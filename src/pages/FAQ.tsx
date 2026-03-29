@@ -8,23 +8,23 @@ export default function FAQ() {
   const faqs = [
     {
       question: "How do you select your products?",
-      answer: "Our curation process is rigorous. We evaluate every potential addition based on three pillars: material integrity, artisan heritage, and timeless design utility. We personally visit our artisan partners to ensure ethical practices and superior craftsmanship."
+      answer: "Our curation process is rigorous. We evaluate every potential addition based on three pillars: quality, artisan integrity, and ethical sourcing. We personally vet our partners to ensure they meet our high standards."
     },
     {
       question: "What is your shipping policy?",
-      answer: "We offer free standard shipping on all orders worldwide. Delivery times vary by region: typically 3-5 business days for domestic orders and 7-12 business days for international shipments. All packages are carbon-neutral and fully insured."
+      answer: "We offer free standard shipping on all orders worldwide. Delivery times vary by region: typically 3-5 business days for domestic orders and 7-12 business days for international shipments. All packages are eco-friendly and fully insured."
     },
     {
-      question: "Can I return a curated item?",
-      answer: "Yes, we offer an effortless 30-day return policy. If a piece doesn't perfectly complement your lifestyle, you can return it in its original condition for a full refund or exchange. We provide pre-paid return labels for your convenience."
+      question: "Can I return a product?",
+      answer: "Yes, we offer an effortless 30-day return policy for unused items. If a product doesn't meet your expectations, you can return it in its original condition for a full refund or exchange. We provide pre-paid return labels for your convenience."
     },
     {
       question: "How can I track my order?",
-      answer: "Once your selection has been prepared and dispatched, you will receive a confirmation email with a unique tracking link. You can also monitor your order status directly through your Mallu's Mart account dashboard."
+      answer: "Once your order has been prepared and dispatched, you will receive a confirmation email with a unique tracking link. You can also monitor your order status directly through your Mallu's Mart account dashboard."
     },
     {
-      question: "Do you offer wholesale opportunities?",
-      answer: "We occasionally partner with boutique retailers and interior design studios who share our aesthetic values. Please reach out to our curation team via the Contact page for professional inquiries."
+      question: "Are your products cruelty-free?",
+      answer: "Absolutely. We only partner with brands that are 100% cruelty-free and do not test on animals. Many of our selections are also vegan-friendly."
     }
   ];
 

@@ -3,6 +3,7 @@ export interface Product {
   name: string;
   price: number;
   category: string;
+  parentCategory?: string;
   description: string;
   image: string;
   images?: string[];
@@ -12,6 +13,12 @@ export interface Product {
   artisan?: string;
   rating?: number;
   inStock?: boolean;
+}
+
+export interface Category {
+  name: string;
+  image: string;
+  subcategories?: string[];
 }
 
 export interface CartItem extends Product {

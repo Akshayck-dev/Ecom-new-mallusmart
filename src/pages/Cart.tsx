@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Trash2, Minus, Plus, ShieldCheck, Truck, ArrowRight, X, Bookmark, ShoppingBag } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { Trash2, Minus, Plus, ShieldCheck, Truck, ArrowRight, X, Bookmark, ShoppingBag, MessageCircle } from 'lucide-react';
 import { PRODUCTS } from '../constants';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
@@ -9,6 +9,57 @@ export default function Cart() {
   const { items, savedItems, updateQuantity, removeItem, saveForLater, moveToCart, removeSavedItem } = useCartStore();
   const [showCheckout, setShowCheckout] = useState(false);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Mouse tracking for parallax
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { stiffness: 100, damping: 30 };
+  const xSpring = useSpring(mouseX, springConfig);
+  const ySpring = useSpring(mouseY, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  // Parallax transforms for different layers
+  const layer1X = useTransform(xSpring, [-0.5, 0.5], [-30, 30]);
+  const layer1Y = useTransform(ySpring, [-0.5, 0.5], [-30, 30]);
+  const layer2X = useTransform(xSpring, [-0.5, 0.5], [50, -50]);
+  const layer2Y = useTransform(ySpring, [-0.5, 0.5], [50, -50]);
+  const layer3X = useTransform(xSpring, [-0.5, 0.5], [-15, 15]);
+  const layer3Y = useTransform(ySpring, [-0.5, 0.5], [-15, 15]);
+
+  // Magnetic button transforms
+  const btnX = useTransform(xSpring, [-0.5, 0.5], [-10, 10]);
+  const btnY = useTransform(ySpring, [-0.5, 0.5], [-10, 10]);
+
+  // Spotlight effect
+  const spotlightX = useTransform(xSpring, [-0.5, 0.5], [0, 100]);
+  const spotlightY = useTransform(ySpring, [-0.5, 0.5], [0, 100]);
+
+  // Icon rotation (look at cursor)
+  const iconRotateX = useTransform(ySpring, [-0.5, 0.5], [15, -15]);
+  const iconRotateY = useTransform(xSpring, [-0.5, 0.5], [-15, 15]);
+
+  // Particle transforms
+  const p1X = useTransform(xSpring, [-0.5, 0.5], [-20, 20]);
+  const p1Y = useTransform(ySpring, [-0.5, 0.5], [-20, 20]);
+  const p2X = useTransform(xSpring, [-0.5, 0.5], [15, -15]);
+  const p2Y = useTransform(ySpring, [-0.5, 0.5], [15, -15]);
+  const p3X = useTransform(xSpring, [-0.5, 0.5], [-10, 10]);
+  const p3Y = useTransform(ySpring, [-0.5, 0.5], [10, -10]);
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shipping = 0;
@@ -23,115 +74,240 @@ export default function Cart() {
 
   return (
     <main className="pt-32 pb-20 px-6 md:px-12 max-w-7xl mx-auto">
-      <div className="flex justify-between items-end mb-16">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
         <div>
-          <h1 className="text-display-lg mb-4">Your Selection.</h1>
-          <p className="text-on-surface-variant max-w-md">
-            Review your curated pieces before we prepare them for their journey to your home.
+          <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.1] font-serif italic mb-6">Your <span className="text-[#FDCB58] not-italic font-headline font-light">Selection.</span></h1>
+          <p className="text-on-surface-variant max-w-md font-light leading-relaxed">
+            Review your curated pieces before we prepare them for their journey to your home. Each item is inspected for quality and artisan integrity.
           </p>
         </div>
-        <Link to="/shop" className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">
+        <Link to="/shop" className="group flex items-center gap-3 text-[#FDCB58] font-bold text-xs tracking-[0.2em] uppercase">
           Continue Shopping
+          <ArrowRight size={18} className="transition-transform group-hover:translate-x-2" />
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
         {/* Cart Items */}
-        <div className="lg:col-span-8 space-y-12">
-          <div className="space-y-6">
+        <div className="lg:col-span-8 space-y-16">
+          <div className="space-y-8">
             <AnimatePresence mode="popLayout">
               {items.map((item) => (
                 <motion.div 
                   key={item.id}
                   layout
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ 
                     opacity: 1, 
-                    x: 0,
+                    y: 0,
                     scale: animatingId === item.id ? 1.02 : 1,
-                    borderColor: animatingId === item.id ? 'rgba(var(--primary), 0.3)' : 'rgba(var(--outline-variant), 0.1)'
                   }}
-                  exit={{ opacity: 0, x: 20, scale: 0.95 }}
+                  exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="bg-white p-6 rounded-2xl border flex gap-6 items-center shadow-sm"
+                  className="bg-white p-8 rounded-[2.5rem] border border-outline-variant/10 flex flex-col sm:flex-row gap-8 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500"
                 >
-                  <div className="w-32 h-32 rounded-xl overflow-hidden bg-surface-container-low flex-shrink-0">
+                  <div className="w-40 h-40 rounded-3xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   </div>
-                  <div className="flex-grow">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">{item.category}</p>
-                    <h3 className="text-xl font-bold mb-1">{item.name}</h3>
-                    <div className="flex items-center justify-between mt-4">
-                      <div className="flex items-center bg-surface-container-low rounded-md">
+                  <div className="flex-grow w-full">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <p className="text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-[#FDCB58] mb-2">{item.category}</p>
+                        <h3 className="text-2xl font-headline font-medium leading-tight">{item.name}</h3>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-mono font-light">${(item.price * item.quantity).toFixed(2)}</p>
+                        <p className="text-[10px] font-mono text-on-surface-variant/40 mt-1 uppercase tracking-widest">${item.price.toFixed(2)} / unit</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center justify-between gap-6 mt-8">
+                      <div className="flex items-center bg-surface-container-low rounded-2xl border border-outline-variant/5 p-1">
                         <button 
                           onClick={() => handleQuantityUpdate(item.id, -1, item.quantity)} 
-                          className="p-2 hover:text-primary transition-colors"
+                          className="p-3 hover:text-primary transition-colors"
                         >
-                          <Minus size={14} />
+                          <Minus size={16} />
                         </button>
                         <motion.span 
                           key={item.quantity}
                           initial={{ scale: 1.2, color: 'var(--primary)' }}
                           animate={{ scale: 1, color: 'inherit' }}
-                          className="w-8 text-center font-bold text-sm"
+                          className="w-10 text-center font-mono font-bold text-base"
                         >
-                          {item.quantity}
+                          {item.quantity.toString().padStart(2, '0')}
                         </motion.span>
                         <button 
                           onClick={() => handleQuantityUpdate(item.id, 1, item.quantity)} 
-                          className="p-2 hover:text-primary transition-colors"
+                          className="p-3 hover:text-primary transition-colors"
                         >
-                          <Plus size={14} />
+                          <Plus size={16} />
                         </button>
                       </div>
-                      <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-8">
                         <button 
                           onClick={() => saveForLater(item.id)}
-                          className="flex items-center gap-2 text-xs font-bold text-on-surface-variant hover:text-primary transition-colors"
+                          className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-primary transition-colors uppercase tracking-[0.2em]"
                         >
-                          <Bookmark size={14} /> SAVE FOR LATER
+                          <Bookmark size={14} className="group-hover:fill-current" /> Save for Later
                         </button>
                         <button 
                           onClick={() => removeItem(item.id)} 
-                          className="flex items-center gap-2 text-xs font-bold text-on-surface-variant hover:text-red-500 transition-colors"
+                          className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-red-500 transition-colors uppercase tracking-[0.2em]"
                         >
-                          <Trash2 size={14} /> REMOVE
+                          <Trash2 size={14} /> Remove
                         </button>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right min-w-[100px]">
-                    <p className="text-xl font-bold">${(item.price * item.quantity).toFixed(2)}</p>
-                    <p className="text-[10px] text-on-surface-variant mt-1">${item.price.toFixed(2)} / unit</p>
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
             {items.length === 0 && (
-              <div className="text-center py-20 bg-surface-container-low rounded-2xl border-2 border-dashed border-outline-variant/20">
-                <div className="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-6 text-on-surface-variant">
-                  <ShoppingBag size={24} />
+              <motion.div 
+                ref={containerRef}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                className="text-center py-40 bg-surface-container-low rounded-[4rem] border border-outline-variant/10 relative overflow-hidden group shadow-inner"
+              >
+                {/* Spotlight effect that follows mouse */}
+                <motion.div 
+                  style={{ 
+                    background: useTransform(
+                      [spotlightX, spotlightY],
+                      ([x, y]) => `radial-gradient(800px circle at ${x}% ${y}%, rgba(253, 203, 88, 0.1), transparent 70%)`
+                    )
+                  }}
+                  className="absolute inset-0 pointer-events-none"
+                />
+
+                {/* Interactive Parallax Background Layers */}
+                <motion.div 
+                  style={{ x: layer1X, y: layer1Y }}
+                  className="absolute top-20 left-20 w-32 h-32 rounded-full bg-[#FDCB58]/10 blur-3xl pointer-events-none"
+                />
+                <motion.div 
+                  style={{ x: layer2X, y: layer2Y }}
+                  className="absolute bottom-20 right-20 w-48 h-48 rounded-full bg-[#FDCB58]/10 blur-[100px] pointer-events-none"
+                />
+                
+                {/* Floating Decorative Elements */}
+                <motion.div 
+                  style={{ x: layer2X, y: layer1Y }}
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-1/4 right-1/4 text-[#FDCB58]/10 pointer-events-none"
+                >
+                  <Bookmark size={120} strokeWidth={0.5} />
+                </motion.div>
+
+                <motion.div 
+                  style={{ x: layer1X, y: layer2Y }}
+                  className="absolute bottom-1/4 left-1/4 text-[#FDCB58]/10 pointer-events-none"
+                >
+                  <ShoppingBag size={120} strokeWidth={0.5} />
+                </motion.div>
+
+                <div className="relative z-10">
+                  <div className="relative w-64 h-64 mx-auto mb-12">
+                    {/* Multi-layered animated illustration */}
+                    <motion.div 
+                      style={{ x: layer3X, y: layer3Y }}
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                      className="absolute inset-0 bg-[#FDCB58]/10 rounded-full blur-[80px]"
+                    />
+                    
+                    <motion.div 
+                      style={{ x: layer1X, y: layer1Y }}
+                      className="absolute inset-4 border border-[#FDCB58]/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]"
+                    />
+
+                    <motion.div 
+                      style={{ 
+                        x: layer3X, 
+                        y: layer3Y,
+                        rotateX: iconRotateX,
+                        rotateY: iconRotateY,
+                        perspective: 1000
+                      }}
+                      className="absolute inset-0 flex items-center justify-center"
+                    >
+                      <div className="w-40 h-40 bg-white rounded-[2.5rem] shadow-premium border border-outline-variant/10 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-700">
+                        <motion.div 
+                          animate={{ y: [0, -12, 0] }}
+                          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                          className="text-[#FDCB58]"
+                        >
+                          <ShoppingBag size={72} strokeWidth={1} />
+                        </motion.div>
+                        
+                        <motion.div 
+                          animate={{ x: [-150, 250] }}
+                          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent -skew-x-12 pointer-events-none"
+                        />
+                      </div>
+                    </motion.div>
+
+                    {/* Floating particles */}
+                    {[
+                      { top: '10%', left: '20%', x: p1X, y: p1Y, delay: 0 },
+                      { top: '80%', left: '15%', x: p2X, y: p2Y, delay: 0.5 },
+                      { top: '30%', left: '85%', x: p3X, y: p3Y, delay: 1 },
+                      { top: '70%', left: '75%', x: p1X, y: p3Y, delay: 1.5 },
+                      { top: '15%', left: '70%', x: p2X, y: p1Y, delay: 2 },
+                      { top: '85%', left: '60%', x: p3X, y: p2Y, delay: 2.5 },
+                    ].map((p, i) => (
+                      <motion.div
+                        key={i}
+                        style={{ x: p.x, y: p.y, top: p.top, left: p.left }}
+                        animate={{ y: [0, -20, 0], opacity: [0.1, 0.3, 0.1] }}
+                        transition={{ duration: 4, repeat: Infinity, delay: p.delay }}
+                        className="absolute w-2 h-2 bg-[#FDCB58]/30 rounded-full pointer-events-none"
+                      />
+                    ))}
+                  </div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <h3 className="text-4xl font-serif italic mb-6">Your gallery is <span className="text-[#FDCB58] not-italic font-headline font-light">Empty.</span></h3>
+                    <p className="text-on-surface-variant mb-14 max-w-sm mx-auto leading-relaxed text-lg font-light">
+                      Every great collection starts with a single piece. Discover yours in our curated gallery.
+                    </p>
+                    <motion.div style={{ x: btnX, y: btnY }}>
+                      <Link 
+                        to="/shop" 
+                        className="inline-flex items-center gap-4 bg-[#FDCB58] text-black px-14 py-7 rounded-full font-bold shadow-premium hover:bg-[#FDCB58]/90 transition-all active:scale-95 group text-xs uppercase tracking-[0.2em]"
+                      >
+                        Browse the Collection
+                        <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+                      </Link>
+                    </motion.div>
+                  </motion.div>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Your cart is empty</h3>
-                <p className="text-on-surface-variant mb-8">Looks like you haven't added any curated pieces yet.</p>
-                <Link to="/shop" className="bg-primary text-white px-8 py-4 rounded-md font-bold shadow-lg hover:shadow-primary/20 transition-all">
-                  Browse Collection
-                </Link>
-              </div>
+              </motion.div>
             )}
           </div>
 
           {/* Saved for Later Section */}
           {savedItems.length > 0 && (
-            <div className="pt-12 border-t border-outline-variant/20">
-              <div className="flex items-center gap-3 mb-8">
-                <Bookmark className="text-primary" size={20} />
-                <h2 className="text-2xl font-bold">Saved for Later</h2>
-                <span className="text-sm font-bold text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">
-                  {savedItems.length}
-                </span>
+            <div className="pt-20 border-t border-outline-variant/10">
+              <div className="flex items-center gap-4 mb-12">
+                <div className="p-3 bg-primary/5 rounded-2xl text-primary">
+                  <Bookmark size={24} className="fill-current" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-serif italic">Saved for <span className="text-primary not-italic font-headline font-light">Later.</span></h2>
+                  <p className="text-xs font-mono text-on-surface-variant/60 uppercase tracking-widest mt-1">{savedItems.length} items in your archive</p>
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <AnimatePresence mode="popLayout">
                   {savedItems.map((item) => (
                     <motion.div 
@@ -140,24 +316,24 @@ export default function Cart() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="bg-white p-4 rounded-2xl border border-outline-variant/10 flex gap-4 items-center"
+                      className="bg-white p-6 rounded-[2rem] border border-outline-variant/10 flex gap-6 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500"
                     >
-                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container-low flex-shrink-0">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-70" referrerPolicy="no-referrer" />
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
                       </div>
                       <div className="flex-grow min-w-0">
-                        <h4 className="font-bold text-sm truncate">{item.name}</h4>
-                        <p className="text-xs text-on-surface-variant mb-3">${item.price.toFixed(2)}</p>
-                        <div className="flex gap-4">
+                        <h4 className="font-headline font-medium text-lg truncate mb-1">{item.name}</h4>
+                        <p className="font-mono text-sm text-on-surface-variant mb-4">${item.price.toFixed(2)}</p>
+                        <div className="flex gap-6">
                           <button 
                             onClick={() => moveToCart(item.id)}
-                            className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest"
+                            className="text-[10px] font-mono font-bold text-primary hover:underline uppercase tracking-[0.2em]"
                           >
                             Move to Cart
                           </button>
                           <button 
                             onClick={() => removeSavedItem(item.id)}
-                            className="text-[10px] font-bold text-on-surface-variant hover:text-red-500 uppercase tracking-widest"
+                            className="text-[10px] font-mono font-bold text-on-surface-variant/40 hover:text-red-500 uppercase tracking-[0.2em]"
                           >
                             Remove
                           </button>
@@ -173,43 +349,47 @@ export default function Cart() {
 
         {/* Order Summary */}
         <div className="lg:col-span-4">
-          <div className="bg-surface-container-low p-8 rounded-2xl sticky top-32">
-            <h2 className="text-2xl font-bold mb-8">Order Summary</h2>
-            <div className="space-y-4 mb-8">
-              <div className="flex justify-between text-sm">
-                <span className="text-on-surface-variant">SUBTOTAL</span>
-                <span className="font-bold">${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+          <div className="bg-surface-container-low p-10 rounded-[3rem] sticky top-32 border border-outline-variant/5 shadow-inner">
+            <h2 className="text-3xl font-serif italic mb-10">Order <span className="text-[#FDCB58] not-italic font-headline font-light">Summary.</span></h2>
+            <div className="space-y-6 mb-10">
+              <div className="flex justify-between text-xs font-mono tracking-widest uppercase">
+                <span className="text-on-surface-variant/60">Subtotal</span>
+                <span className="font-bold text-on-surface">${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-on-surface-variant">STANDARD SHIPPING</span>
-                <span className="font-bold">FREE</span>
+              <div className="flex justify-between text-xs font-mono tracking-widest uppercase">
+                <span className="text-on-surface-variant/60">Shipping</span>
+                <span className="font-bold text-green-600">Complimentary</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-on-surface-variant">ESTIMATED TAX</span>
-                <span className="font-bold">${tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+              <div className="flex justify-between text-xs font-mono tracking-widest uppercase">
+                <span className="text-on-surface-variant/60">Estimated Tax</span>
+                <span className="font-bold text-on-surface">${tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
             </div>
-            <div className="pt-6 border-t border-outline-variant/20 mb-8">
-              <p className="text-xs font-bold text-on-surface-variant mb-2 uppercase tracking-widest">Total Amount</p>
-              <p className="text-4xl font-black text-on-background">${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            <div className="pt-8 border-t border-outline-variant/10 mb-10">
+              <p className="text-[10px] font-mono font-bold text-on-surface-variant/40 mb-3 uppercase tracking-[0.3em]">Total Investment</p>
+              <p className="text-5xl font-mono font-light text-on-surface tracking-tighter">${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
             </div>
-            <button 
+            <motion.button 
               onClick={() => setShowCheckout(true)}
               disabled={items.length === 0}
-              className="w-full bg-primary text-white py-5 rounded-md font-bold shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98] mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-[#FDCB58] text-black py-6 rounded-3xl font-bold shadow-premium hover:bg-[#FDCB58]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-8 text-xs uppercase tracking-[0.2em]"
             >
               Proceed to Checkout
-            </button>
-            <p className="text-[10px] text-center font-bold text-on-surface-variant uppercase tracking-widest mb-8">Secure SSL Encrypted Checkout</p>
+            </motion.button>
+            <div className="flex items-center justify-center gap-3 text-[10px] font-mono font-bold text-on-surface-variant/40 uppercase tracking-[0.2em] mb-10">
+              <ShieldCheck size={14} /> Secure SSL Encrypted
+            </div>
             
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-xs text-on-surface-variant">
-                <Truck size={16} className="text-primary" />
-                <span>Free worldwide shipping on all orders</span>
+            <div className="space-y-5 pt-8 border-t border-outline-variant/10">
+              <div className="flex items-start gap-4 text-xs text-on-surface-variant leading-relaxed">
+                <Truck size={18} className="text-[#FDCB58] shrink-0" />
+                <span>Free worldwide priority shipping on all curated orders.</span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-on-surface-variant">
-                <ShieldCheck size={16} className="text-primary" />
-                <span>30-day effortless returns policy</span>
+              <div className="flex items-start gap-4 text-xs text-on-surface-variant leading-relaxed">
+                <ShieldCheck size={18} className="text-[#FDCB58] shrink-0" />
+                <span>30-day effortless returns and artisan guarantee.</span>
               </div>
             </div>
           </div>
@@ -225,86 +405,92 @@ export default function Cart() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowCheckout(false)}
-              className="absolute inset-0 bg-on-background/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-on-background/60 backdrop-blur-xl"
             />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row"
+              exit={{ opacity: 0, scale: 0.9, y: 40 }}
+              transition={{ type: "spring", stiffness: 300, damping: 35 }}
+              className="relative w-full max-w-5xl bg-white rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col lg:flex-row max-h-[90vh]"
             >
-              <div className="md:w-1/2 bg-surface-container-low p-10 max-h-[80vh] overflow-y-auto">
-                <h3 className="text-2xl font-bold mb-8">Order Summary</h3>
-                <div className="space-y-6 mb-8">
+              <div className="lg:w-[40%] bg-surface-container-low p-12 overflow-y-auto no-scrollbar border-r border-outline-variant/10">
+                <h3 className="text-3xl font-serif italic mb-10">Order <span className="text-primary not-italic font-headline font-light">Summary.</span></h3>
+                <div className="space-y-8 mb-10">
                   {items.map(item => (
-                    <div key={item.id} className="flex gap-4 items-center">
-                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-white flex-shrink-0">
+                    <div key={item.id} className="flex gap-6 items-center">
+                      <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white flex-shrink-0 shadow-sm">
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                       <div className="flex-grow">
-                        <p className="font-bold text-sm">{item.name}</p>
-                        <p className="text-xs text-on-surface-variant">Qty {item.quantity}</p>
+                        <p className="font-headline font-medium text-base leading-tight mb-1">{item.name}</p>
+                        <p className="text-[10px] font-mono text-on-surface-variant/60 uppercase tracking-widest">Quantity {item.quantity}</p>
                       </div>
-                      <p className="font-bold text-sm">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="font-mono font-bold text-sm">${(item.price * item.quantity).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
-                <div className="space-y-3 pt-6 border-t border-outline-variant/20">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-on-surface-variant">Subtotal</span>
+                <div className="space-y-4 pt-8 border-t border-outline-variant/10">
+                  <div className="flex justify-between text-xs font-mono uppercase tracking-widest">
+                    <span className="text-on-surface-variant/60">Subtotal</span>
                     <span className="font-bold">${subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-on-surface-variant">Shipping</span>
-                    <span className="font-bold">Free</span>
+                  <div className="flex justify-between text-xs font-mono uppercase tracking-widest">
+                    <span className="text-on-surface-variant/60">Shipping</span>
+                    <span className="font-bold text-green-600">Free</span>
                   </div>
-                  <div className="flex justify-between text-xl font-black pt-3">
+                  <div className="flex justify-between text-3xl font-mono font-light pt-6 border-t border-outline-variant/5">
                     <span>Total</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="md:w-1/2 p-10 relative">
+              <div className="flex-1 p-12 relative overflow-y-auto no-scrollbar">
                 <button 
                   onClick={() => setShowCheckout(false)}
-                  className="absolute top-6 right-6 p-2 hover:bg-surface-container rounded-full transition-colors"
+                  className="absolute top-8 right-8 p-4 hover:bg-surface-container rounded-3xl transition-all border border-outline-variant/10 text-on-surface-variant hover:text-primary"
                 >
-                  <X size={20} />
+                  <X size={24} />
                 </button>
-                <h3 className="text-2xl font-bold mb-8">Checkout Details</h3>
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Full Name</label>
-                    <input type="text" defaultValue="John Doe" className="w-full px-4 py-3 rounded-lg bg-surface-container-high border-none focus:ring-1 focus:ring-primary/30" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Phone Number</label>
-                    <input type="text" placeholder="+1 (555) 000-0000" className="w-full px-4 py-3 rounded-lg bg-surface-container-high border-none focus:ring-1 focus:ring-primary/30" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Delivery Address</label>
-                    <input type="text" placeholder="Street name..." className="w-full px-4 py-3 rounded-lg bg-surface-container-high border-none focus:ring-1 focus:ring-primary/30" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Pincode</label>
-                      <input type="text" defaultValue="600001" className="w-full px-4 py-3 rounded-lg bg-surface-container-high border-none focus:ring-1 focus:ring-primary/30" />
+                <h3 className="text-3xl font-serif italic mb-10">Checkout <span className="text-primary not-italic font-headline font-light">Details.</span></h3>
+                <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 ml-1">Full Name</label>
+                      <input type="text" defaultValue="John Doe" className="w-full px-6 py-4 rounded-2xl bg-surface-container-low border border-outline-variant/10 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-light" />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">City</label>
-                      <input type="text" defaultValue="Kochi" className="w-full px-4 py-3 rounded-lg bg-surface-container-high border-none focus:ring-1 focus:ring-primary/30" />
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 ml-1">Phone Number</label>
+                      <input type="text" placeholder="+1 (555) 000-0000" className="w-full px-6 py-4 rounded-2xl bg-surface-container-low border border-outline-variant/10 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-light" />
                     </div>
                   </div>
-                  <button className="w-full bg-primary text-white py-4 rounded-lg font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-primary/20 transition-all active:scale-[0.98]">
-                    Order via WhatsApp
-                  </button>
-                  <button 
-                    onClick={() => setShowCheckout(false)}
-                    className="w-full text-sm font-bold text-on-surface-variant hover:text-primary transition-colors"
-                  >
-                    Return to Cart
-                  </button>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 ml-1">Delivery Address</label>
+                    <input type="text" placeholder="Street name, apartment, suite..." className="w-full px-6 py-4 rounded-2xl bg-surface-container-low border border-outline-variant/10 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-light" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 ml-1">Pincode</label>
+                      <input type="text" defaultValue="600001" className="w-full px-6 py-4 rounded-2xl bg-surface-container-low border border-outline-variant/10 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-light" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/60 ml-1">City</label>
+                      <input type="text" defaultValue="Kochi" className="w-full px-6 py-4 rounded-2xl bg-surface-container-low border border-outline-variant/10 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-light" />
+                    </div>
+                  </div>
+                  <div className="pt-6">
+                    <motion.button 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full bg-[#FDCB58] text-black py-6 rounded-3xl font-bold flex items-center justify-center gap-4 shadow-premium hover:bg-[#FDCB58]/90 transition-all text-xs uppercase tracking-[0.2em]"
+                    >
+                      <MessageCircle size={20} /> Order via WhatsApp
+                    </motion.button>
+                  </div>
+                  <p className="text-[10px] text-center font-mono font-bold text-on-surface-variant/40 uppercase tracking-[0.2em]">
+                    By placing an order, you agree to our <span className="underline cursor-pointer hover:text-primary">Terms of Service</span>
+                  </p>
                 </form>
               </div>
             </motion.div>

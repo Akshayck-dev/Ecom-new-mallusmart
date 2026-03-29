@@ -21,7 +21,7 @@ export default function About() {
             transition={{ delay: 0.1 }}
             className="text-display-lg mb-8"
           >
-            Curation as a <span className="italic font-serif">Fine Art.</span>
+            Beauty as a <span className="italic font-serif">Fine Art.</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -29,7 +29,7 @@ export default function About() {
             transition={{ delay: 0.2 }}
             className="text-on-surface-variant text-lg leading-relaxed"
           >
-            Mallu's Mart was born from a simple observation: in a world of infinite choice, the most valuable thing we can offer is a deliberate selection. We don't just sell products; we curate experiences that honor craftsmanship and heritage.
+            Mallu's Mart was born from a simple observation: in a world of infinite choice, the most valuable thing we can offer is a deliberate selection. We don't just sell products; we curate experiences that honor quality and artisan integrity.
           </motion.p>
         </div>
       </section>
@@ -39,8 +39,8 @@ export default function About() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div className="rounded-2xl overflow-hidden shadow-2xl">
             <img 
-              src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" 
-              alt="Our studio" 
+              src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=1200" 
+              alt="Our beauty studio" 
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
@@ -53,8 +53,8 @@ export default function About() {
                   <Heart size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2">Intentionality</h3>
-                  <p className="text-on-surface-variant text-sm leading-relaxed">Every item in our collection is chosen with purpose. We look for pieces that tell a story and serve a function with grace.</p>
+                  <h3 className="font-bold mb-2">Clean Ingredients</h3>
+                  <p className="text-on-surface-variant text-sm leading-relaxed">Every item in our collection is chosen with purpose. We look for formulations that are safe, effective, and kind to your skin.</p>
                 </div>
               </div>
               <div className="flex gap-6">
@@ -62,8 +62,8 @@ export default function About() {
                   <Globe size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2">Global Heritage</h3>
-                  <p className="text-on-surface-variant text-sm leading-relaxed">We partner with artisans from Kerala to Copenhagen, celebrating traditional techniques in a modern context.</p>
+                  <h3 className="font-bold mb-2">Ethical Sourcing</h3>
+                  <p className="text-on-surface-variant text-sm leading-relaxed">We partner with labs and artisans who share our commitment to sustainability and ethical practices.</p>
                 </div>
               </div>
               <div className="flex gap-6">
