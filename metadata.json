@@ -1,0 +1,7 @@
+{
+  "name": "Mallu's Mart",
+  "description": "An elevated digital gallery for curated artisan goods and daily necessities.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
