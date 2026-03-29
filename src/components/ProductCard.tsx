@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Heart, ShoppingBag, Star, Eye, Loader2 } from 'lucide-react';
@@ -42,15 +43,50 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onAddToCart
 }) => {
   const [isAddingInternal, setIsAddingInternal] = React.useState(false);
+  const [flyingImage, setFlyingImage] = React.useState<{ url: string; x: number; y: number } | null>(null);
   const isAdding = isAddingProp || isAddingInternal;
   const addItem = useCartStore((state) => state.addItem);
+  const cartIconRef = useCartStore((state) => state.cartIconRef);
+  const triggerBounce = useCartStore((state) => state.triggerBounce);
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore();
   const isWishlisted = isInWishlist(product.id);
+  const imageRef = React.useRef<HTMLImageElement>(null);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
+    if (imageRef.current && cartIconRef?.current) {
+      const rect = imageRef.current.getBoundingClientRect();
+      const cartRect = cartIconRef.current.getBoundingClientRect();
+      
+      setFlyingImage({
+        url: product.image,
+        x: rect.left,
+        y: rect.top
+      });
+
+      // Trigger the fly animation
+      setTimeout(() => {
+        const flyingEl = document.getElementById(`flying-image-${product.id}`);
+        if (flyingEl) {
+          flyingEl.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+          flyingEl.style.left = `${cartRect.left}px`;
+          flyingEl.style.top = `${cartRect.top}px`;
+          flyingEl.style.width = '20px';
+          flyingEl.style.height = '20px';
+          flyingEl.style.opacity = '0';
+          flyingEl.style.transform = 'scale(0.1)';
+        }
+      }, 10);
+
+      // Trigger bounce and cleanup
+      setTimeout(() => {
+        setFlyingImage(null);
+        triggerBounce();
+      }, 800);
+    }
+
     if (onAddToCart) {
       onAddToCart(product);
       return;
@@ -117,11 +153,39 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Product Image */}
       <Link to={`/product/${product.id}`} className="block relative aspect-square mb-8 overflow-hidden rounded-2xl">
         <img 
+          ref={imageRef}
           src={product.image} 
           alt={product.name} 
           className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" 
           referrerPolicy="no-referrer"
         />
+        
+        {/* Flying Image Portal */}
+        {flyingImage && createPortal(
+          <div 
+            id={`flying-image-${product.id}`}
+            style={{
+              position: 'fixed',
+              left: `${flyingImage.x}px`,
+              top: `${flyingImage.y}px`,
+              width: `${imageRef.current?.offsetWidth || 100}px`,
+              height: `${imageRef.current?.offsetHeight || 100}px`,
+              zIndex: 9999,
+              pointerEvents: 'none',
+              borderRadius: '1rem',
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+            }}
+          >
+            <img 
+              src={flyingImage.url} 
+              alt="" 
+              className="w-full h-full object-cover" 
+              referrerPolicy="no-referrer"
+            />
+          </div>,
+          document.body
+        )}
         
         {/* Quick View Overlay */}
         {onQuickView && (

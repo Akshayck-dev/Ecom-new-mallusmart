@@ -11,8 +11,17 @@ export default function Navbar() {
   const location = useLocation();
   const cartItems = useCartStore((state) => state.items);
   const totalItems = useCartStore((state) => state.totalItems());
+  const isBouncing = useCartStore((state) => state.isBouncing);
+  const setCartIconRef = useCartStore((state) => state.setCartIconRef);
   const wishlistItems = useWishlistStore((state) => state.items);
   const { scrollY } = useScroll();
+  const cartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (cartRef.current) {
+      setCartIconRef(cartRef);
+    }
+  }, [setCartIconRef]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
@@ -76,7 +85,16 @@ export default function Navbar() {
               )}
             </Link>
             <Link to="/cart" className="relative p-1 hover:text-primary transition-colors">
-              <ShoppingBag size={20} className="text-on-background" />
+              <motion.div
+                ref={cartRef}
+                animate={isBouncing ? {
+                  scale: [1, 1.2, 0.9, 1.1, 1],
+                  rotate: [0, -10, 10, -5, 0]
+                } : {}}
+                transition={{ duration: 0.5 }}
+              >
+                <ShoppingBag size={20} className="text-on-background" />
+              </motion.div>
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[8px] font-black flex items-center justify-center rounded-full">
                   {totalItems}

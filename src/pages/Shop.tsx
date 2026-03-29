@@ -101,9 +101,15 @@ export default function Shop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const removeRecentSearch = (term: string) => {
+    const updated = recentSearches.filter(s => s !== term);
+    setRecentSearches(updated);
+    localStorage.setItem('recentSearches', JSON.stringify(updated));
+  };
+
   const addToRecentSearches = (query: string) => {
     if (!query.trim()) return;
-    const updated = [query, ...recentSearches.filter(s => s !== query)].slice(0, 5);
+    const updated = [query, ...recentSearches.filter(s => s !== query)].slice(0, 8);
     setRecentSearches(updated);
     localStorage.setItem('recentSearches', JSON.stringify(updated));
   };
@@ -146,10 +152,10 @@ export default function Shop() {
   };
 
   const categories = useMemo(() => [
-    { name: 'All Products', count: PRODUCTS.length },
+    { name: 'All Products', count: PRODUCTS.filter(p => p.inStock).length },
     ...CATEGORIES.map(cat => ({
       name: cat.name,
-      count: PRODUCTS.filter(p => p.category === cat.name).length
+      count: PRODUCTS.filter(p => p.category === cat.name && p.inStock).length
     }))
   ].filter(cat => cat.count > 0 || cat.name === 'All Products'), []);
 
@@ -213,35 +219,31 @@ export default function Shop() {
   const suggestionsData = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     
-    // If no query but focused, show recent searches
-    if (!query) {
-      return { 
-        items: recentSearches.map(s => ({ type: 'recent', name: s })), 
-        hasMore: false 
-      };
-    }
+    if (!query) return { items: [], type: 'none' };
     
-    const recentMatches = recentSearches
-      .filter(s => s.toLowerCase().includes(query))
-      .map(s => ({ type: 'recent', name: s }));
+    const categoryMatches = categories
+      .filter(c => c.name.toLowerCase().includes(query) && c.name !== 'All Products')
+      .map(c => ({ type: 'category', name: c.name, count: c.count }));
       
+    const subcategoryMatches = CATEGORIES.flatMap(c => c.subcategories || [])
+      .filter(sub => sub.toLowerCase().includes(query))
+      .map(sub => ({ type: 'subcategory', name: sub }));
+
     const productMatches = PRODUCTS
       .filter(p => p.name.toLowerCase().includes(query))
       .map(p => ({ type: 'product', id: p.id, name: p.name, category: p.category, image: p.image }));
-      
-    const categoryMatches = categories
-      .filter(c => c.name.toLowerCase().includes(query) && c.name !== 'All Products')
-      .map(c => ({ type: 'category', name: c.name }));
 
-    const allMatches = [...recentMatches, ...categoryMatches, ...productMatches];
-    const hasMore = allMatches.length > 5;
-    const items = allMatches.slice(0, 5);
+    // Combine and remove duplicates by name
+    const combined = [...categoryMatches, ...subcategoryMatches, ...productMatches];
+    const uniqueItems = Array.from(new Map(combined.map(item => [item.name, item])).values());
 
-    return { items, hasMore, total: allMatches.length };
-  }, [searchQuery, categories, recentSearches]);
+    return { 
+      items: uniqueItems.slice(0, 8),
+      type: 'suggestions'
+    };
+  }, [searchQuery, categories]);
 
   const suggestions = suggestionsData.items;
-  const hasMoreSuggestions = suggestionsData.hasMore;
 
   return (
     <main className="pt-32 pb-20 px-6 md:px-12 max-w-7xl mx-auto overflow-hidden">
@@ -313,96 +315,132 @@ export default function Shop() {
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[3rem] shadow-2xl border border-outline-variant/10 p-10 z-50 backdrop-blur-xl bg-white/95"
+                className="absolute top-full left-0 right-0 mt-4 bg-white rounded-[2.5rem] shadow-2xl border border-outline-variant/10 p-8 z-50 backdrop-blur-xl bg-white/95 overflow-hidden"
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                  <div>
-                    <div className="flex items-center justify-between mb-6">
-                      <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/40">Recent Discoveries</h4>
-                      <button 
-                        onClick={() => setRecentSearches([])}
-                        className="text-[9px] font-mono font-bold uppercase tracking-widest text-primary hover:underline"
-                      >
-                        Clear All
-                      </button>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      {recentSearches.length > 0 ? recentSearches.map((term, i) => (
-                        <button 
-                          key={i}
-                          onClick={() => {
-                            setSearchQuery(term);
-                            setIsSearchFocused(false);
-                          }}
-                          className="px-6 py-3 bg-surface-container-lowest border border-outline-variant/10 rounded-2xl text-xs font-light hover:border-primary/30 hover:bg-primary/5 transition-all flex items-center gap-3 group"
-                        >
-                          <Search size={12} className="text-on-surface-variant/30 group-hover:text-primary" />
-                          {term}
-                        </button>
-                      )) : (
-                        <p className="text-xs text-on-surface-variant/40 font-light italic">Your search history will appear here.</p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/40 mb-6">Curated Collections</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      {categories.slice(1, 5).map((cat) => (
-                        <button 
-                          key={cat.name}
-                          onClick={() => {
-                            setSelectedCategory(cat.name);
-                            setIsSearchFocused(false);
-                          }}
-                          className="flex items-center gap-4 p-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/5 hover:border-primary/20 hover:bg-primary/5 transition-all group text-left"
-                        >
-                          <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <span className="text-xs font-mono font-bold text-primary">{cat.count}</span>
-                          </div>
-                          <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-primary">{cat.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                {searchQuery && suggestions.length > 0 && (
-                  <div className="mt-12 pt-10 border-t border-outline-variant/10">
-                    <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/40 mb-6">Matching Pieces</h4>
-                    <div className="space-y-4">
-                      {suggestions.map((item: any, i) => (
-                        <button 
-                          key={i}
-                          onClick={() => {
-                            if (item.type === 'product') {
-                              window.location.href = `/product/${item.id}`;
-                            } else {
-                              setSearchQuery(item.name);
-                              setIsSearchFocused(false);
-                            }
-                          }}
-                          className="w-full flex items-center gap-6 p-4 rounded-2xl hover:bg-surface-container transition-all group text-left"
-                        >
-                          {item.type === 'product' ? (
-                            <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover shadow-sm" />
-                          ) : (
-                            <div className="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
-                              <Search size={16} className="text-on-surface-variant/40" />
+                {!searchQuery ? (
+                  <div className="space-y-8">
+                    {recentSearches.length > 0 && (
+                      <div>
+                        <div className="flex items-center justify-between mb-4 px-2">
+                          <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/40">Recent Discoveries</h4>
+                          <button 
+                            onClick={() => {
+                              setRecentSearches([]);
+                              localStorage.removeItem('recentSearches');
+                            }}
+                            className="text-[9px] font-mono font-bold uppercase tracking-widest text-primary hover:underline"
+                          >
+                            Clear All
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {recentSearches.map((term, i) => (
+                            <div 
+                              key={i}
+                              className="group flex items-center bg-surface-container-lowest border border-outline-variant/10 rounded-xl hover:border-primary/30 hover:bg-primary/5 transition-all"
+                            >
+                              <button 
+                                onClick={() => {
+                                  setSearchQuery(term);
+                                  addToRecentSearches(term);
+                                  setIsSearchFocused(false);
+                                }}
+                                className="pl-4 pr-2 py-2 text-xs font-light flex items-center gap-2"
+                              >
+                                <Clock size={12} className="text-on-surface-variant/30" />
+                                {term}
+                              </button>
+                              <button 
+                                onClick={() => removeRecentSearch(term)}
+                                className="pr-3 pl-1 py-2 text-on-surface-variant/20 hover:text-destructive transition-colors"
+                              >
+                                <X size={12} />
+                              </button>
                             </div>
-                          )}
-                          <div className="flex-1">
-                            <p className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">
-                              <Highlight text={item.name} query={searchQuery} />
-                            </p>
-                            <p className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/40">
-                              {item.type === 'product' ? item.category : 'Search Suggestion'}
-                            </p>
-                          </div>
-                          <ArrowRight size={16} className="text-primary opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                        </button>
-                      ))}
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div>
+                      <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/40 mb-4 px-2">Popular Collections</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        {categories.slice(1, 5).map((cat) => (
+                          <button 
+                            key={cat.name}
+                            onClick={() => {
+                              setSelectedCategory(cat.name);
+                              setIsSearchFocused(false);
+                            }}
+                            className="flex items-center gap-4 p-3 rounded-2xl bg-surface-container-lowest border border-outline-variant/5 hover:border-primary/20 hover:bg-primary/5 transition-all group text-left"
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                              <span className="text-xs font-mono font-bold text-primary">{cat.count}</span>
+                            </div>
+                            <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-primary">{cat.name}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
+                  </div>
+                ) : (
+                  <div>
+                    {suggestions.length > 0 ? (
+                      <div className="space-y-2">
+                        <h4 className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/40 mb-4 px-2">Suggestions</h4>
+                        {suggestions.map((item: any, i) => (
+                          <button 
+                            key={i}
+                            onClick={() => {
+                              if (item.type === 'product') {
+                                window.location.href = `/product/${item.id}`;
+                              } else if (item.type === 'category') {
+                                setSelectedCategory(item.name);
+                                addToRecentSearches(item.name);
+                                setIsSearchFocused(false);
+                              } else if (item.type === 'subcategory') {
+                                setSelectedSubcategory(item.name);
+                                addToRecentSearches(item.name);
+                                setIsSearchFocused(false);
+                              }
+                            }}
+                            className="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-surface-container transition-all group text-left"
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center overflow-hidden shrink-0">
+                              {item.type === 'product' ? (
+                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                              ) : item.type === 'category' ? (
+                                <Filter size={14} className="text-primary" />
+                              ) : (
+                                <Search size={14} className="text-on-surface-variant/40" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-on-surface group-hover:text-primary transition-colors truncate">
+                                <Highlight text={item.name} query={searchQuery} />
+                              </p>
+                              <p className="text-[9px] font-mono uppercase tracking-widest text-on-surface-variant/40">
+                                {item.type === 'product' ? `In ${item.category}` : item.type === 'category' ? 'Collection' : 'Subcategory'}
+                              </p>
+                            </div>
+                            <ArrowRight size={14} className="text-primary opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all shrink-0" />
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center">
+                        <p className="text-sm text-on-surface-variant/40 font-light italic">No direct matches for "{searchQuery}"</p>
+                        <button 
+                          onClick={() => {
+                            addToRecentSearches(searchQuery);
+                            setIsSearchFocused(false);
+                          }}
+                          className="mt-4 text-[10px] font-mono font-bold uppercase tracking-widest text-primary hover:underline"
+                        >
+                          Search anyway
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </motion.div>
@@ -476,12 +514,9 @@ export default function Shop() {
                     <div className="flex items-center gap-4">
                       <div className={`w-1.5 h-1.5 rounded-full transition-all duration-700 ${selectedCategory === cat.name ? 'bg-primary scale-125 shadow-[0_0_15px_rgba(0,89,198,0.6)]' : 'bg-outline-variant/20 group-hover:bg-primary/40'}`} />
                       <span className={`text-sm transition-all duration-500 ${selectedCategory === cat.name ? 'font-bold text-on-surface' : 'text-on-surface-variant group-hover:text-primary font-light'}`}>
-                        {cat.name}
+                        {cat.name} <span className="text-[10px] opacity-40 ml-1">({cat.count})</span>
                       </span>
                     </div>
-                    <span className={`text-[10px] font-mono transition-colors ${selectedCategory === cat.name ? 'text-primary font-bold' : 'text-outline-variant/30'}`}>
-                      {cat.count.toString().padStart(2, '0')}
-                    </span>
                   </div>
                   
                   {/* Subcategories */}
@@ -765,7 +800,12 @@ export default function Shop() {
               className="absolute top-0 right-0 bottom-0 w-full max-w-sm bg-white shadow-2xl p-10 overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-12">
-                <h3 className="text-xl font-serif italic">Refine Selection</h3>
+                <div>
+                  <h3 className="text-xl font-serif italic">Refine Selection</h3>
+                  <p className="text-[10px] font-mono text-on-surface-variant/40 uppercase tracking-widest mt-1">
+                    Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
+                  </p>
+                </div>
                 <button 
                   onClick={() => setIsFilterDrawerOpen(false)}
                   className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary hover:text-white transition-all"
@@ -773,6 +813,50 @@ export default function Shop() {
                   <X size={18} />
                 </button>
               </div>
+
+              {/* Applied Filters Summary */}
+              {(selectedCategory !== 'All Products' || priceRange[1] < 1500 || onlyInStock) && (
+                <div className="mb-12 p-6 bg-surface-container-lowest rounded-[2rem] border border-outline-variant/10 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant/40">Active Filters</span>
+                    <button 
+                      onClick={clearAllFilters}
+                      className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-primary hover:underline"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {selectedCategory !== 'All Products' && (
+                      <button 
+                        onClick={() => setSelectedCategory('All Products')}
+                        className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest border border-primary/20 hover:bg-primary/20 transition-all"
+                      >
+                        {selectedCategory}
+                        <X size={12} />
+                      </button>
+                    )}
+                    {priceRange[1] < 1500 && (
+                      <button 
+                        onClick={() => setPriceRange([0, 1500])}
+                        className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest border border-primary/20 hover:bg-primary/20 transition-all"
+                      >
+                        Under ${priceRange[1]}
+                        <X size={12} />
+                      </button>
+                    )}
+                    {onlyInStock && (
+                      <button 
+                        onClick={() => setOnlyInStock(false)}
+                        className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest border border-primary/20 hover:bg-primary/20 transition-all"
+                      >
+                        In Stock
+                        <X size={12} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
               
               <div className="space-y-16">
                 {/* Reusing Sidebar Sections - In a real app, these would be extracted components */}
@@ -789,17 +873,17 @@ export default function Shop() {
                           handleCategoryChange(cat.name);
                           setIsFilterDrawerOpen(false);
                         }}
-                        className={`flex justify-between items-center group cursor-pointer transition-all ${selectedCategory === cat.name ? 'translate-x-2' : ''}`}
+                        className={`flex justify-between items-center group cursor-pointer transition-all p-4 rounded-2xl ${selectedCategory === cat.name ? 'bg-primary/5 translate-x-2' : 'hover:bg-surface-container-lowest'}`}
                       >
                         <div className="flex items-center gap-4">
                           <div className={`w-1.5 h-1.5 rounded-full transition-all duration-700 ${selectedCategory === cat.name ? 'bg-primary scale-125 shadow-[0_0_15px_rgba(0,89,198,0.6)]' : 'bg-outline-variant/20 group-hover:bg-primary/40'}`} />
                           <span className={`text-sm transition-all duration-500 ${selectedCategory === cat.name ? 'font-bold text-on-surface' : 'text-on-surface-variant group-hover:text-primary font-light'}`}>
-                            {cat.name}
+                            {cat.name} <span className="text-[10px] opacity-40 ml-1">({cat.count})</span>
                           </span>
                         </div>
-                        <span className={`text-[10px] font-mono transition-colors ${selectedCategory === cat.name ? 'text-primary font-bold' : 'text-outline-variant/30'}`}>
-                          {cat.count.toString().padStart(2, '0')}
-                        </span>
+                        {selectedCategory === cat.name && (
+                          <Check size={14} className="text-primary" />
+                        )}
                       </li>
                     ))}
                   </ul>

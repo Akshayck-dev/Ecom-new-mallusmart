@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product } from '../types';
+import React from 'react';
 
 interface CartItem extends Product {
   quantity: number;
@@ -9,6 +10,10 @@ interface CartItem extends Product {
 interface CartStore {
   items: CartItem[];
   savedItems: CartItem[];
+  cartIconRef: React.RefObject<HTMLDivElement> | null;
+  isBouncing: boolean;
+  setCartIconRef: (ref: React.RefObject<HTMLDivElement>) => void;
+  triggerBounce: () => void;
   addItem: (product: Product) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -25,6 +30,13 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       savedItems: [],
+      cartIconRef: null,
+      isBouncing: false,
+      setCartIconRef: (ref) => set({ cartIconRef: ref }),
+      triggerBounce: () => {
+        set({ isBouncing: true });
+        setTimeout(() => set({ isBouncing: false }), 500);
+      },
       addItem: (product) => {
         const currentItems = get().items;
         const existingItem = currentItems.find((item) => item.id === product.id);
@@ -86,6 +98,10 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: 'cart-storage',
+      partialize: (state) => ({
+        items: state.items,
+        savedItems: state.savedItems,
+      }),
     }
   )
 );
