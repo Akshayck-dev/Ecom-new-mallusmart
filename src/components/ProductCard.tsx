@@ -2,7 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, ShoppingBag, Star, Eye, Loader2, Check, Plus, ShoppingCart } from 'lucide-react';
+import { Heart, ShoppingBag, Star, Eye, Loader2, Check, Plus, ShoppingCart, History } from 'lucide-react';
 import { Product } from '../types';
 import { useCartStore } from '../store/cartStore';
 import { useWishlistStore } from '../store/wishlistStore';
@@ -13,6 +13,7 @@ interface ProductCardProps {
   index?: number;
   searchQuery?: string;
   isActive?: boolean;
+  isRecentlyViewed?: boolean;
 }
 
 const Highlight = ({ text, query }: { text: string; query: string }) => {
@@ -36,7 +37,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   product, 
   index = 0, 
   searchQuery = '', 
-  isActive = false
+  isActive = false,
+  isRecentlyViewed = false
 }) => {
   const [isAdding, setIsAdding] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
@@ -122,32 +124,40 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         delay: (index % 4) * 0.1,
         ease: [0.16, 1, 0.3, 1]
       }}
-      className={`group bg-white rounded-[12px] p-4 transition-all duration-300 flex flex-col h-full relative border border-gray-100 ${
-        isActive ? 'shadow-2xl border-primary/20' : 'shadow-sm hover:shadow-lg hover:-translate-y-1'
-      }`}
+      className={`group bg-white rounded-2xl p-4 transition-all duration-500 flex flex-col h-full relative shadow-sm hover:shadow-xl border border-gray-100/50 ${
+        isActive ? 'ring-2 ring-brand-yellow/50 shadow-lg' : ''
+      } ${isRecentlyViewed ? 'bg-brand-yellow/[0.02] ring-1 ring-brand-yellow/10' : ''}`}
     >
+      {/* Recently Viewed Indicator */}
+      {isRecentlyViewed && (
+        <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm border border-brand-yellow/20">
+          <History size={10} className="text-brand-yellow" />
+          <span className="text-[8px] font-mono font-bold uppercase tracking-widest text-brand-yellow">Viewed</span>
+        </div>
+      )}
+
       {/* Heart Icon - Top Left */}
       <button 
         onClick={handleWishlist}
-        className={`absolute top-4 left-4 z-20 transition-all duration-300 hover:scale-110 active:scale-90 ${isActive ? 'block' : 'opacity-0 group-hover:opacity-100'}`}
+        className="absolute top-4 left-4 z-20 transition-all duration-300 hover:scale-110 active:scale-90"
       >
         <Heart 
           size={18} 
           className={`transition-colors ${
-            isActive || isWishlisted 
+            isWishlisted 
               ? 'fill-red-500 text-red-500' 
-              : 'text-gray-200 group-hover:text-red-400'
+              : 'text-gray-200 hover:text-red-400'
           }`} 
         />
       </button>
 
-      {/* Product Image Area - Fixed Height 220px */}
-      <Link to={`/product/${product.id}`} className="block relative h-[220px] mb-4 flex items-center justify-center overflow-hidden rounded-lg bg-brand-offwhite/30">
+      {/* Product Image Area */}
+      <Link to={`/product/${product.id}`} className="block relative h-[220px] mb-6 flex items-center justify-center overflow-hidden rounded-xl bg-gray-50/30">
         <img 
           ref={imageRef}
           src={product.image} 
           alt={product.name} 
-          className="max-h-full max-w-full object-contain transition-transform duration-700 group-hover:scale-105" 
+          className="max-h-[85%] max-w-[85%] object-contain transition-transform duration-1000 group-hover:scale-110" 
           referrerPolicy="no-referrer"
         />
         
@@ -180,28 +190,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
         {!product.inStock && (
           <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Sold Out</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 bg-white/80 px-4 py-2 rounded-full shadow-sm">Sold Out</span>
           </div>
         )}
       </Link>
 
       {/* Product Info */}
       <div className="flex flex-col flex-1 text-left">
-        <p className="text-brand-yellow text-[10px] font-bold uppercase tracking-wider mb-1 h-[1rem] flex items-center">
-          <Highlight text={product.category} query={searchQuery} />
-        </p>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-brand-yellow mb-2">
+          {product.category}
+        </span>
+        
         <Link to={`/product/${product.id}`}>
-          <h3 className="text-brand-gray font-semibold text-sm mb-2 group-hover:text-primary transition-all line-clamp-2 leading-snug h-[2.5rem] flex items-center">
+          <h3 className="text-brand-gray font-bold text-sm mb-3 group-hover:text-brand-yellow transition-all line-clamp-2 leading-snug">
             <Highlight text={product.name} query={searchQuery} />
           </h3>
         </Link>
-        <p className="text-gray-400 text-[10px] mb-4 line-clamp-1 font-medium h-[1rem] flex items-center">
-          {product.description}
-        </p>
 
         {/* Bottom Row: Price and Basket Icon */}
-        <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
-          <span className="text-base font-bold text-brand-gray">
+        <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
+          <span className="text-lg font-black text-brand-gray tracking-tight">
             {product.price.toFixed(2).replace('.', ',')}€
           </span>
 
@@ -209,10 +217,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <button 
               onClick={handleAddToCart}
               disabled={isAdding || showSuccess}
-              className={`p-2 rounded-full transition-all duration-300 disabled:opacity-50 flex items-center justify-center ${
+              className={`w-10 h-10 rounded-xl transition-all duration-500 disabled:opacity-50 flex items-center justify-center shadow-sm ${
                 showSuccess 
                   ? 'bg-green-500 text-white' 
-                  : 'bg-brand-offwhite text-brand-gray hover:bg-brand-yellow hover:text-white shadow-sm active:scale-90'
+                  : 'bg-brand-yellow/10 text-brand-yellow hover:bg-brand-yellow hover:text-white active:scale-90'
               }`}
               title="Add to Cart"
             >

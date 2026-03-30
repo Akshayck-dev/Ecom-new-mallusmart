@@ -40,9 +40,12 @@ export default function Navbar() {
     { name: 'contact', path: '/contact' },
   ];
 
+  const isHome = location.pathname === '/';
+  const textColor = isHome && !isScrolled ? 'text-white' : 'text-on-background';
+
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-white/90 backdrop-blur-md py-4 shadow-sm' : 'bg-transparent py-8'
+      isScrolled ? 'bg-transparent backdrop-blur-sm py-4' : 'bg-transparent py-8'
     }`}>
       <div className="max-w-7xl mx-auto px-8 md:px-12">
         <div className="flex items-center justify-between">
@@ -63,7 +66,7 @@ export default function Navbar() {
                 key={link.name}
                 to={link.path}
                 className={`text-sm font-medium transition-all hover:text-primary ${
-                  isActive(link.path) ? 'text-primary' : 'text-on-background'
+                  isActive(link.path) ? 'text-primary' : textColor
                 }`}
               >
                 {link.name}
@@ -74,10 +77,10 @@ export default function Navbar() {
           {/* Right Actions */}
           <div className="flex items-center space-x-6">
             <button className="p-1 hover:text-primary transition-colors">
-              <Search size={20} className="text-on-background" />
+              <Search size={20} className={textColor} />
             </button>
             <Link to="/wishlist" className="relative p-1 hover:text-primary transition-colors hidden sm:block">
-              <Heart size={20} className="text-on-background" />
+              <Heart size={20} className={textColor} />
               {wishlistItems.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#FDCB58] text-black text-[8px] font-black flex items-center justify-center rounded-full">
                   {wishlistItems.length}
@@ -93,7 +96,7 @@ export default function Navbar() {
                 } : {}}
                 transition={{ duration: 0.5 }}
               >
-                <ShoppingBag size={20} className="text-on-background" />
+                <ShoppingBag size={20} className={textColor} />
               </motion.div>
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[8px] font-black flex items-center justify-center rounded-full">
@@ -102,7 +105,7 @@ export default function Navbar() {
               )}
             </Link>
             <button 
-              className="md:hidden p-1 hover:text-primary transition-colors"
+              className={`md:hidden p-1 hover:text-primary transition-colors ${textColor}`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}

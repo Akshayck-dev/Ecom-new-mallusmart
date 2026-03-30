@@ -41,16 +41,31 @@ export default function ProductDetail() {
   const relatedProducts = useMemo(() => {
     if (!product) return [];
 
-    // 1. Define Frequently Bought Together Heuristic
+    // 1. Define Frequently Bought Together / Complementary Categories
     const getComplementaryCategories = (cat: string) => {
       const map: Record<string, string[]> = {
-        'Serums': ['Moisturizers', 'Cleansers'],
-        'Cleansers': ['Moisturizers', 'Serums'],
-        'Moisturizers': ['Sunscreen', 'Serums'],
-        'Lips': ['Face', 'Brushes'],
-        'Face': ['Brushes', 'Lips'],
-        'Shampoo': ['Conditioner', 'Treatments'],
-        'Conditioner': ['Shampoo', 'Treatments'],
+        // Skincare
+        'Serums': ['Moisturizers', 'Cleansers', 'Sunscreen'],
+        'Cleansers': ['Moisturizers', 'Serums', 'Scrubs'],
+        'Moisturizers': ['Sunscreen', 'Serums', 'Cleansers'],
+        'Sunscreen': ['Moisturizers', 'Serums'],
+        // Makeup
+        'Lips': ['Face', 'Brushes', 'Eyes'],
+        'Face': ['Brushes', 'Lips', 'Eyes', 'Cleansers'],
+        'Eyes': ['Face', 'Brushes', 'Lips'],
+        'Brushes': ['Face', 'Eyes', 'Lips', 'Cleansers'],
+        // Haircare
+        'Shampoo': ['Conditioner', 'Treatments', 'Oils'],
+        'Conditioner': ['Shampoo', 'Treatments', 'Oils'],
+        'Treatments': ['Shampoo', 'Conditioner'],
+        // Fragrance
+        'Perfume': ['Body Mist', 'Lotions'],
+        'Cologne': ['Body Mist', 'Lotions'],
+        'Body Mist': ['Perfume', 'Lotions'],
+        // Body Care
+        'Lotions': ['Scrubs', 'Oils', 'Fragrance'],
+        'Scrubs': ['Lotions', 'Oils', 'Cleansers'],
+        'Oils': ['Lotions', 'Scrubs', 'Serums'],
       };
       return map[cat] || [];
     };
@@ -61,18 +76,18 @@ export default function ProductDetail() {
     const scoredProducts = PRODUCTS.filter(p => p.id !== product.id).map(p => {
       let score = 0;
 
-      // Category matching
+      // Category matching (Base relevance)
       if (p.parentCategory === product.parentCategory) score += 5;
-      if (p.category === product.category) score += 10;
+      if (p.category === product.category) score += 8;
 
-      // Complementary categories (Frequently Bought Together)
-      if (complementary.includes(p.category)) score += 20;
+      // Complementary categories (Frequently Bought Together - HIGHEST PRIORITY)
+      if (complementary.includes(p.category)) score += 30;
 
-      // Tag & Material
-      if (p.tag === product.tag) score += 3;
-      if (p.material === product.material) score += 2;
+      // Tag & Material (Subtle relevance)
+      if (p.tag === product.tag) score += 5;
+      if (p.material === product.material) score += 3;
 
-      // Cart Context
+      // Cart Context (Dynamic relevance)
       const isRelatedToCart = cartItems.some(item => 
         item.parentCategory === p.parentCategory || 
         getComplementaryCategories(item.category).includes(p.category)
@@ -87,7 +102,7 @@ export default function ProductDetail() {
           getComplementaryCategories(viewedProduct.category).includes(p.category)
         );
       });
-      if (isRelatedToHistory) score += 8;
+      if (isRelatedToHistory) score += 10;
 
       // Boost for high rating
       score += (p.rating || 0) * 2;
@@ -95,10 +110,10 @@ export default function ProductDetail() {
       return { product: p, score };
     });
 
-    // Sort by score and return top 10 for carousel
+    // Sort by score and return top 5 for carousel
     return scoredProducts
       .sort((a, b) => b.score - a.score)
-      .slice(0, 10)
+      .slice(0, 5)
       .map(s => s.product);
   }, [product, cartItems, viewedIds]);
 
@@ -224,15 +239,15 @@ export default function ProductDetail() {
     <main className="pt-32 pb-20 px-6 md:px-12 max-w-7xl mx-auto">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-[0.2em] text-on-surface-variant/60 mb-16">
-        <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+        <Link to="/" className="hover:text-brand-yellow transition-colors">Home</Link>
         <span className="w-1 h-1 bg-outline-variant/30 rounded-full" />
-        <Link to="/shop" className="hover:text-primary transition-colors">Shop</Link>
+        <Link to="/shop" className="hover:text-brand-yellow transition-colors">Shop</Link>
         {product && (
           <>
             <span className="w-1 h-1 bg-outline-variant/30 rounded-full" />
             <span className="text-on-surface-variant/40">{product.category}</span>
             <span className="w-1 h-1 bg-outline-variant/30 rounded-full" />
-            <span className="text-primary font-bold truncate max-w-[150px]">{product.name}</span>
+            <span className="text-brand-yellow font-bold truncate max-w-[150px]">{product.name}</span>
           </>
         )}
       </nav>
@@ -358,7 +373,7 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-            {/* Product Info */}
+              {/* Product Info */}
             <motion.div 
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -366,45 +381,49 @@ export default function ProductDetail() {
               className="flex flex-col"
             >
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-[10px] font-mono font-bold tracking-[0.3em] uppercase text-black bg-[#FDCB58] px-4 py-1.5 rounded-full">{product.category}</span>
+                <span className="text-[10px] font-mono font-bold tracking-[0.3em] uppercase text-brand-gray bg-brand-yellow px-4 py-1.5 rounded-full">{product.category}</span>
                 <div className="h-px w-12 bg-outline-variant/20" />
                 <div className="flex items-center gap-1 text-[10px] font-mono text-on-surface-variant/60">
-                  <Star size={12} className="fill-current text-[#FDCB58]" />
+                  <Star size={12} className="fill-current text-brand-yellow" />
                   <span>{product.rating || '4.8'} (24 Reviews)</span>
                 </div>
               </div>
               
-              <h1 className="text-[clamp(2.5rem,5vw,4rem)] leading-[1.1] font-serif italic mb-6">{product.name}</h1>
+              <h1 className="text-[clamp(2.5rem,5vw,4rem)] leading-[1.1] font-serif italic mb-6 text-brand-gray">{product.name}</h1>
               <div className="flex items-baseline gap-4 mb-12">
-                <p className="text-3xl font-mono font-light text-on-surface">${product.price.toFixed(2)}</p>
+                <p className="text-3xl font-mono font-light text-brand-gray tracking-tighter">{product.price.toFixed(2).replace('.', ',')}€</p>
                 <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/40">Tax included</span>
               </div>
               
               <div className="space-y-2 mb-16">
                 {/* Description Accordion */}
-                <div className="border-b border-outline-variant/10">
+                <div className={`border-b border-outline-variant/10 transition-all duration-500 ${openSection === 'description' ? 'bg-white shadow-sm rounded-2xl mb-4' : ''}`}>
                   <button 
                     onClick={() => setOpenSection(openSection === 'description' ? null : 'description')}
-                    className="w-full py-6 flex items-center justify-between group"
+                    className="w-full py-6 px-6 flex items-center justify-between group"
                   >
-                    <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant group-hover:text-black transition-colors">The Narrative</h3>
+                    <h3 className={`text-[11px] font-mono font-bold uppercase tracking-[0.2em] transition-colors duration-300 ${openSection === 'description' ? 'text-brand-gray' : 'text-on-surface-variant group-hover:text-brand-gray'}`}>The Narrative</h3>
                     <motion.div
-                      animate={{ rotate: openSection === 'description' ? 180 : 0 }}
-                      className="text-on-surface-variant/40 group-hover:text-black transition-colors"
+                      animate={{ rotate: openSection === 'description' ? 45 : 0 }}
+                      className={`transition-colors duration-300 ${openSection === 'description' ? 'text-brand-gray' : 'text-on-surface-variant/40 group-hover:text-brand-gray'}`}
                     >
-                      <ChevronDown size={18} />
+                      <Plus size={18} strokeWidth={1.5} />
                     </motion.div>
                   </button>
                   <AnimatePresence initial={false}>
                     {openSection === 'description' && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.5, ease: [0.21, 0.47, 0.32, 0.98] }}
+                        initial={{ height: 0, opacity: 0, y: -8 }}
+                        animate={{ height: 'auto', opacity: 1, y: 0 }}
+                        exit={{ height: 0, opacity: 0, y: -8 }}
+                        transition={{ 
+                          height: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.4, delay: 0.1 },
+                          y: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+                        }}
                         className="overflow-hidden"
                       >
-                        <p className="pb-8 text-on-surface-variant leading-relaxed font-light text-base">
+                        <p className="pb-8 px-6 text-on-surface-variant leading-relaxed font-light text-base">
                           {product.description} Crafted from the finest materials, this piece redefines effortless elegance. Features a relaxed silhouette, dropped shoulders, and mother-of-pearl buttons. Each piece is pre-washed for a signature soft feel from the very first wear.
                         </p>
                       </motion.div>
@@ -413,44 +432,48 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Specifications Accordion */}
-                <div className="border-b border-outline-variant/10">
+                <div className={`border-b border-outline-variant/10 transition-all duration-500 ${openSection === 'specifications' ? 'bg-white shadow-sm rounded-2xl mb-4' : ''}`}>
                   <button 
                     onClick={() => setOpenSection(openSection === 'specifications' ? null : 'specifications')}
-                    className="w-full py-6 flex items-center justify-between group"
+                    className="w-full py-6 px-6 flex items-center justify-between group"
                   >
-                    <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant group-hover:text-black transition-colors">Specifications</h3>
+                    <h3 className={`text-[11px] font-mono font-bold uppercase tracking-[0.2em] transition-colors duration-300 ${openSection === 'specifications' ? 'text-brand-gray' : 'text-on-surface-variant group-hover:text-brand-gray'}`}>Specifications</h3>
                     <motion.div
-                      animate={{ rotate: openSection === 'specifications' ? 180 : 0 }}
-                      className="text-on-surface-variant/40 group-hover:text-black transition-colors"
+                      animate={{ rotate: openSection === 'specifications' ? 45 : 0 }}
+                      className={`transition-colors duration-300 ${openSection === 'specifications' ? 'text-brand-gray' : 'text-on-surface-variant/40 group-hover:text-brand-gray'}`}
                     >
-                      <ChevronDown size={18} />
+                      <Plus size={18} strokeWidth={1.5} />
                     </motion.div>
                   </button>
                   <AnimatePresence initial={false}>
                     {openSection === 'specifications' && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.5, ease: [0.21, 0.47, 0.32, 0.98] }}
+                        initial={{ height: 0, opacity: 0, y: -8 }}
+                        animate={{ height: 'auto', opacity: 1, y: 0 }}
+                        exit={{ height: 0, opacity: 0, y: -8 }}
+                        transition={{ 
+                          height: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.4, delay: 0.1 },
+                          y: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+                        }}
                         className="overflow-hidden"
                       >
-                        <div className="pb-8 space-y-4">
+                        <div className="pb-8 px-6 space-y-4">
                           <div className="flex justify-between items-center">
                             <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/60">Material</span>
-                            <span className="text-sm font-medium">{product.material || 'Premium Organic Cotton'}</span>
+                            <span className="text-sm font-medium text-brand-gray">{product.material || 'Premium Organic Cotton'}</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/60">Primary Color</span>
-                            <span className="text-sm font-medium">{product.color || 'Bone White'}</span>
+                            <span className="text-sm font-medium text-brand-gray">{product.color || 'Bone White'}</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/60">Category</span>
-                            <span className="text-sm font-medium">{product.category}</span>
+                            <span className="text-sm font-medium text-brand-gray">{product.category}</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/60">Artisan</span>
-                            <span className="text-sm font-medium">{product.artisan || 'Mallu\'s Mart Studio'}</span>
+                            <span className="text-sm font-medium text-brand-gray">{product.artisan || 'Mallu\'s Mart Studio'}</span>
                           </div>
                         </div>
                       </motion.div>
@@ -459,38 +482,42 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Shade Accordion */}
-                <div className="border-b border-outline-variant/10">
+                <div className={`border-b border-outline-variant/10 transition-all duration-500 ${openSection === 'color' ? 'bg-white shadow-sm rounded-2xl mb-4' : ''}`}>
                   <button 
                     onClick={() => setOpenSection(openSection === 'color' ? null : 'color')}
-                    className="w-full py-6 flex items-center justify-between group"
+                    className="w-full py-6 px-6 flex items-center justify-between group"
                   >
-                    <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant group-hover:text-black transition-colors">Shade: {selectedColor}</h3>
+                    <h3 className={`text-[11px] font-mono font-bold uppercase tracking-[0.2em] transition-colors duration-300 ${openSection === 'color' ? 'text-brand-gray' : 'text-on-surface-variant group-hover:text-brand-gray'}`}>Shade: {selectedColor}</h3>
                     <motion.div
-                      animate={{ rotate: openSection === 'color' ? 180 : 0 }}
-                      className="text-on-surface-variant/40 group-hover:text-black transition-colors"
+                      animate={{ rotate: openSection === 'color' ? 45 : 0 }}
+                      className={`transition-colors duration-300 ${openSection === 'color' ? 'text-brand-gray' : 'text-on-surface-variant/40 group-hover:text-brand-gray'}`}
                     >
-                      <ChevronDown size={18} />
+                      <Plus size={18} strokeWidth={1.5} />
                     </motion.div>
                   </button>
                   <AnimatePresence initial={false}>
                     {openSection === 'color' && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.5, ease: [0.21, 0.47, 0.32, 0.98] }}
+                        initial={{ height: 0, opacity: 0, y: -8 }}
+                        animate={{ height: 'auto', opacity: 1, y: 0 }}
+                        exit={{ height: 0, opacity: 0, y: -8 }}
+                        transition={{ 
+                          height: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.4, delay: 0.1 },
+                          y: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+                        }}
                         className="overflow-hidden"
                       >
-                        <div className="pb-8 flex gap-5">
+                        <div className="pb-8 px-6 flex gap-5">
                           {colors.map((color) => (
                             <button
                               key={color.name}
                               onClick={() => setSelectedColor(color.name)}
-                              className={`w-10 h-10 rounded-full border-2 transition-all relative ${selectedColor === color.name ? 'border-primary scale-110 shadow-lg shadow-primary/20' : 'border-outline-variant/10'}`}
+                              className={`w-10 h-10 rounded-full border-2 transition-all relative ${selectedColor === color.name ? 'border-brand-yellow scale-110 shadow-lg shadow-brand-yellow/20' : 'border-outline-variant/10'}`}
                               style={{ backgroundColor: color.hex }}
                             >
                               {selectedColor === color.name && (
-                                <motion.div layoutId="activeColorDot" className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full" />
+                                <motion.div layoutId="activeColorDot" className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 bg-brand-yellow rounded-full" />
                               )}
                             </button>
                           ))}
@@ -501,37 +528,41 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Size Accordion */}
-                <div className="border-b border-outline-variant/10">
+                <div className={`border-b border-outline-variant/10 transition-all duration-500 ${openSection === 'size' ? 'bg-white shadow-sm rounded-2xl mb-4' : ''}`}>
                   <button 
                     onClick={() => setOpenSection(openSection === 'size' ? null : 'size')}
-                    className="w-full py-6 flex items-center justify-between group"
+                    className="w-full py-6 px-6 flex items-center justify-between group"
                   >
-                    <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant group-hover:text-black transition-colors">Size: {selectedSize}</h3>
+                    <h3 className={`text-[11px] font-mono font-bold uppercase tracking-[0.2em] transition-colors duration-300 ${openSection === 'size' ? 'text-brand-gray' : 'text-on-surface-variant group-hover:text-brand-gray'}`}>Size: {selectedSize}</h3>
                     <motion.div
-                      animate={{ rotate: openSection === 'size' ? 180 : 0 }}
-                      className="text-on-surface-variant/40 group-hover:text-black transition-colors"
+                      animate={{ rotate: openSection === 'size' ? 45 : 0 }}
+                      className={`transition-colors duration-300 ${openSection === 'size' ? 'text-brand-gray' : 'text-on-surface-variant/40 group-hover:text-brand-gray'}`}
                     >
-                      <ChevronDown size={18} />
+                      <Plus size={18} strokeWidth={1.5} />
                     </motion.div>
                   </button>
                   <AnimatePresence initial={false}>
                     {openSection === 'size' && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.5, ease: [0.21, 0.47, 0.32, 0.98] }}
+                        initial={{ height: 0, opacity: 0, y: -8 }}
+                        animate={{ height: 'auto', opacity: 1, y: 0 }}
+                        exit={{ height: 0, opacity: 0, y: -8 }}
+                        transition={{ 
+                          height: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.4, delay: 0.1 },
+                          y: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+                        }}
                         className="overflow-hidden"
                       >
-                        <div className="pb-8 flex gap-4">
+                        <div className="pb-8 px-6 flex gap-4">
                           {sizes.map((size) => (
                             <button
                               key={size}
                               onClick={() => setSelectedSize(size)}
                               className={`w-20 py-4 rounded-2xl text-xs font-mono font-bold transition-all border ${
                                 selectedSize === size 
-                                  ? 'bg-on-background text-white border-on-background shadow-xl scale-105' 
-                                  : 'bg-surface-container-low text-on-surface-variant border-outline-variant/10 hover:border-primary/30 hover:text-primary'
+                                  ? 'bg-brand-gray text-white border-brand-gray shadow-xl scale-105' 
+                                  : 'bg-surface-container-low text-on-surface-variant border-outline-variant/10 hover:border-brand-yellow/30 hover:text-brand-yellow'
                               }`}
                             >
                               {size}
@@ -544,39 +575,43 @@ export default function ProductDetail() {
                 </div>
 
                 {/* Quantity Accordion */}
-                <div className="border-b border-outline-variant/10">
+                <div className={`border-b border-outline-variant/10 transition-all duration-500 ${openSection === 'quantity' ? 'bg-white shadow-sm rounded-2xl mb-4' : ''}`}>
                   <button 
                     onClick={() => setOpenSection(openSection === 'quantity' ? null : 'quantity')}
-                    className="w-full py-6 flex items-center justify-between group"
+                    className="w-full py-6 px-6 flex items-center justify-between group"
                   >
-                    <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant group-hover:text-black transition-colors">Volume: {quantity}</h3>
+                    <h3 className={`text-[11px] font-mono font-bold uppercase tracking-[0.2em] transition-colors duration-300 ${openSection === 'quantity' ? 'text-brand-gray' : 'text-on-surface-variant group-hover:text-brand-gray'}`}>Volume: {quantity}</h3>
                     <motion.div
-                      animate={{ rotate: openSection === 'quantity' ? 180 : 0 }}
-                      className="text-on-surface-variant/40 group-hover:text-black transition-colors"
+                      animate={{ rotate: openSection === 'quantity' ? 45 : 0 }}
+                      className={`transition-colors duration-300 ${openSection === 'quantity' ? 'text-brand-gray' : 'text-on-surface-variant/40 group-hover:text-brand-gray'}`}
                     >
-                      <ChevronDown size={18} />
+                      <Plus size={18} strokeWidth={1.5} />
                     </motion.div>
                   </button>
                   <AnimatePresence initial={false}>
                     {openSection === 'quantity' && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.5, ease: [0.21, 0.47, 0.32, 0.98] }}
+                        initial={{ height: 0, opacity: 0, y: -8 }}
+                        animate={{ height: 'auto', opacity: 1, y: 0 }}
+                        exit={{ height: 0, opacity: 0, y: -8 }}
+                        transition={{ 
+                          height: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.4, delay: 0.1 },
+                          y: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+                        }}
                         className="overflow-hidden"
                       >
-                        <div className="pb-8 flex items-center bg-surface-container-low rounded-2xl w-fit border border-outline-variant/5">
+                        <div className="pb-8 px-6 flex items-center bg-surface-container-low rounded-2xl w-fit border border-outline-variant/5">
                           <button 
                             onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                            className="p-5 hover:text-primary transition-colors"
+                            className="p-5 hover:text-brand-yellow transition-colors"
                           >
                             <Minus size={18} />
                           </button>
-                          <span className="w-16 text-center font-mono font-bold text-lg">{quantity.toString().padStart(2, '0')}</span>
+                          <span className="w-16 text-center font-mono font-bold text-lg text-brand-gray">{quantity.toString().padStart(2, '0')}</span>
                           <button 
                             onClick={() => setQuantity(quantity + 1)}
-                            className="p-5 hover:text-primary transition-colors"
+                            className="p-5 hover:text-brand-yellow transition-colors"
                           >
                             <Plus size={18} />
                           </button>
@@ -587,78 +622,80 @@ export default function ProductDetail() {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-5">
-                <motion.button 
-                  onClick={handleAddToCart}
-                  disabled={isAdding || !product.inStock}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`flex-1 py-6 rounded-3xl font-bold shadow-2xl transition-all flex items-center justify-center gap-4 text-xs uppercase tracking-[0.2em] ${
-                    !product.inStock 
-                      ? 'bg-surface-container-highest text-on-surface-variant cursor-not-allowed' 
-                      : isAdding 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-[#FDCB58] text-black hover:bg-[#FDCB58]/90'
-                  }`}
-                >
-                  <AnimatePresence mode="wait">
-                    {!product.inStock ? (
-                      <motion.div
-                        key="soldout"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="flex items-center gap-2"
-                      >
-                        Currently Unavailable
-                      </motion.div>
-                    ) : isAdding ? (
-                      <motion.div
-                        key="success"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="flex items-center gap-2"
-                      >
-                        <Check size={20} /> Added to Selection
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="default"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="flex items-center gap-2"
-                      >
-                        <ShoppingBag size={20} /> Add to Selection
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col sm:flex-row gap-5">
+                  <motion.button 
+                    onClick={handleAddToCart}
+                    disabled={isAdding || !product.inStock}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`flex-1 py-6 rounded-3xl font-bold shadow-2xl transition-all flex items-center justify-center gap-4 text-xs uppercase tracking-[0.2em] ${
+                      !product.inStock 
+                        ? 'bg-surface-container-highest text-on-surface-variant cursor-not-allowed' 
+                        : isAdding 
+                          ? 'bg-green-500 text-white' 
+                          : 'bg-brand-yellow text-brand-gray hover:bg-brand-yellow/90'
+                    }`}
+                  >
+                    <AnimatePresence mode="wait">
+                      {!product.inStock ? (
+                        <motion.div
+                          key="soldout"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="flex items-center gap-2"
+                        >
+                          Currently Unavailable
+                        </motion.div>
+                      ) : isAdding ? (
+                        <motion.div
+                          key="success"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="flex items-center gap-2"
+                        >
+                          <Check size={20} /> Added to Selection
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="default"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="flex items-center gap-2"
+                        >
+                          <ShoppingBag size={20} /> Add to Selection
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.button>
 
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    if (isInWishlist(product.id)) {
-                      removeFromWishlist(product.id);
-                      toast.success('Removed from wishlist');
-                    } else {
-                      addToWishlist(product);
-                      toast.success('Added to wishlist');
-                    }
-                  }}
-                  className={`w-full sm:w-20 h-20 rounded-3xl flex items-center justify-center transition-all shadow-premium border border-outline-variant/10 ${
-                    isInWishlist(product.id)
-                      ? 'bg-[#FDCB58] text-black'
-                      : 'bg-white text-on-surface hover:bg-surface-container'
-                  }`}
-                >
-                  <Heart size={24} className={isInWishlist(product.id) ? 'fill-current' : ''} />
-                </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      if (isInWishlist(product.id)) {
+                        removeFromWishlist(product.id);
+                        toast.success('Removed from wishlist');
+                      } else {
+                        addToWishlist(product);
+                        toast.success('Added to wishlist');
+                      }
+                    }}
+                    className={`w-full sm:w-20 h-20 rounded-3xl flex items-center justify-center transition-all shadow-premium border border-outline-variant/10 ${
+                      isInWishlist(product.id)
+                        ? 'bg-brand-yellow text-brand-gray'
+                        : 'bg-white text-brand-gray hover:bg-surface-container'
+                    }`}
+                  >
+                    <Heart size={24} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+                  </motion.button>
+                </div>
 
                 {product.inStock && (
-                  <button className="w-full bg-surface-container-low text-on-surface py-6 rounded-3xl font-bold flex items-center justify-center gap-4 hover:bg-surface-container-high transition-all border border-outline-variant/10 text-xs uppercase tracking-[0.2em]">
+                  <button className="w-full bg-brand-green text-white py-6 rounded-3xl font-bold flex items-center justify-center gap-4 hover:bg-brand-green/90 transition-all border border-outline-variant/10 text-xs uppercase tracking-[0.2em] shadow-xl">
                     <MessageCircle size={20} /> Inquire via WhatsApp
                   </button>
                 )}
@@ -673,10 +710,10 @@ export default function ProductDetail() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
           <div className="max-w-xl">
             <div className="flex items-center gap-3 mb-4">
-              <span className="w-8 h-px bg-primary/40" />
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-primary">Tailored for You</span>
+              <span className="w-8 h-px bg-brand-yellow" />
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-yellow">Tailored for You</span>
             </div>
-            <h2 className="text-4xl font-serif italic mb-4">Curated <span className="text-primary not-italic font-headline font-light">Recommendations.</span></h2>
+            <h2 className="text-4xl font-serif italic mb-4 text-brand-gray">Curated <span className="text-brand-yellow not-italic font-headline font-light">Recommendations.</span></h2>
             <p className="text-on-surface-variant font-light leading-relaxed">
               Intelligent suggestions based on your browsing history, current selection, and what others frequently pair together.
             </p>
@@ -687,7 +724,7 @@ export default function ProductDetail() {
                 const el = document.getElementById('related-carousel');
                 if (el) el.scrollBy({ left: -400, behavior: 'smooth' });
               }}
-              className="p-4 rounded-full border border-outline-variant/10 hover:bg-surface-container transition-all text-on-surface-variant/40 hover:text-primary"
+              className="p-4 rounded-full border border-outline-variant/10 hover:bg-white hover:shadow-xl transition-all text-on-surface-variant/40 hover:text-brand-yellow"
             >
               <ArrowLeft size={20} />
             </button>
@@ -696,7 +733,7 @@ export default function ProductDetail() {
                 const el = document.getElementById('related-carousel');
                 if (el) el.scrollBy({ left: 400, behavior: 'smooth' });
               }}
-              className="p-4 rounded-full border border-outline-variant/10 hover:bg-surface-container transition-all text-on-surface-variant/40 hover:text-primary"
+              className="p-4 rounded-full border border-outline-variant/10 hover:bg-white hover:shadow-xl transition-all text-on-surface-variant/40 hover:text-brand-yellow"
             >
               <ArrowRight size={20} />
             </button>

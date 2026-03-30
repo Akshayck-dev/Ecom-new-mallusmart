@@ -311,6 +311,7 @@ export default function Home() {
               product={product} 
               index={i} 
               isActive={i === 1}
+              isRecentlyViewed={viewedIds.includes(product.id)}
             />
           ))}
         </div>
@@ -348,6 +349,7 @@ export default function Home() {
                 key={`recent-${product.id}`} 
                 product={product} 
                 index={i} 
+                isRecentlyViewed={true}
               />
             ))}
           </div>
@@ -385,6 +387,7 @@ export default function Home() {
                 key={product.id} 
                 product={product} 
                 index={i} 
+                isRecentlyViewed={viewedIds.includes(product.id)}
               />
             ))}
           </div>
