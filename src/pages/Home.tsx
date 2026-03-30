@@ -1,117 +1,188 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Shield, Truck, ChevronRight, ShoppingBag } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { ArrowRight, Star, Shield, Truck, ChevronRight, ShoppingBag, ArrowLeft, Clock } from 'lucide-react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { PRODUCTS, CATEGORIES } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { QuickViewModal } from '../components/QuickViewModal';
-import { useState } from 'react';
+import { useHistoryStore } from '../store/historyStore';
+import { Product } from '../types';
+
+const HERO_SLIDES = [
+  {
+    id: 1,
+    subtitle: "Introducing",
+    title: "OFFBEAT",
+    description: "A scent that defies the ordinary. Bold, mysterious, and unapologetically unique.",
+    image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=1000",
+    accent: "#F27D26",
+    bg: "radial-gradient(circle at 50% 50%, #3a1510 0%, #0a0502 100%)"
+  },
+  {
+    id: 2,
+    subtitle: "The New",
+    title: "ESSENCE",
+    description: "Pure, refined, and timeless. The ultimate expression of modern elegance.",
+    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1000",
+    accent: "#0059c6",
+    bg: "radial-gradient(circle at 50% 50%, #101a3a 0%, #02050a 100%)"
+  }
+];
 
 export default function Home() {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const heroRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  });
+  
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const slide = HERO_SLIDES[currentSlide];
+  const { viewedIds } = useHistoryStore();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3
-      }
-    }
-  };
+  const recentlyViewed = useMemo(() => {
+    return viewedIds
+      .map(id => PRODUCTS.find(p => p.id === id))
+      .filter((p): p is Product => !!p)
+      .slice(0, 5);
+  }, [viewedIds]);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }
-    }
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 6000); // Change slide every 6 seconds
+    return () => clearInterval(timer);
+  }, [currentSlide]);
 
   return (
     <main className="overflow-hidden bg-[#F9F9F9]">
-      {/* Hero Section */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center px-8 md:px-12 max-w-7xl mx-auto pt-20">
-        <div className="flex flex-col md:flex-row items-center justify-between w-full gap-12">
+      {/* Editorial Hero Section */}
+      <section 
+        ref={heroRef} 
+        className="relative h-screen min-h-[700px] flex items-center overflow-hidden transition-colors duration-1000"
+        style={{ background: slide.bg }}
+      >
+        <AnimatePresence mode="wait">
           <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="md:w-1/2 z-10"
+            key={currentSlide}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0 flex items-center justify-center px-8 md:px-24"
           >
-            <motion.h1 variants={itemVariants} className="text-[clamp(3rem,6vw,5rem)] leading-[1.1] font-black tracking-tight text-on-background mb-8">
-              The new lineup <br />
-              you'll swear by for <br />
-              dullness, dryness <br />
-              and breakouts.
-            </motion.h1>
-            
-            <motion.p variants={itemVariants} className="text-on-surface-variant text-lg mb-10 max-w-md leading-relaxed font-medium">
-              Morbi quam quam, tincidunt sed tempor in, interdum tempus eros. Proin sed dictum lorem. Fusce porttitor bibendum elementum. Nulla vitae elit placerat augue molestie auctor non non quam.
-            </motion.p>
-            
-            <motion.div variants={itemVariants}>
-              <Link to="/shop" className="inline-block px-12 py-4 bg-[#FDCB58] text-on-background rounded-2xl font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-yellow-500/20">
-                see more
-              </Link>
-            </motion.div>
-          </motion.div>
-          
-          <div className="md:w-1/2 relative flex items-center justify-center">
-            {/* Background Circle */}
-            <motion.div 
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5, ease: "circOut" }}
-              className="absolute w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-[#FDCB58] rounded-full -z-10 translate-x-12 -translate-y-12"
+            {/* Background Glow */}
+            <div 
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] blur-[120px] opacity-30 rounded-full"
+              style={{ background: slide.accent }}
             />
-            
-            {/* Product Image */}
-            <motion.div 
-              initial={{ x: 100, opacity: 0, rotate: 10 }}
-              animate={{ x: 0, opacity: 1, rotate: 0 }}
-              transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 w-full max-w-[600px]"
-            >
-              <img 
-                src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=1000" 
-                alt="Skincare Lineup" 
-                className="w-full h-auto drop-shadow-[0_50px_50px_rgba(0,0,0,0.15)]"
-                referrerPolicy="no-referrer"
-              />
-              
-              {/* Price Tag Overlay */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.5 }}
-                className="absolute top-1/4 right-0 md:right-12 text-right"
-              >
-                <p className="text-3xl md:text-4xl font-black text-on-background leading-none">24,99€</p>
-                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">per piece, 30 ml</p>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
 
-        {/* Pagination Dots */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-4">
-          <div className="w-2 h-2 rounded-full bg-[#FDCB58]" />
-          <div className="w-4 h-4 rounded-full border-2 border-[#FDCB58] flex items-center justify-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#FDCB58]" />
+            <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
+              {/* Product Image Side */}
+              <div className="relative flex justify-center lg:justify-start order-2 lg:order-1">
+                <motion.div
+                  initial={{ scale: 2, y: 100, opacity: 0, rotate: -10 }}
+                  animate={{ scale: 1, y: 0, opacity: 1, rotate: 0 }}
+                  transition={{ 
+                    duration: 1.2, 
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: 0.2
+                  }}
+                  className="relative w-full max-w-[500px] aspect-[4/5]"
+                >
+                  {/* Stylized "Rock" Base */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-32 bg-black/40 blur-2xl rounded-[100%] -z-10" />
+                  
+                  <img 
+                    src={slide.image} 
+                    alt={slide.title} 
+                    className="w-full h-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
+                    referrerPolicy="no-referrer"
+                  />
+                </motion.div>
+              </div>
+
+              {/* Text Side */}
+              <div className="text-center lg:text-left order-1 lg:order-2">
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="font-serif italic text-2xl md:text-4xl text-white/80 mb-2"
+                >
+                  {slide.subtitle}
+                </motion.p>
+                
+                <motion.h1
+                  initial={{ scale: 1.5, opacity: 0, filter: "blur(20px)" }}
+                  animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                  transition={{ 
+                    duration: 1, 
+                    ease: [0.16, 1, 0.3, 1],
+                    delay: 0.6
+                  }}
+                  className="font-display text-[15vw] lg:text-[12vw] leading-[0.85] text-white tracking-tighter mb-8"
+                  style={{ 
+                    textShadow: `0 10px 30px rgba(0,0,0,0.5)`,
+                    background: `linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.4) 100%)`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}
+                >
+                  {slide.title}
+                </motion.h1>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.7 }}
+                  transition={{ delay: 0.8 }}
+                  className="text-white text-lg md:text-xl max-w-md mx-auto lg:mx-0 mb-10 font-light leading-relaxed"
+                >
+                  {slide.description}
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1 }}
+                >
+                  <Link 
+                    to="/shop" 
+                    className="inline-flex items-center gap-4 px-10 py-5 bg-white text-black font-bold uppercase tracking-widest text-xs rounded-full hover:scale-105 transition-transform shadow-2xl"
+                  >
+                    Shop Collection <ArrowRight size={16} />
+                  </Link>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation Controls */}
+        <div className="absolute bottom-12 left-0 right-0 px-8 md:px-24 flex items-center justify-between z-20">
+          <button 
+            onClick={prevSlide}
+            className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+          >
+            <ArrowLeft size={20} />
+          </button>
+
+          <div className="flex items-center gap-3">
+            {HERO_SLIDES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                className={`h-1.5 transition-all duration-500 rounded-full ${currentSlide === i ? 'w-8 bg-white' : 'w-2 bg-white/20'}`}
+              />
+            ))}
           </div>
-          <div className="w-2 h-2 rounded-full bg-[#FDCB58]/30" />
+
+          <button 
+            onClick={nextSlide}
+            className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+          >
+            <ArrowRight size={20} />
+          </button>
         </div>
       </section>
 
@@ -216,38 +287,72 @@ export default function Home() {
         </div>
       </section>
 
-      {/* New Arrivals */}
+      {/* Clean Beauty Section */}
       <section className="section-spacing px-6 md:px-12 max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
+          className="flex items-center justify-between mb-6"
         >
-          <div className="max-w-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-8 h-px bg-primary/40" />
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-primary">Just Landed</span>
-            </div>
-            <h2 className="text-[clamp(2.5rem,5vw,4rem)] leading-[1.1] font-black tracking-tight text-on-background">New Arrivals.</h2>
-            <p className="text-on-surface-variant mt-4 text-xl font-medium">Explore our latest drops, formulated with premium ingredients to elevate your daily beauty rituals.</p>
-          </div>
-          <Link to="/shop" className="group flex items-center gap-4 px-8 py-4 bg-surface-container rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-on-background hover:text-white transition-all">
-            View Full Collection <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          <h2 className="text-2xl font-semibold text-gray-900">Clean beauty</h2>
+          <Link 
+            to="/shop" 
+            className="px-6 py-2 bg-[#FFD966] text-gray-900 font-medium rounded-full hover:scale-105 transition-transform text-sm"
+          >
+            see more
           </Link>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-          {PRODUCTS.slice(4, 7).map((product, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {PRODUCTS.slice(4, 9).map((product, i) => (
             <ProductCard 
               key={product.id} 
               product={product} 
               index={i} 
-              onQuickView={(p) => setQuickViewId(p.id)}
+              isActive={i === 1}
             />
           ))}
         </div>
       </section>
+
+      {/* Recently Viewed Section */}
+      {recentlyViewed.length > 0 && (
+        <section className="section-spacing px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/10">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex items-center justify-between mb-12"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center">
+                <Clock size={16} className="text-primary" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900">Recently Viewed</h2>
+                <p className="text-[10px] font-mono text-on-surface-variant/40 uppercase tracking-widest mt-1">Your browsing history</p>
+              </div>
+            </div>
+            <Link 
+              to="/shop" 
+              className="px-6 py-2 bg-surface-container text-on-surface font-medium rounded-full hover:bg-on-background hover:text-white transition-all text-sm"
+            >
+              Shop All
+            </Link>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {recentlyViewed.map((product, i) => (
+              <ProductCard 
+                key={`recent-${product.id}`} 
+                product={product} 
+                index={i} 
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Hall of Classics */}
       <section className="section-spacing bg-surface-container-low px-6 md:px-12 relative overflow-hidden">
@@ -274,13 +379,12 @@ export default function Home() {
             </Link>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            {PRODUCTS.slice(0, 3).map((product, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {PRODUCTS.slice(0, 5).map((product, i) => (
               <ProductCard 
                 key={product.id} 
                 product={product} 
                 index={i} 
-                onQuickView={(p) => setQuickViewId(p.id)}
               />
             ))}
           </div>

@@ -27,18 +27,18 @@ export default function Skeleton({ className = "", ...props }: SkeletonProps) {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="space-y-6">
-      <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-surface-container-low">
+    <div className="bg-white rounded-xl p-3 space-y-3 border border-gray-100">
+      <div className="relative h-[160px] rounded-lg overflow-hidden bg-gray-50">
         <Skeleton className="w-full h-full" />
-        {/* Placeholder for the "Add to Cart" button */}
-        <div className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant/10" />
-        {/* Placeholder for the tag */}
-        <div className="absolute top-4 left-4 w-16 h-6 rounded-full bg-surface-container-high border border-outline-variant/10" />
       </div>
-      <div className="space-y-3">
-        <Skeleton className="h-3 w-20 rounded-full" />
-        <Skeleton className="h-6 w-full rounded-md" />
-        <Skeleton className="h-5 w-16 rounded-md" />
+      <div className="space-y-2">
+        <Skeleton className="h-2 w-12 rounded-full" />
+        <Skeleton className="h-3 w-full rounded-md" />
+        <Skeleton className="h-2 w-2/3 rounded-md" />
+        <div className="flex items-center justify-between pt-2">
+          <Skeleton className="h-6 w-12 rounded-full" />
+          <Skeleton className="h-8 w-8 rounded-lg" />
+        </div>
       </div>
     </div>
   );

@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Minus, Plus, MessageCircle, ArrowLeft, Check, ShoppingBag, ChevronLeft, ChevronRight, X, Maximize2, ZoomIn, ZoomOut, ChevronDown, Star, ArrowRight, Heart } from 'lucide-react';
-import { PRODUCTS } from '../constants';
+import { PRODUCTS, CATEGORIES } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { useCartStore } from '../store/cartStore';
 import { useWishlistStore } from '../store/wishlistStore';
+import { useHistoryStore } from '../store/historyStore';
 import { toast } from 'sonner';
 import Skeleton, { ProductDetailSkeleton } from '../components/Skeleton';
 
@@ -25,40 +27,86 @@ export default function ProductDetail() {
   const [isAdding, setIsAdding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [openSection, setOpenSection] = useState<string | null>('description');
+  const [flyingImage, setFlyingImage] = useState<{ url: string; x: number; y: number } | null>(null);
   
   const addItem = useCartStore((state) => state.addItem);
+  const cartIconRef = useCartStore((state) => state.cartIconRef);
+  const triggerBounce = useCartStore((state) => state.triggerBounce);
+  const cartItems = useCartStore((state) => state.items);
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore();
+  const { viewedIds, addViewed } = useHistoryStore();
+  
+  const mainImageRef = useRef<HTMLImageElement>(null);
   
   const relatedProducts = useMemo(() => {
-    // Filter products in the same category, excluding the current one
-    const sameCategory = PRODUCTS.filter(p => p.category === product.category && p.id !== product.id);
-    
-    // Products with the same tag
-    const sameTag = PRODUCTS.filter(p => 
-      p.tag === product.tag && 
-      p.id !== product.id && 
-      !sameCategory.find(sc => sc.id === p.id)
-    );
+    if (!product) return [];
 
-    // Products with the same material
-    const sameMaterial = PRODUCTS.filter(p => 
-      p.material === product.material && 
-      p.id !== product.id && 
-      !sameCategory.find(sc => sc.id === p.id) &&
-      !sameTag.find(st => st.id === p.id)
-    );
-    
-    const combined = [...sameCategory, ...sameTag, ...sameMaterial];
-    if (combined.length >= 4) return combined.slice(0, 4);
-    
-    // Finally, fill with any other products to ensure we have 4
-    const others = PRODUCTS.filter(p => 
-      p.id !== product.id && 
-      !combined.find(c => c.id === p.id)
-    );
-    
-    return [...combined, ...others].slice(0, 4);
-  }, [product]);
+    // 1. Define Frequently Bought Together Heuristic
+    const getComplementaryCategories = (cat: string) => {
+      const map: Record<string, string[]> = {
+        'Serums': ['Moisturizers', 'Cleansers'],
+        'Cleansers': ['Moisturizers', 'Serums'],
+        'Moisturizers': ['Sunscreen', 'Serums'],
+        'Lips': ['Face', 'Brushes'],
+        'Face': ['Brushes', 'Lips'],
+        'Shampoo': ['Conditioner', 'Treatments'],
+        'Conditioner': ['Shampoo', 'Treatments'],
+      };
+      return map[cat] || [];
+    };
+
+    const complementary = getComplementaryCategories(product.category);
+
+    // 2. Scoring System
+    const scoredProducts = PRODUCTS.filter(p => p.id !== product.id).map(p => {
+      let score = 0;
+
+      // Category matching
+      if (p.parentCategory === product.parentCategory) score += 5;
+      if (p.category === product.category) score += 10;
+
+      // Complementary categories (Frequently Bought Together)
+      if (complementary.includes(p.category)) score += 20;
+
+      // Tag & Material
+      if (p.tag === product.tag) score += 3;
+      if (p.material === product.material) score += 2;
+
+      // Cart Context
+      const isRelatedToCart = cartItems.some(item => 
+        item.parentCategory === p.parentCategory || 
+        getComplementaryCategories(item.category).includes(p.category)
+      );
+      if (isRelatedToCart) score += 15;
+
+      // Browsing History Context
+      const isRelatedToHistory = viewedIds.some(id => {
+        const viewedProduct = PRODUCTS.find(hp => hp.id === id);
+        return viewedProduct && (
+          viewedProduct.parentCategory === p.parentCategory ||
+          getComplementaryCategories(viewedProduct.category).includes(p.category)
+        );
+      });
+      if (isRelatedToHistory) score += 8;
+
+      // Boost for high rating
+      score += (p.rating || 0) * 2;
+
+      return { product: p, score };
+    });
+
+    // Sort by score and return top 10 for carousel
+    return scoredProducts
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10)
+      .map(s => s.product);
+  }, [product, cartItems, viewedIds]);
+
+  useEffect(() => {
+    if (product) {
+      addViewed(product.id);
+    }
+  }, [product?.id, addViewed]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -105,6 +153,37 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
+    if (mainImageRef.current && cartIconRef?.current) {
+      const rect = mainImageRef.current.getBoundingClientRect();
+      const cartRect = cartIconRef.current.getBoundingClientRect();
+      
+      setFlyingImage({
+        url: productImages[activeImageIndex],
+        x: rect.left,
+        y: rect.top
+      });
+
+      // Trigger the fly animation
+      setTimeout(() => {
+        const flyingEl = document.getElementById(`flying-image-detail-${product.id}`);
+        if (flyingEl) {
+          flyingEl.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+          flyingEl.style.left = `${cartRect.left}px`;
+          flyingEl.style.top = `${cartRect.top}px`;
+          flyingEl.style.width = '20px';
+          flyingEl.style.height = '20px';
+          flyingEl.style.opacity = '0';
+          flyingEl.style.transform = 'scale(0.1)';
+        }
+      }, 10);
+
+      // Trigger bounce and cleanup
+      setTimeout(() => {
+        setFlyingImage(null);
+        triggerBounce();
+      }, 800);
+    }
+
     setIsAdding(true);
     for(let i = 0; i < quantity; i++) {
       addItem(product);
@@ -203,6 +282,7 @@ export default function ProductDetail() {
                         onClick={() => setIsModalOpen(true)}
                       >
                         <img 
+                          ref={mainImageRef}
                           src={productImages[activeImageIndex]} 
                           alt={product.name} 
                           className="w-full h-full object-cover transition-transform duration-300 ease-out" 
@@ -214,6 +294,33 @@ export default function ProductDetail() {
                         />
                       </motion.div>
                     </AnimatePresence>
+
+                    {/* Flying Image Portal */}
+                    {flyingImage && createPortal(
+                      <div 
+                        id={`flying-image-detail-${product.id}`}
+                        style={{
+                          position: 'fixed',
+                          left: `${flyingImage.x}px`,
+                          top: `${flyingImage.y}px`,
+                          width: `${mainImageRef.current?.offsetWidth || 100}px`,
+                          height: `${mainImageRef.current?.offsetHeight || 100}px`,
+                          zIndex: 9999,
+                          pointerEvents: 'none',
+                          borderRadius: '3rem',
+                          overflow: 'hidden',
+                          boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+                        }}
+                      >
+                        <img 
+                          src={flyingImage.url} 
+                          alt="" 
+                          className="w-full h-full object-cover" 
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>,
+                      document.body
+                    )}
 
                     {/* Image Counter */}
                     <div className="absolute top-8 left-8 px-4 py-2 bg-black/10 backdrop-blur-xl rounded-2xl text-white text-[10px] font-mono font-bold tracking-[0.2em] uppercase z-10 border border-white/10">
@@ -300,6 +407,52 @@ export default function ProductDetail() {
                         <p className="pb-8 text-on-surface-variant leading-relaxed font-light text-base">
                           {product.description} Crafted from the finest materials, this piece redefines effortless elegance. Features a relaxed silhouette, dropped shoulders, and mother-of-pearl buttons. Each piece is pre-washed for a signature soft feel from the very first wear.
                         </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Specifications Accordion */}
+                <div className="border-b border-outline-variant/10">
+                  <button 
+                    onClick={() => setOpenSection(openSection === 'specifications' ? null : 'specifications')}
+                    className="w-full py-6 flex items-center justify-between group"
+                  >
+                    <h3 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-on-surface-variant group-hover:text-black transition-colors">Specifications</h3>
+                    <motion.div
+                      animate={{ rotate: openSection === 'specifications' ? 180 : 0 }}
+                      className="text-on-surface-variant/40 group-hover:text-black transition-colors"
+                    >
+                      <ChevronDown size={18} />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {openSection === 'specifications' && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.5, ease: [0.21, 0.47, 0.32, 0.98] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pb-8 space-y-4">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/60">Material</span>
+                            <span className="text-sm font-medium">{product.material || 'Premium Organic Cotton'}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/60">Primary Color</span>
+                            <span className="text-sm font-medium">{product.color || 'Bone White'}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/60">Category</span>
+                            <span className="text-sm font-medium">{product.category}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/60">Artisan</span>
+                            <span className="text-sm font-medium">{product.artisan || 'Mallu\'s Mart Studio'}</span>
+                          </div>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -515,21 +668,50 @@ export default function ProductDetail() {
         </div>
       )}
 
-      {/* Related Products */}
-      <section className="border-t border-outline-variant/10 pt-24">
+      {/* Related Products Carousel */}
+      <section className="border-t border-outline-variant/10 pt-24 pb-32">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
           <div className="max-w-xl">
-            <h2 className="text-4xl font-serif italic mb-4">You may also <span className="text-primary not-italic font-headline font-light">Appreciate.</span></h2>
-            <p className="text-on-surface-variant font-light leading-relaxed">Hand-picked pieces from the same category or similar materials, curated to complement your selection.</p>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="w-8 h-px bg-primary/40" />
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-primary">Tailored for You</span>
+            </div>
+            <h2 className="text-4xl font-serif italic mb-4">Curated <span className="text-primary not-italic font-headline font-light">Recommendations.</span></h2>
+            <p className="text-on-surface-variant font-light leading-relaxed">
+              Intelligent suggestions based on your browsing history, current selection, and what others frequently pair together.
+            </p>
           </div>
-          <Link to="/shop" className="group flex items-center gap-3 text-primary font-bold text-xs tracking-[0.2em] uppercase">
-            View Collection
-            <ArrowRight size={18} className="transition-transform group-hover:translate-x-2" />
-          </Link>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => {
+                const el = document.getElementById('related-carousel');
+                if (el) el.scrollBy({ left: -400, behavior: 'smooth' });
+              }}
+              className="p-4 rounded-full border border-outline-variant/10 hover:bg-surface-container transition-all text-on-surface-variant/40 hover:text-primary"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <button 
+              onClick={() => {
+                const el = document.getElementById('related-carousel');
+                if (el) el.scrollBy({ left: 400, behavior: 'smooth' });
+              }}
+              className="p-4 rounded-full border border-outline-variant/10 hover:bg-surface-container transition-all text-on-surface-variant/40 hover:text-primary"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <div 
+          id="related-carousel"
+          className="flex gap-6 overflow-x-auto pb-12 scrollbar-hide snap-x snap-mandatory -mx-6 px-6 md:-mx-12 md:px-12"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
           {relatedProducts.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
+            <div key={p.id} className="min-w-[260px] md:min-w-[300px] snap-start">
+              <ProductCard product={p} index={i} />
+            </div>
           ))}
         </div>
       </section>

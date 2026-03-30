@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { Trash2, Minus, Plus, ShieldCheck, Truck, ArrowRight, X, Bookmark, ShoppingBag, MessageCircle } from 'lucide-react';
+import { Trash2, Minus, Plus, ShieldCheck, Truck, ArrowRight, X, Bookmark, ShoppingBag, MessageCircle, Loader2 } from 'lucide-react';
 import { PRODUCTS } from '../constants';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
@@ -9,6 +9,7 @@ export default function Cart() {
   const { items, savedItems, updateQuantity, removeItem, saveForLater, moveToCart, removeSavedItem } = useCartStore();
   const [showCheckout, setShowCheckout] = useState(false);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Mouse tracking for parallax
@@ -66,10 +67,82 @@ export default function Cart() {
   const tax = subtotal * 0.0824;
   const total = subtotal + shipping + tax;
 
-  const handleQuantityUpdate = (id: string, delta: number, currentQty: number) => {
+  const handleQuantityUpdate = async (id: string, delta: number, currentQty: number) => {
+    if (processingIds.has(id)) return;
+    
+    setProcessingIds(prev => new Set(prev).add(id));
     setAnimatingId(id);
+    
+    // Simulate async operation
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
     updateQuantity(id, currentQty + delta);
-    setTimeout(() => setAnimatingId(null), 300);
+    setAnimatingId(null);
+    setProcessingIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const handleRemoveItem = async (id: string) => {
+    if (processingIds.has(id)) return;
+    setProcessingIds(prev => new Set(prev).add(id));
+    
+    // Simulate async operation
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
+    removeItem(id);
+    setProcessingIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const handleSaveForLater = async (id: string) => {
+    if (processingIds.has(id)) return;
+    setProcessingIds(prev => new Set(prev).add(id));
+    
+    // Simulate async operation
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
+    saveForLater(id);
+    setProcessingIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const handleMoveToCart = async (id: string) => {
+    if (processingIds.has(id)) return;
+    setProcessingIds(prev => new Set(prev).add(id));
+    
+    // Simulate async operation
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
+    moveToCart(id);
+    setProcessingIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const handleRemoveSavedItem = async (id: string) => {
+    if (processingIds.has(id)) return;
+    setProcessingIds(prev => new Set(prev).add(id));
+    
+    // Simulate async operation
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
+    removeSavedItem(id);
+    setProcessingIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   };
 
   return (
@@ -98,14 +171,28 @@ export default function Cart() {
                   layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ 
-                    opacity: 1, 
+                    opacity: processingIds.has(item.id) ? 0.6 : 1, 
                     y: 0,
                     scale: animatingId === item.id ? 1.02 : 1,
                   }}
                   exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="bg-white p-8 rounded-[2.5rem] border border-outline-variant/10 flex flex-col sm:flex-row gap-8 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500"
+                  className="bg-white/60 backdrop-blur-md p-8 rounded-[2.5rem] border border-outline-variant/10 flex flex-col sm:flex-row gap-8 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500 relative overflow-hidden"
                 >
+                  {/* Loading Overlay */}
+                  <AnimatePresence>
+                    {processingIds.has(item.id) && (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-white/40 backdrop-blur-[2px] z-10 flex items-center justify-center"
+                      >
+                        <Loader2 size={32} className="text-[#FDCB58] animate-spin" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <div className="w-40 h-40 rounded-3xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   </div>
@@ -125,7 +212,8 @@ export default function Cart() {
                       <div className="flex items-center bg-surface-container-low rounded-2xl border border-outline-variant/5 p-1">
                         <button 
                           onClick={() => handleQuantityUpdate(item.id, -1, item.quantity)} 
-                          className="p-3 hover:text-primary transition-colors"
+                          disabled={processingIds.has(item.id)}
+                          className="p-3 hover:text-primary transition-colors disabled:opacity-30"
                         >
                           <Minus size={16} />
                         </button>
@@ -139,21 +227,24 @@ export default function Cart() {
                         </motion.span>
                         <button 
                           onClick={() => handleQuantityUpdate(item.id, 1, item.quantity)} 
-                          className="p-3 hover:text-primary transition-colors"
+                          disabled={processingIds.has(item.id)}
+                          className="p-3 hover:text-primary transition-colors disabled:opacity-30"
                         >
                           <Plus size={16} />
                         </button>
                       </div>
                       <div className="flex items-center gap-8">
                         <button 
-                          onClick={() => saveForLater(item.id)}
-                          className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-primary transition-colors uppercase tracking-[0.2em]"
+                          onClick={() => handleSaveForLater(item.id)}
+                          disabled={processingIds.has(item.id)}
+                          className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-primary transition-colors uppercase tracking-[0.2em] disabled:opacity-30"
                         >
                           <Bookmark size={14} className="group-hover:fill-current" /> Save for Later
                         </button>
                         <button 
-                          onClick={() => removeItem(item.id)} 
-                          className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-red-500 transition-colors uppercase tracking-[0.2em]"
+                          onClick={() => handleRemoveItem(item.id)} 
+                          disabled={processingIds.has(item.id)}
+                          className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-red-500 transition-colors uppercase tracking-[0.2em] disabled:opacity-30"
                         >
                           <Trash2 size={14} /> Remove
                         </button>
@@ -314,10 +405,27 @@ export default function Cart() {
                       key={item.id}
                       layout
                       initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
+                      animate={{ 
+                        opacity: processingIds.has(item.id) ? 0.6 : 1, 
+                        scale: 1 
+                      }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="bg-white p-6 rounded-[2rem] border border-outline-variant/10 flex gap-6 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500"
+                      className="bg-white p-6 rounded-[2rem] border border-outline-variant/10 flex gap-6 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500 relative overflow-hidden"
                     >
+                      {/* Loading Overlay */}
+                      <AnimatePresence>
+                        {processingIds.has(item.id) && (
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-white/40 backdrop-blur-[2px] z-10 flex items-center justify-center"
+                          >
+                            <Loader2 size={24} className="text-primary animate-spin" />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
                       <div className="w-24 h-24 rounded-2xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
                       </div>
@@ -326,14 +434,16 @@ export default function Cart() {
                         <p className="font-mono text-sm text-on-surface-variant mb-4">${item.price.toFixed(2)}</p>
                         <div className="flex gap-6">
                           <button 
-                            onClick={() => moveToCart(item.id)}
-                            className="text-[10px] font-mono font-bold text-primary hover:underline uppercase tracking-[0.2em]"
+                            onClick={() => handleMoveToCart(item.id)}
+                            disabled={processingIds.has(item.id)}
+                            className="text-[10px] font-mono font-bold text-primary hover:underline uppercase tracking-[0.2em] disabled:opacity-30"
                           >
                             Move to Cart
                           </button>
                           <button 
-                            onClick={() => removeSavedItem(item.id)}
-                            className="text-[10px] font-mono font-bold text-on-surface-variant/40 hover:text-red-500 uppercase tracking-[0.2em]"
+                            onClick={() => handleRemoveSavedItem(item.id)}
+                            disabled={processingIds.has(item.id)}
+                            className="text-[10px] font-mono font-bold text-on-surface-variant/40 hover:text-red-500 uppercase tracking-[0.2em] disabled:opacity-30"
                           >
                             Remove
                           </button>
