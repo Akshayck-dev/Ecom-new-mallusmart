@@ -8,6 +8,7 @@ import { ProductCard } from '../components/ProductCard';
 import { useCartStore } from '../store/cartStore';
 import { useWishlistStore } from '../store/wishlistStore';
 import { useHistoryStore } from '../store/historyStore';
+import { Magnetic } from '../components/Magnetic';
 import { toast } from 'sonner';
 import Skeleton, { ProductDetailSkeleton } from '../components/Skeleton';
 
@@ -28,6 +29,9 @@ export default function ProductDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [openSection, setOpenSection] = useState<string | null>('description');
   const [flyingImage, setFlyingImage] = useState<{ url: string; x: number; y: number } | null>(null);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  
+  const buySectionRef = useRef<HTMLDivElement>(null);
   
   const addItem = useCartStore((state) => state.addItem);
   const cartIconRef = useCartStore((state) => state.cartIconRef);
@@ -130,6 +134,18 @@ export default function ProductDetail() {
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
   }, [id]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (buySectionRef.current) {
+        const { bottom } = buySectionRef.current.getBoundingClientRect();
+        setShowStickyBar(bottom < 0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -390,10 +406,17 @@ export default function ProductDetail() {
               </div>
               
               <h1 className="text-[clamp(2.5rem,5vw,4rem)] leading-[1.1] font-serif italic mb-6 text-brand-gray">{product.name}</h1>
-              <div className="flex items-baseline gap-4 mb-12">
+              <div className="flex items-baseline gap-4 mb-4">
                 <p className="text-3xl font-mono font-light text-brand-gray tracking-tighter">{product.price.toFixed(2).replace('.', ',')}€</p>
                 <span className="text-[10px] font-mono uppercase tracking-widest text-on-surface-variant/40">Tax included</span>
               </div>
+
+              {product.inStock && (
+                <div className="flex items-center gap-2 mb-12 animate-pulse">
+                  <span className="w-1.5 h-1.5 bg-brand-yellow rounded-full" />
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-yellow">Limited Availability: Only 3 pieces remaining</span>
+                </div>
+              )}
               
               <div className="space-y-2 mb-16">
                 {/* Description Accordion */}
@@ -621,85 +644,113 @@ export default function ProductDetail() {
                   </AnimatePresence>
                 </div>
               </div>
-
-              <div className="flex flex-col gap-5">
+              <div ref={buySectionRef} className="flex flex-col gap-5">
                 <div className="flex flex-col sm:flex-row gap-5">
-                  <motion.button 
-                    onClick={handleAddToCart}
-                    disabled={isAdding || !product.inStock}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`flex-1 py-6 rounded-3xl font-bold shadow-2xl transition-all flex items-center justify-center gap-4 text-xs uppercase tracking-[0.2em] ${
-                      !product.inStock 
-                        ? 'bg-surface-container-highest text-on-surface-variant cursor-not-allowed' 
-                        : isAdding 
-                          ? 'bg-green-500 text-white' 
-                          : 'bg-brand-yellow text-brand-gray hover:bg-brand-yellow/90'
-                    }`}
-                  >
-                    <AnimatePresence mode="wait">
-                      {!product.inStock ? (
-                        <motion.div
-                          key="soldout"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="flex items-center gap-2"
-                        >
-                          Currently Unavailable
-                        </motion.div>
-                      ) : isAdding ? (
-                        <motion.div
-                          key="success"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="flex items-center gap-2"
-                        >
-                          <Check size={20} /> Added to Selection
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          key="default"
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="flex items-center gap-2"
-                        >
-                          <ShoppingBag size={20} /> Add to Selection
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.button>
+                  <Magnetic strength={0.2}>
+                    <motion.button 
+                      onClick={handleAddToCart}
+                      disabled={isAdding || !product.inStock}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`flex-1 py-6 px-12 rounded-3xl font-bold shadow-2xl transition-all flex items-center justify-center gap-4 text-xs uppercase tracking-[0.2em] min-w-[240px] ${
+                        !product.inStock 
+                          ? 'bg-surface-container-highest text-on-surface-variant cursor-not-allowed' 
+                          : isAdding 
+                            ? 'bg-green-500 text-white' 
+                            : 'bg-brand-yellow text-brand-gray hover:bg-brand-yellow/90'
+                      }`}
+                    >
+                      <AnimatePresence mode="wait">
+                        {!product.inStock ? (
+                          <motion.div
+                            key="soldout"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="flex items-center gap-2"
+                          >
+                            Currently Unavailable
+                          </motion.div>
+                        ) : isAdding ? (
+                          <motion.div
+                            key="success"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="flex items-center gap-2"
+                          >
+                            <Check size={20} /> Added to Selection
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="default"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="flex items-center gap-2"
+                          >
+                            <ShoppingBag size={20} /> Add to Selection
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.button>
+                  </Magnetic>
 
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                      if (isInWishlist(product.id)) {
-                        removeFromWishlist(product.id);
-                        toast.success('Removed from wishlist');
-                      } else {
-                        addToWishlist(product);
-                        toast.success('Added to wishlist');
-                      }
-                    }}
-                    className={`w-full sm:w-20 h-20 rounded-3xl flex items-center justify-center transition-all shadow-premium border border-outline-variant/10 ${
-                      isInWishlist(product.id)
-                        ? 'bg-brand-yellow text-brand-gray'
-                        : 'bg-white text-brand-gray hover:bg-surface-container'
-                    }`}
-                  >
-                    <Heart size={24} className={isInWishlist(product.id) ? 'fill-current' : ''} />
-                  </motion.button>
+                  <Magnetic strength={0.4}>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        if (isInWishlist(product.id)) {
+                          removeFromWishlist(product.id);
+                          toast.success('Removed from wishlist');
+                        } else {
+                          addToWishlist(product);
+                          toast.success('Added to wishlist');
+                        }
+                      }}
+                      className={`w-full sm:w-20 h-20 rounded-3xl flex items-center justify-center transition-all shadow-premium border border-outline-variant/10 ${
+                        isInWishlist(product.id)
+                          ? 'bg-brand-yellow text-brand-gray'
+                          : 'bg-white text-brand-gray hover:bg-surface-container'
+                      }`}
+                    >
+                      <Heart size={24} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+                    </motion.button>
+                  </Magnetic>
                 </div>
 
                 {product.inStock && (
-                  <button className="w-full bg-brand-green text-white py-6 rounded-3xl font-bold flex items-center justify-center gap-4 hover:bg-brand-green/90 transition-all border border-outline-variant/10 text-xs uppercase tracking-[0.2em] shadow-xl">
-                    <MessageCircle size={20} /> Inquire via WhatsApp
-                  </button>
+                  <Magnetic strength={0.1}>
+                    <button className="w-full bg-brand-green text-white py-6 rounded-3xl font-bold flex items-center justify-center gap-4 hover:bg-brand-green/90 transition-all border border-outline-variant/10 text-xs uppercase tracking-[0.2em] shadow-xl">
+                      <MessageCircle size={20} /> Inquire via WhatsApp
+                    </button>
+                  </Magnetic>
                 )}
+
+                {/* Institutional Trust Badges */}
+                <div className="mt-12 grid grid-cols-2 gap-4 border-t border-outline-variant/10 pt-12">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-2xl bg-surface-container flex items-center justify-center text-brand-gray shrink-0">
+                      <Check size={18} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest mb-1">Quality Guaranteed</p>
+                      <p className="text-[10px] text-on-surface-variant/60 font-medium leading-relaxed">Hand-inspected by our curators before every shipment.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-2xl bg-surface-container flex items-center justify-center text-brand-gray shrink-0">
+                      <ShoppingBag size={18} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest mb-1">Elite Logistics</p>
+                      <p className="text-[10px] text-on-surface-variant/60 font-medium leading-relaxed">Priority handling and secure specialized packaging.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
+
             </motion.div>
           </>
         </div>
@@ -819,6 +870,41 @@ export default function ProductDetail() {
                 </button>
               </>
             )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* Sticky Action Bar */}
+      <AnimatePresence>
+        {showStickyBar && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] max-w-4xl bg-white/80 backdrop-blur-2xl border border-gray-100 p-4 md:p-6 shadow-[0_-20px_50px_rgba(0,0,0,0.1)] rounded-[2.5rem]"
+          >
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4 group">
+                <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-50 shrink-0">
+                  <img src={product.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                </div>
+                <div className="hidden sm:block">
+                  <p className="text-[10px] font-mono font-bold text-brand-yellow uppercase tracking-widest">{product.category}</p>
+                  <p className="text-xs font-bold text-brand-gray truncate max-w-[150px]">{product.name}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4 flex-1 justify-end">
+                <span className="text-lg font-black text-brand-gray mr-4">{product.price.toFixed(2).replace('.', ',')}€</span>
+                <button 
+                  onClick={handleAddToCart}
+                  disabled={isAdding || !product.inStock}
+                  className="flex-1 max-w-[200px] bg-brand-yellow text-brand-gray py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest shadow-xl active:scale-95 transition-all"
+                >
+                  {isAdding ? "Adding..." : "Add to Selection"}
+                </button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

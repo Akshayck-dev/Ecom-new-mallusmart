@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useWishlistStore } from '../store/wishlistStore';
 import { useCartStore } from '../store/cartStore';
 import { toast } from 'sonner';
+import logo from '../assets/logo.png';
 
 export default function Wishlist() {
   const { items, removeItem } = useWishlistStore();
@@ -169,11 +170,15 @@ export default function Wishlist() {
               >
                 <div className="w-40 h-40 bg-white rounded-[2.5rem] shadow-premium border border-outline-variant/10 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-700">
                   <motion.div 
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className="text-[#FDCB58]"
+                    animate={{ y: [0, -12, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <Heart size={72} strokeWidth={1} className="fill-current" />
+                    <img 
+                      src={logo} 
+                      alt="Mallu's Mart Logo" 
+                      className="w-24 h-auto object-contain"
+                      referrerPolicy="no-referrer"
+                    />
                   </motion.div>
                   
                   <motion.div 

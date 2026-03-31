@@ -1,6 +1,7 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import { Heart, Globe, Award, Users } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Logo from '../components/Logo';
 
 export default function About() {
   return (
@@ -8,6 +9,13 @@ export default function About() {
       {/* Hero */}
       <section className="px-6 md:px-12 max-w-7xl mx-auto mb-32">
         <div className="text-center max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-center mb-10"
+          >
+            <Logo size="80px" />
+          </motion.div>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -37,13 +45,13 @@ export default function About() {
       {/* Philosophy */}
       <section className="section-spacing bg-surface-container-low px-6 md:px-12">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-          <div className="rounded-2xl overflow-hidden shadow-2xl">
-            <img 
-              src="https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=1200" 
-              alt="Our beauty studio" 
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
+          <div className="rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center bg-white p-12">
+            <motion.div 
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <Logo size="64px" />
+            </motion.div>
           </div>
           <div className="space-y-8">
             <h2 className="text-display-md">Our Philosophy</h2>

@@ -1,6 +1,8 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import { Send, ChevronDown } from 'lucide-react';
+import { toast } from 'sonner';
+import { motion } from 'framer-motion';
+import logo from '../assets/logo.png';
 
 export default function Contact() {
   return (
@@ -10,6 +12,18 @@ export default function Contact() {
           {/* Form Side */}
           <div className="space-y-12">
             <div>
+              <motion.div 
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="mb-8"
+              >
+                <img 
+                  src={logo} 
+                  alt="Mallu's Mart Logo" 
+                  className="h-20 w-auto object-contain"
+                  referrerPolicy="no-referrer"
+                />
+              </motion.div>
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

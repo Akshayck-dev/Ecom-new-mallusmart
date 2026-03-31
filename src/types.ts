@@ -13,6 +13,8 @@ export interface Product {
   artisan?: string;
   rating?: number;
   inStock?: boolean;
+  skinType?: string[];
+  concern?: string[];
 }
 
 export interface Category {

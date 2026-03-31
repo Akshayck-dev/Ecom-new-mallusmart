@@ -2,7 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, ShoppingBag, Star, Eye, Loader2, Check, Plus, ShoppingCart, History } from 'lucide-react';
+import { Heart, ShoppingBag, Loader2, Check, ShoppingCart, History } from 'lucide-react';
 import { Product } from '../types';
 import { useCartStore } from '../store/cartStore';
 import { useWishlistStore } from '../store/wishlistStore';
@@ -18,13 +18,12 @@ interface ProductCardProps {
 
 const Highlight = ({ text, query }: { text: string; query: string }) => {
   if (!query.trim()) return <>{text}</>;
-  
   const parts = text.split(new RegExp(`(${query})`, 'gi'));
   return (
     <>
-      {parts.map((part, i) => 
+      {parts.map((part, i) =>
         part.toLowerCase() === query.toLowerCase() ? (
-          <mark key={i} className="bg-brand-yellow/20 text-brand-gray font-bold rounded-sm px-0.5">{part}</mark>
+          <mark key={i} className="bg-yellow-100 text-gray-900 font-bold rounded-sm px-0.5">{part}</mark>
         ) : (
           <span key={i}>{part}</span>
         )
@@ -33,10 +32,23 @@ const Highlight = ({ text, query }: { text: string; query: string }) => {
   );
 };
 
-export const ProductCard: React.FC<ProductCardProps> = ({ 
-  product, 
-  index = 0, 
-  searchQuery = '', 
+// Badge styling based on tag value
+const getBadgeStyle = (tag?: string) => {
+  if (!tag) return null;
+  const lower = tag.toLowerCase();
+  if (['bestseller', 'premium', 'luxury', 'couture', 'new season'].includes(lower)) {
+    return { label: tag, className: 'bg-white/90 backdrop-blur-sm text-gray-900' };
+  }
+  if (['limited', 'limited edition', 'unique', 'heirloom', 'bespoke'].includes(lower)) {
+    return { label: 'Limited', className: 'bg-black text-white' };
+  }
+  return { label: tag, className: 'bg-white/90 backdrop-blur-sm text-gray-900' };
+};
+
+export const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  index = 0,
+  searchQuery = '',
   isActive = false,
   isRecentlyViewed = false
 }) => {
@@ -49,22 +61,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore();
   const isWishlisted = isInWishlist(product.id);
   const imageRef = React.useRef<HTMLImageElement>(null);
+  const badge = getBadgeStyle(product.tag);
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (imageRef.current && cartIconRef?.current) {
       const rect = imageRef.current.getBoundingClientRect();
       const cartRect = cartIconRef.current.getBoundingClientRect();
-      
-      setFlyingImage({
-        url: product.image,
-        x: rect.left,
-        y: rect.top
-      });
+      setFlyingImage({ url: product.image, x: rect.left, y: rect.top });
 
-      // Trigger the fly animation
       setTimeout(() => {
         const flyingEl = document.getElementById(`flying-image-${product.id}`);
         if (flyingEl) {
@@ -78,7 +85,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         }
       }, 10);
 
-      // Trigger bounce and cleanup
       setTimeout(() => {
         setFlyingImage(null);
         triggerBounce();
@@ -86,17 +92,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
 
     setIsAdding(true);
-    // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 800));
-    
     addItem(product);
     setShowSuccess(true);
     toast.success(`${product.name} added to cart`, {
-      description: "Your beauty selection has been updated.",
-      action: {
-        label: "View Cart",
-        onClick: () => window.location.href = '/cart'
-      }
+      description: 'Your selection has been updated.',
+      action: { label: 'View Cart', onClick: () => window.location.href = '/cart' }
     });
     setIsAdding(false);
     setTimeout(() => setShowSuccess(false), 2000);
@@ -119,51 +120,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ 
-        duration: 0.8,
-        delay: (index % 4) * 0.1,
+      transition={{
+        duration: 0.6,
+        delay: (index % 4) * 0.08,
         ease: [0.16, 1, 0.3, 1]
       }}
-      className={`group bg-white rounded-2xl p-4 transition-all duration-500 flex flex-col h-full relative shadow-sm hover:shadow-xl border border-gray-100/50 ${
-        isActive ? 'ring-2 ring-brand-yellow/50 shadow-lg' : ''
-      } ${isRecentlyViewed ? 'bg-brand-yellow/[0.02] ring-1 ring-brand-yellow/10' : ''}`}
+      className={`group flex flex-col bg-white rounded-xl overflow-hidden transition-all duration-500 hover:shadow-[0_20px_40px_rgba(17,17,17,0.08)] hover:-translate-y-1 ${
+        isActive ? 'ring-2 ring-black/10 shadow-lg' : ''
+      }`}
     >
-      {/* Recently Viewed Indicator */}
-      {isRecentlyViewed && (
-        <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm border border-brand-yellow/20">
-          <History size={10} className="text-brand-yellow" />
-          <span className="text-[8px] font-mono font-bold uppercase tracking-widest text-brand-yellow">Viewed</span>
-        </div>
-      )}
-
-      {/* Heart Icon - Top Left */}
-      <button 
-        onClick={handleWishlist}
-        className="absolute top-4 left-4 z-20 transition-all duration-300 hover:scale-110 active:scale-90"
-      >
-        <Heart 
-          size={18} 
-          className={`transition-colors ${
-            isWishlisted 
-              ? 'fill-red-500 text-red-500' 
-              : 'text-gray-200 hover:text-red-400'
-          }`} 
-        />
-      </button>
-
       {/* Product Image Area */}
-      <Link to={`/product/${product.id}`} className="block relative h-[220px] mb-6 flex items-center justify-center overflow-hidden rounded-xl bg-gray-50/30">
-        <img 
+      <Link to={`/product/${product.id}`} className="block relative overflow-hidden bg-gray-50" style={{ aspectRatio: '3/4' }}>
+        <img
           ref={imageRef}
-          src={product.image} 
-          alt={product.name} 
-          className="max-h-[85%] max-w-[85%] object-contain transition-transform duration-1000 group-hover:scale-110" 
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           referrerPolicy="no-referrer"
         />
-        
+
         {/* Flying Image Portal */}
         {flyingImage && createPortal(
-          <div 
+          <div
             id={`flying-image-${product.id}`}
             style={{
               position: 'fixed',
@@ -173,63 +151,91 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               height: `${imageRef.current?.offsetHeight || 100}px`,
               zIndex: 9999,
               pointerEvents: 'none',
-              borderRadius: '12px',
+              borderRadius: '8px',
               overflow: 'hidden',
               boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
             }}
           >
-            <img 
-              src={flyingImage.url} 
-              alt="" 
-              className="w-full h-full object-cover" 
-              referrerPolicy="no-referrer"
-            />
+            <img src={flyingImage.url} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           </div>,
           document.body
         )}
 
+        {/* Top Badges */}
+        <div className="absolute top-3 left-3 right-3 flex items-start justify-between">
+          {/* Tag badge */}
+          {badge && (
+            <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-tight rounded-full ${badge.className}`}>
+              {badge.label}
+            </span>
+          )}
+          {/* Recently viewed */}
+          {isRecentlyViewed && (
+            <span className="ml-auto flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest text-gray-500">
+              <History size={9} />
+              Viewed
+            </span>
+          )}
+        </div>
+
+        {/* Wishlist button */}
+        <button
+          onClick={handleWishlist}
+          className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-sm"
+        >
+          <motion.div
+            animate={isWishlisted ? { scale: [1, 1.4, 0.9, 1.1, 1], rotate: [0, 15, -15, 5, 0] } : {}}
+            transition={{ duration: 0.5 }}
+          >
+            <Heart
+              size={14}
+              className={isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}
+            />
+          </motion.div>
+        </button>
+
+        {/* Out of stock overlay */}
         {!product.inStock && (
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center z-10">
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 bg-white/80 px-4 py-2 rounded-full shadow-sm">Sold Out</span>
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 bg-white/80 px-4 py-2 rounded-full">
+              Sold Out
+            </span>
           </div>
         )}
       </Link>
 
       {/* Product Info */}
-      <div className="flex flex-col flex-1 text-left">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-brand-yellow mb-2">
-          {product.category}
-        </span>
-        
-        <Link to={`/product/${product.id}`}>
-          <h3 className="text-brand-gray font-bold text-sm mb-3 group-hover:text-brand-yellow transition-all line-clamp-2 leading-snug">
-            <Highlight text={product.name} query={searchQuery} />
-          </h3>
-        </Link>
+      <div className="p-5 flex flex-col flex-grow">
+        <div className="mb-4 flex-1">
+          <p className="text-xs text-gray-400 mb-1">{product.category}</p>
+          <Link to={`/product/${product.id}`}>
+            <h3 className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 group-hover:text-black transition-colors">
+              <Highlight text={product.name} query={searchQuery} />
+            </h3>
+          </Link>
+        </div>
 
-        {/* Bottom Row: Price and Basket Icon */}
-        <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
-          <span className="text-lg font-black text-brand-gray tracking-tight">
-            {product.price.toFixed(2).replace('.', ',')}€
+        <div className="flex items-center justify-between">
+          <span className="text-base font-bold text-gray-900">
+            ${product.price.toFixed(0)}
           </span>
-
           {product.inStock && (
-            <button 
+            <button
               onClick={handleAddToCart}
               disabled={isAdding || showSuccess}
-              className={`w-10 h-10 rounded-xl transition-all duration-500 disabled:opacity-50 flex items-center justify-center shadow-sm ${
-                showSuccess 
-                  ? 'bg-green-500 text-white' 
-                  : 'bg-brand-yellow/10 text-brand-yellow hover:bg-brand-yellow hover:text-white active:scale-90'
+              className={`flex items-center justify-center w-10 h-10 rounded-lg transition-colors duration-300 disabled:opacity-50 ${
+                showSuccess
+                  ? 'bg-green-500 text-white'
+                  : 'bg-black text-white hover:bg-yellow-500 active:scale-90'
               }`}
               title="Add to Cart"
             >
               {isAdding ? (
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={15} className="animate-spin" />
               ) : showSuccess ? (
-                <Check size={16} />
+                <Check size={15} />
               ) : (
-                <ShoppingCart size={18} />
+                <ShoppingBag size={15} />
               )}
             </button>
           )}

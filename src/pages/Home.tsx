@@ -1,44 +1,51 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, Shield, Truck, ChevronRight, ShoppingBag, ArrowLeft, Clock } from 'lucide-react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
+import { ArrowRight, Star, Shield, Truck, ChevronRight, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { PRODUCTS, CATEGORIES } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import { QuickViewModal } from '../components/QuickViewModal';
 import { useHistoryStore } from '../store/historyStore';
 import { Product } from '../types';
-
-const HERO_SLIDES = [
-  {
-    id: 1,
-    subtitle: "Introducing",
-    title: "OFFBEAT",
-    description: "A scent that defies the ordinary. Bold, mysterious, and unapologetically unique.",
-    image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=1000",
-    accent: "#F27D26",
-    bg: "radial-gradient(circle at 50% 50%, #3a1510 0%, #0a0502 100%)"
-  },
-  {
-    id: 2,
-    subtitle: "The New",
-    title: "ESSENCE",
-    description: "Pure, refined, and timeless. The ultimate expression of modern elegance.",
-    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1000",
-    accent: "#0059c6",
-    bg: "radial-gradient(circle at 50% 50%, #101a3a 0%, #02050a 100%)"
-  }
-];
+import logoImg from '../assets/logo.png';
 
 export default function Home() {
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const heroRef = useRef(null);
-  
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
-
-  const slide = HERO_SLIDES[currentSlide];
   const { viewedIds } = useHistoryStore();
+
+  const HERO_SLIDES = [
+    {
+      id: 0,
+      src: 'https://images.unsplash.com/photo-1596797882870-8c33c4ee4e58?auto=format&fit=crop&q=75&w=1920',
+      alt: 'Kerala spices and food — authentic homemade products'
+    },
+    {
+      id: 1,
+      src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=75&w=1920',
+      alt: 'Fashion and clothing from Kerala homepreneurs'
+    },
+    {
+      id: 2,
+      src: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=75&w=1920',
+      alt: 'Natural beauty and cosmetic products'
+    },
+    {
+      id: 3,
+      src: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=75&w=1920',
+      alt: 'Gifts and lifestyle products from Kerala'
+    },
+  ];
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setSlideIndex(prev => (prev + 1) % HERO_SLIDES.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [isPaused, slideIndex]);
 
   const recentlyViewed = useMemo(() => {
     return viewedIds
@@ -47,387 +54,664 @@ export default function Home() {
       .slice(0, 5);
   }, [viewedIds]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      nextSlide();
-    }, 6000); // Change slide every 6 seconds
-    return () => clearInterval(timer);
-  }, [currentSlide]);
-
   return (
     <main className="overflow-hidden bg-[#F9F9F9]">
-      {/* Editorial Hero Section */}
-      <section 
-        ref={heroRef} 
-        className="relative h-screen min-h-[700px] flex items-center overflow-hidden transition-colors duration-1000"
-        style={{ background: slide.bg }}
+      {/* ── Hero Carousel Section ─────────────────────────────── */}
+      <section
+        ref={heroRef}
+        className="relative h-[65vh] md:h-[75vh] min-h-[500px] md:min-h-[560px] flex items-center justify-center overflow-hidden"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
       >
-        <AnimatePresence mode="wait">
-          <motion.div 
-            key={currentSlide}
+        {/* Carousel Background Slides */}
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={slideIndex}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="absolute inset-0 flex items-center justify-center px-8 md:px-24"
+            transition={{ duration: 1.2, ease: 'easeInOut' }}
+            className="absolute inset-0"
           >
-            {/* Background Glow */}
-            <div 
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] blur-[120px] opacity-30 rounded-full"
-              style={{ background: slide.accent }}
+            {/* Image with zoom */}
+            <motion.img
+              src={HERO_SLIDES[slideIndex].src}
+              alt={HERO_SLIDES[slideIndex].alt}
+              className="w-full h-full object-cover"
+              initial={{ scale: 1.0 }}
+              animate={{ scale: 1.08 }}
+              transition={{ duration: 6, ease: 'easeOut' }}
+              referrerPolicy="no-referrer"
             />
-
-            <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
-              {/* Product Image Side */}
-              <div className="relative flex justify-center lg:justify-start order-2 lg:order-1">
-                <motion.div
-                  initial={{ scale: 2, y: 100, opacity: 0, rotate: -10 }}
-                  animate={{ scale: 1, y: 0, opacity: 1, rotate: 0 }}
-                  transition={{ 
-                    duration: 1.2, 
-                    ease: [0.16, 1, 0.3, 1],
-                    delay: 0.2
-                  }}
-                  className="relative w-full max-w-[500px] aspect-[4/5]"
-                >
-                  {/* Stylized "Rock" Base */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-32 bg-black/40 blur-2xl rounded-[100%] -z-10" />
-                  
-                  <img 
-                    src={slide.image} 
-                    alt={slide.title} 
-                    className="w-full h-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
-                    referrerPolicy="no-referrer"
-                  />
-                </motion.div>
-              </div>
-
-              {/* Text Side */}
-              <div className="text-center lg:text-left order-1 lg:order-2">
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="font-serif italic text-2xl md:text-4xl text-white/80 mb-2"
-                >
-                  {slide.subtitle}
-                </motion.p>
-                
-                <motion.h1
-                  initial={{ scale: 1.5, opacity: 0, filter: "blur(20px)" }}
-                  animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-                  transition={{ 
-                    duration: 1, 
-                    ease: [0.16, 1, 0.3, 1],
-                    delay: 0.6
-                  }}
-                  className="font-display text-[15vw] lg:text-[12vw] leading-[0.85] text-white tracking-tighter mb-8"
-                  style={{ 
-                    textShadow: `0 10px 30px rgba(0,0,0,0.5)`,
-                    background: `linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.4) 100%)`,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                  }}
-                >
-                  {slide.title}
-                </motion.h1>
-
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.7 }}
-                  transition={{ delay: 0.8 }}
-                  className="text-white text-lg md:text-xl max-w-md mx-auto lg:mx-0 mb-10 font-light leading-relaxed"
-                >
-                  {slide.description}
-                </motion.p>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1 }}
-                >
-                  <Link 
-                    to="/shop" 
-                    className="inline-flex items-center gap-4 px-10 py-5 bg-white text-black font-bold uppercase tracking-widest text-xs rounded-full hover:scale-105 transition-transform shadow-2xl"
-                  >
-                    Shop Collection <ArrowRight size={16} />
-                  </Link>
-                </motion.div>
-              </div>
-            </div>
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation Controls */}
-        <div className="absolute bottom-12 left-0 right-0 px-8 md:px-24 flex items-center justify-between z-20">
-          <button 
-            onClick={prevSlide}
-            className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
-          >
-            <ArrowLeft size={20} />
-          </button>
+        {/* Dark gradient overlay — brown/green tone */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0d2b12]/65 via-[#111a0a]/60 to-[#0d2b12]/80 z-10" />
+        {/* Horizontal vignette */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-black/25 z-10" />
 
-          <div className="flex items-center gap-3">
-            {HERO_SLIDES.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentSlide(i)}
-                className={`h-1.5 transition-all duration-500 rounded-full ${currentSlide === i ? 'w-8 bg-white' : 'w-2 bg-white/20'}`}
-              />
-            ))}
-          </div>
+        {/* Green accent glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#1a6b2f]/15 blur-[100px] rounded-full pointer-events-none z-10" />
 
-          <button 
-            onClick={nextSlide}
-            className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
-          >
-            <ArrowRight size={20} />
-          </button>
-        </div>
-      </section>
+        {/* ── Fixed Hero Content (animates once, not per slide) ── */}
+        <div className="relative z-20 text-center px-6 md:px-12 max-w-4xl mx-auto -mt-8">
 
-      {/* Curated Verticals (Bento Grid) */}
-      <section className="section-spacing bg-surface-container-lowest px-6 md:px-12 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
+          {/* Logo mark */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="flex justify-center mb-4"
           >
-            <div className="max-w-xl">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="w-8 h-px bg-primary/40" />
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-primary">The Collection</span>
-              </div>
-              <h2 className="text-[clamp(2.5rem,5vw,4rem)] leading-[1.1] font-black tracking-tight text-on-background">Beauty Essentials.</h2>
-              <p className="text-on-surface-variant mt-4 text-xl font-medium">Discover our hand-picked categories, designed to enhance your natural glow and simplify your routine.</p>
-            </div>
-            <Link to="/shop" className="group flex items-center gap-4 px-8 py-4 bg-surface-container rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-on-background hover:text-white transition-all">
-              View All Collections <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <img
+              src={logoImg}
+              alt="Mallu's Mart"
+              className="h-[58px] w-auto object-contain"
+              style={{
+                filter: 'drop-shadow(0 0 18px rgba(255,255,255,0.5)) drop-shadow(0 6px 24px rgba(0,0,0,0.7))',
+              }}
+            />
+          </motion.div>
+
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center justify-center gap-3 mb-3"
+          >
+            <span className="w-10 h-px bg-[#FFA500]/60" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.5em] text-[#FFA500]/90">
+              Kerala Homepreneurs United
+            </span>
+            <span className="w-10 h-px bg-[#FFA500]/60" />
+          </motion.div>
+
+          {/* Main Heading */}
+          <motion.h1
+            initial={{ opacity: 0, y: 36 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.95, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-[1.05] mb-3"
+            style={{ textShadow: '0 8px 40px rgba(0,0,0,0.5)' }}
+          >
+            Authentic Products
+            <br />
+            <span className="italic font-light text-[#FFA500]">from Kerala</span>
+          </motion.h1>
+
+          {/* Subheading */}
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            className="text-base md:text-lg text-white/70 max-w-xl mx-auto mb-6 leading-relaxed font-light"
+          >
+            From homemade foods to fashion, beauty, and more — crafted with love by Kerala's finest homepreneurs.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <Link
+              to="/shop"
+              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-10 py-4 bg-[#1a6b2f] text-white text-[13px] font-bold uppercase tracking-widest rounded-full hover:bg-[#145a27] transition-all duration-300 shadow-xl shadow-green-900/30 hover:-translate-y-0.5 hover:shadow-2xl"
+            >
+              Shop Now <ArrowRight size={15} />
+            </Link>
+            <Link
+              to="/shop"
+              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-10 py-4 border-2 border-white/30 text-white text-[13px] font-bold uppercase tracking-widest rounded-full backdrop-blur-sm hover:bg-white/10 hover:border-white/60 transition-all duration-300 hover:-translate-y-0.5"
+            >
+              Explore Categories
             </Link>
           </motion.div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-10 h-[1200px] md:h-[800px]">
-            {/* Large Bento Item */}
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-[2.5rem] shadow-2xl"
-            >
-              <img src={CATEGORIES[0].image} alt={CATEGORIES[0].name} className="w-full h-full object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-110" referrerPolicy="no-referrer" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-12">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <p className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-white/50 mb-4">Featured Category</p>
-                  <h3 className="text-4xl font-black text-white mb-8">{CATEGORIES[0].name}</h3>
-                  <Link to="/shop" className="inline-flex items-center gap-4 px-8 py-4 bg-[#FDCB58] text-on-background rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-2xl">
-                    Explore Collection <ArrowRight size={16} />
-                  </Link>
-                </motion.div>
-              </div>
-            </motion.div>
 
-            {/* Medium Bento Item */}
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="md:col-span-2 md:row-span-1 relative group overflow-hidden rounded-[2.5rem] shadow-xl"
-            >
-              <img src={CATEGORIES[1].image} alt={CATEGORIES[1].name} className="w-full h-full object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-110" referrerPolicy="no-referrer" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-12">
-                <h3 className="text-3xl font-black text-white mb-4">{CATEGORIES[1].name}</h3>
-                <Link to="/shop" className="text-white/60 text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-3 hover:text-white transition-colors group/link">
-                  Explore Collection 
-                  <span className="w-8 h-px bg-white/20 group-hover/link:w-12 group-hover/link:bg-white transition-all" />
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Small Bento Items */}
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="md:col-span-1 md:row-span-1 relative group overflow-hidden rounded-[2.5rem] shadow-lg"
-            >
-              <img src={CATEGORIES[2].image} alt={CATEGORIES[2].name} className="w-full h-full object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-110" referrerPolicy="no-referrer" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8">
-                <h3 className="text-2xl font-black text-white mb-3">{CATEGORIES[2].name}</h3>
-                <Link to="/shop" className="text-white/60 text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors">
-                  Explore <ArrowRight size={14} />
-                </Link>
-              </div>
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="md:col-span-1 md:row-span-1 relative group overflow-hidden rounded-[2.5rem] shadow-lg"
-            >
-              <img src={CATEGORIES[3].image} alt={CATEGORIES[3].name} className="w-full h-full object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-110" referrerPolicy="no-referrer" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8">
-                <h3 className="text-2xl font-black text-white mb-3">{CATEGORIES[3].name}</h3>
-                <Link to="/shop" className="text-white/60 text-[9px] font-bold uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors">
-                  Explore <ArrowRight size={14} />
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Clean Beauty Section */}
-      <section className="section-spacing px-6 md:px-12 max-w-7xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex items-center justify-between mb-6"
-        >
-          <h2 className="text-2xl font-semibold text-gray-900">Clean beauty</h2>
-          <Link 
-            to="/shop" 
-            className="px-6 py-2 bg-[#FFD966] text-gray-900 font-medium rounded-full hover:scale-105 transition-transform text-sm"
+          {/* Trust badges */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2"
           >
-            see more
-          </Link>
-        </motion.div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {PRODUCTS.slice(4, 9).map((product, i) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              index={i} 
-              isActive={i === 1}
-              isRecentlyViewed={viewedIds.includes(product.id)}
+            {['🌿 100% Organic', '🏠 Homemade Quality', '🚀 Fast Delivery', '💬 WhatsApp Support'].map(b => (
+              <span key={b} className="text-[11px] font-semibold text-white/50 tracking-wide">{b}</span>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Slide dots */}
+        <div className="absolute bottom-7 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+          {HERO_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setSlideIndex(i)}
+              className={`rounded-full transition-all duration-500 ${
+                i === slideIndex
+                  ? 'w-6 h-1.5 bg-[#FFA500]'
+                  : 'w-1.5 h-1.5 bg-white/30 hover:bg-white/60'
+              }`}
             />
           ))}
         </div>
       </section>
 
-      {/* Recently Viewed Section */}
-      {recentlyViewed.length > 0 && (
-        <section className="section-spacing px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/10">
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center justify-between mb-12"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center">
-                <Clock size={16} className="text-primary" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-semibold text-gray-900">Recently Viewed</h2>
-                <p className="text-[10px] font-mono text-on-surface-variant/40 uppercase tracking-widest mt-1">Your browsing history</p>
-              </div>
-            </div>
-            <Link 
-              to="/shop" 
-              className="px-6 py-2 bg-surface-container text-on-surface font-medium rounded-full hover:bg-on-background hover:text-white transition-all text-sm"
-            >
-              Shop All
-            </Link>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {recentlyViewed.map((product, i) => (
-              <ProductCard 
-                key={`recent-${product.id}`} 
-                product={product} 
-                index={i} 
-                isRecentlyViewed={true}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      {/* ── Explore Our Products ───────────────────────────────────── */}
+      <section className="bg-[#F9F9F9] px-6 md:px-12 py-20 md:py-28">
+        <div className="max-w-7xl mx-auto">
 
-      {/* Hall of Classics */}
-      <section className="section-spacing bg-surface-container-low px-6 md:px-12 relative overflow-hidden">
-        {/* Abstract Background Shape */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] translate-x-1/2 -translate-y-1/2" />
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
-          >
-            <div className="max-w-xl">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="w-8 h-px bg-primary/40" />
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-primary">Heritage Pieces</span>
-              </div>
-              <h2 className="text-[clamp(2.5rem,5vw,4rem)] leading-[1.1] font-black tracking-tight text-on-background">Hall of Classics.</h2>
-              <p className="text-on-surface-variant mt-4 text-xl font-medium">Timeless beauty icons that have defined our brand and earned a permanent spot on your vanity.</p>
-            </div>
-            <Link to="/shop" className="group flex items-center gap-4 px-8 py-4 bg-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-on-background hover:text-white transition-all shadow-sm">
-              View All Classics <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {PRODUCTS.slice(0, 5).map((product, i) => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                index={i} 
-                isRecentlyViewed={viewedIds.includes(product.id)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="section-spacing px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {[
-            { icon: <Star size={28} />, title: "Clean Beauty", desc: "Formulated without harmful chemicals, focusing on pure, skin-loving ingredients." },
-            { icon: <Shield size={28} />, title: "Dermatologist Tested", desc: "Every product is rigorously tested for safety and efficacy on all skin types." },
-            { icon: <Truck size={28} />, title: "Global Shipping", desc: "Eco-friendly shipping to over 45 countries with real-time tracking." }
-          ].map((feature, i) => (
-            <motion.div 
-              key={feature.title}
-              initial={{ opacity: 0, y: 40 }}
+          {/* Section Header */}
+          <div className="text-center mb-14">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.8 }}
-              className="flex flex-col items-center text-center p-16 rounded-[2.5rem] bg-surface-container-lowest border border-outline-variant/5 hover:border-primary/20 hover:shadow-premium transition-all group relative overflow-hidden"
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="flex items-center justify-center gap-3 mb-3"
             >
-              <div className="w-20 h-20 bg-[#FDCB58]/10 rounded-[2rem] flex items-center justify-center text-on-background mb-10 group-hover:scale-110 group-hover:bg-[#FDCB58] transition-all duration-700 shadow-inner">
-                {feature.icon}
-              </div>
-              <h3 className="text-2xl font-black mb-4 tracking-tight">{feature.title}</h3>
-              <p className="text-on-surface-variant text-base leading-relaxed font-medium">{feature.desc}</p>
-              
-              {/* Decorative background number */}
-              <span className="absolute -bottom-4 -right-4 text-[12rem] font-black text-on-background/5 select-none pointer-events-none group-hover:text-on-background/10 transition-colors">
-                0{i + 1}
+              <span className="w-8 h-px bg-[#1a6b2f]/40" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-[#1a6b2f]">
+                Kerala Homepreneurs
               </span>
+              <span className="w-8 h-px bg-[#1a6b2f]/40" />
             </motion.div>
-          ))}
+
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight mb-3"
+            >
+              Explore Our <span className="font-light text-gray-400 italic">Products.</span>
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-gray-500 text-base font-light max-w-md mx-auto"
+            >
+              Discover handmade and natural products from Kerala homepreneurs
+            </motion.p>
+          </div>
+
+          {/* Floating keyframe injected via style tag */}
+          <style>{`
+            @keyframes floatImg {
+              0%, 100% { transform: translateY(0px) scale(1); }
+              50% { transform: translateY(-6px) scale(1.01); }
+            }
+            .product-float img {
+              animation: floatImg 5s ease-in-out infinite;
+            }
+            .product-float:hover img {
+              animation: none;
+              transform: scale(1.08);
+            }
+          `}</style>
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+            {[
+              {
+                name: "Idiyirachi Masala",
+                price: "₹180",
+                tag: "Best Seller",
+                tagColor: "#dc2626",
+                image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=600",
+              },
+              {
+                name: "Homemade Pickle",
+                price: "₹220",
+                tag: "Homemade",
+                tagColor: "#d97706",
+                image: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&q=80&w=600",
+              },
+              {
+                name: "Banana Chips",
+                price: "₹150",
+                tag: "Fresh",
+                tagColor: "#16a34a",
+                image: "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?auto=format&fit=crop&q=80&w=600",
+              },
+              {
+                name: "Herbal Hair Oil",
+                price: "₹250",
+                tag: "Natural",
+                tagColor: "#16a34a",
+                image: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=600",
+              },
+              {
+                name: "Handmade Soap",
+                price: "₹120",
+                tag: "Organic",
+                tagColor: "#16a34a",
+                image: "https://images.unsplash.com/photo-1600857544200-b2f468e4e8d5?auto=format&fit=crop&q=80&w=600",
+              },
+              {
+                name: "Cotton Kurti",
+                price: "₹799",
+                tag: "Trending",
+                tagColor: "#7c3aed",
+                image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600",
+              },
+              {
+                name: "Jewellery Set",
+                price: "₹499",
+                tag: "Handmade",
+                tagColor: "#b45309",
+                image: "https://images.unsplash.com/photo-1601821765780-754fa98637c1?auto=format&fit=crop&q=80&w=600",
+              },
+              {
+                name: "Gift Hamper",
+                price: "₹999",
+                tag: "Premium",
+                tagColor: "#1a6b2f",
+                image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=600",
+              },
+            ].map((product, i) => {
+              const waMsg = encodeURIComponent(
+                `Hello, I want to order:\nProduct: ${product.name}\nPrice: ${product.price}\nQuantity: 1\n\nPlease share more details.`
+              );
+              return (
+                <motion.div
+                  key={product.name}
+                  initial={{ opacity: 0, y: 30, scale: 0.94 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                  className="product-float group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+                >
+                  {/* Image container */}
+                  <div className="relative aspect-square overflow-hidden bg-gray-50">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-in-out"
+                      referrerPolicy="no-referrer"
+                    />
+
+                    {/* Dark overlay on hover */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 ease-in-out" />
+
+                    {/* Tag badge */}
+                    <span
+                      className="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider text-white px-2.5 py-1 rounded-full shadow-sm z-10"
+                      style={{ backgroundColor: product.tagColor }}
+                    >
+                      {product.tag}
+                    </span>
+
+                    {/* WhatsApp button — slides up on hover */}
+                    <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out p-3 z-10">
+                      <a
+                        href={`https://wa.me/919400000000?text=${waMsg}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-1.5 w-full py-2.5 bg-[#25D366] text-white text-[11px] font-bold rounded-xl hover:bg-[#20b958] transition-colors duration-200"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 shrink-0">
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                        Order on WhatsApp
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Info */}
+                  <div className="p-4">
+                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1">{product.name}</h3>
+                    <p className="text-base font-bold text-[#1a6b2f]">{product.price}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* View All button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-center mt-12"
+          >
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-2 px-9 py-3.5 border-2 border-[#1a6b2f] text-[#1a6b2f] text-xs font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#1a6b2f] hover:text-white transition-all duration-300"
+            >
+              View All Products <ArrowRight size={14} />
+            </Link>
+          </motion.div>
+
         </div>
       </section>
 
-      <QuickViewModal 
-        productId={quickViewId} 
-        onClose={() => setQuickViewId(null)} 
+      {/* ── Featured Products ─────────────────────────────────── */}
+      <section className="bg-white px-6 md:px-12 py-20 md:py-28">
+        <div className="max-w-7xl mx-auto">
+
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center mb-14"
+          >
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <span className="w-8 h-px bg-[#1a6b2f]/40" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-[#1a6b2f]">
+                Handpicked
+              </span>
+              <span className="w-8 h-px bg-[#1a6b2f]/40" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight mb-3">
+              Featured <span className="font-light text-gray-400 italic">Products.</span>
+            </h2>
+            <p className="text-gray-500 text-base font-light">
+              Handpicked from Kerala Homepreneurs
+            </p>
+          </motion.div>
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+            {[
+              {
+                name: "Idiyirachi Masala",
+                category: "Healthy Kitchen",
+                price: "₹180",
+                image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=600",
+                badge: "Best Seller",
+                badgeColor: "#dc2626",
+              },
+              {
+                name: "Homemade Mango Pickle",
+                category: "Healthy Kitchen",
+                price: "₹220",
+                image: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&q=80&w=600",
+                badge: "Homemade",
+                badgeColor: "#d97706",
+              },
+              {
+                name: "Kerala Banana Chips",
+                category: "Healthy Kitchen",
+                price: "₹150",
+                image: "https://images.unsplash.com/photo-1621939514649-280e2ee25f60?auto=format&fit=crop&q=80&w=600",
+                badge: "Fresh",
+                badgeColor: "#16a34a",
+              },
+              {
+                name: "Herbal Hair Oil",
+                category: "Natural Care Zone",
+                price: "₹250",
+                image: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=600",
+                badge: "Natural",
+                badgeColor: "#16a34a",
+              },
+              {
+                name: "Handmade Soap Pack",
+                category: "Natural Care Zone",
+                price: "₹120",
+                image: "https://images.unsplash.com/photo-1600857544200-b2f468e4e8d5?auto=format&fit=crop&q=80&w=600",
+                badge: "Organic",
+                badgeColor: "#16a34a",
+              },
+              {
+                name: "Cotton Kurti",
+                category: "Fashion Street",
+                price: "₹799",
+                image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600",
+                badge: "Trending",
+                badgeColor: "#7c3aed",
+              },
+              {
+                name: "Handmade Jewellery Set",
+                category: "Fashion Street",
+                price: "₹499",
+                image: "https://images.unsplash.com/photo-1601821765780-754fa98637c1?auto=format&fit=crop&q=80&w=600",
+                badge: "Handcrafted",
+                badgeColor: "#b45309",
+              },
+              {
+                name: "Gift Hamper Box",
+                category: "Gift Corner",
+                price: "₹999",
+                image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=600",
+                badge: "Premium",
+                badgeColor: "#1a6b2f",
+              },
+            ].map((product, i) => {
+              const waMsg = encodeURIComponent(
+                `Hello, I want to order:\nProduct: ${product.name}\nPrice: ${product.price}\nQuantity: 1\n\nPlease share more details.`
+              );
+              return (
+                <motion.div
+                  key={product.name}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.6, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                  className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+                >
+                  {/* Image */}
+                  <div className="relative aspect-square overflow-hidden bg-gray-50">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      referrerPolicy="no-referrer"
+                    />
+                    {/* Badge */}
+                    <span
+                      className="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm text-white"
+                      style={{ backgroundColor: product.badgeColor }}
+                    >
+                      {product.badge}
+                    </span>
+                  </div>
+
+                  {/* Info */}
+                  <div className="p-4">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-1">
+                      {product.category}
+                    </p>
+                    <h3 className="text-sm font-bold text-gray-900 leading-snug mb-1.5">
+                      {product.name}
+                    </h3>
+                    <p className="text-lg font-bold text-[#1a6b2f] mb-3">{product.price}</p>
+
+                    {/* WhatsApp Button */}
+                    <a
+                      href={`https://wa.me/919400000000?text=${waMsg}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-1.5 w-full py-2.5 bg-[#25D366] text-white text-[11px] font-bold rounded-xl hover:bg-[#20b958] active:scale-95 transition-all duration-200"
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 shrink-0">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                      </svg>
+                      Order on WhatsApp
+                    </a>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* View All link */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-center mt-12"
+          >
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-[#1a6b2f] text-[#1a6b2f] text-xs font-bold uppercase tracking-[0.2em] rounded-full hover:bg-[#1a6b2f] hover:text-white transition-all duration-300"
+            >
+              View All Products <ArrowRight size={14} />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Trust / Why Choose Us ─────────────────────────────── */}
+      <section className="bg-[#F4FAF6] px-6 md:px-12 py-20 md:py-24">
+        <div className="max-w-6xl mx-auto">
+
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              Why Shop with <span className="text-[#1a6b2f]">Mallu's Mart?</span>
+            </h2>
+          </motion.div>
+
+          {/* Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                icon: "🏠",
+                title: "100% Homemade Products",
+                desc: "Every item is crafted at home by real Kerala sellers — no factories, no middlemen.",
+              },
+              {
+                icon: "🌴",
+                title: "Kerala Local Sellers",
+                desc: "Supporting local families and homepreneurs from every corner of Kerala.",
+              },
+              {
+                icon: "🌿",
+                title: "Natural & Safe Ingredients",
+                desc: "Chemical-free, trusted ingredients that are safe for your family.",
+              },
+              {
+                icon: "💬",
+                title: "Direct WhatsApp Ordering",
+                desc: "Order directly from sellers in one tap. No app, no login required.",
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                className="bg-white rounded-2xl p-7 text-center border border-[#1a6b2f]/8 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+              >
+                <div className="text-5xl mb-4">{item.icon}</div>
+                <h3 className="text-[15px] font-bold text-gray-900 mb-2 leading-snug">{item.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Final WhatsApp CTA ────────────────────────────────── */}
+      <section
+        className="cta-wrapper relative px-6 md:px-12 overflow-hidden flex items-center"
+        style={{
+          height: "52vh",
+          background: "radial-gradient(ellipse at 50% 0%, #1a4d2a 0%, #0d2b12 55%, #071a0b 100%)",
+        }}
+      >
+        {/* Subtle top glow line */}
+        <div
+          className="absolute inset-x-0 top-0 h-px opacity-20"
+          style={{ background: "linear-gradient(90deg, transparent, #25D366, transparent)" }}
+        />
+
+        {/* Glow + responsive height */}
+        <style>{`
+          @keyframes waGlow {
+            0%, 100% { box-shadow: 0 0 20px 4px rgba(37,211,102,0.25), 0 4px 24px rgba(0,0,0,0.4); }
+            50%       { box-shadow: 0 0 36px 12px rgba(37,211,102,0.45), 0 4px 32px rgba(0,0,0,0.4); }
+          }
+          .wa-glow { animation: waGlow 2.6s ease-in-out infinite; }
+          @media (min-width: 768px) {
+            .cta-wrapper { height: 62vh; }
+          }
+        `}</style>
+
+        {/* Content — shifted above center with padding-top bias */}
+        <div className="w-full max-w-2xl mx-auto text-center relative z-10 -mt-6">
+
+          {/* Heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.1] mb-2"
+          >
+            Start Shopping from<br />
+            <span className="text-[#FFA500]">Kerala's Best Homepreneurs</span>
+          </motion.h2>
+
+          {/* Subheading */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.12 }}
+            className="text-white/50 text-sm md:text-base font-light mb-6"
+          >
+            Order authentic homemade products directly via WhatsApp
+          </motion.p>
+
+          {/* Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.22 }}
+          >
+            <a
+              href="https://wa.me/919400000000?text=Hi%2C%20I%20want%20to%20shop%20from%20Mallu's%20Mart!"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wa-glow inline-flex items-center gap-3 px-10 py-4 bg-[#25D366] text-white text-sm font-bold uppercase tracking-widest rounded-full hover:bg-[#20b958] hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+              Order on WhatsApp
+            </a>
+          </motion.div>
+
+          {/* Trust line */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="mt-4 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/20"
+          >
+            100% Homemade &nbsp;•&nbsp; No Hidden Charges &nbsp;•&nbsp; Direct from Sellers
+          </motion.p>
+
+        </div>
+      </section>
+
+      <QuickViewModal
+        productId={quickViewId}
+        onClose={() => setQuickViewId(null)}
       />
     </main>
   );

@@ -4,6 +4,7 @@ import { Trash2, Minus, Plus, ShieldCheck, Truck, ArrowRight, X, Bookmark, Shopp
 import { PRODUCTS } from '../constants';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
+import Logo from '../components/Logo';
 
 export default function Cart() {
   const { items, savedItems, updateQuantity, removeItem, saveForLater, moveToCart, removeSavedItem } = useCartStore();
@@ -330,9 +331,8 @@ export default function Cart() {
                         <motion.div 
                           animate={{ y: [0, -12, 0] }}
                           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                          className="text-[#FDCB58]"
                         >
-                          <ShoppingBag size={72} strokeWidth={1} />
+                          <Logo size="64px" />
                         </motion.div>
                         
                         <motion.div 
@@ -525,6 +525,9 @@ export default function Cart() {
               className="relative w-full max-w-5xl bg-white rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col lg:flex-row max-h-[90vh]"
             >
               <div className="lg:w-[40%] bg-surface-container-low p-12 overflow-y-auto no-scrollbar border-r border-outline-variant/10">
+                <div className="mb-12">
+                  <Logo size="40px" />
+                </div>
                 <h3 className="text-3xl font-serif italic mb-10">Order <span className="text-primary not-italic font-headline font-light">Summary.</span></h3>
                 <div className="space-y-8 mb-10">
                   {items.map(item => (

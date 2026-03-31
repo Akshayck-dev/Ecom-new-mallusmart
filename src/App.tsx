@@ -35,10 +35,13 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        initial={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
+        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+        exit={{ opacity: 0, scale: 1.02, filter: 'blur(10px)' }}
+        transition={{ 
+          duration: 0.6, 
+          ease: [0.16, 1, 0.3, 1] 
+        }}
         className="flex-grow"
       >
         {children}

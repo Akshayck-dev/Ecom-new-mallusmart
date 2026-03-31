@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useSpring } from 'motion/react';
+import { CartDrawer } from './CartDrawer';
+import { SearchModal } from './SearchModal';
 
 export default function GlobalUI() {
   const { scrollYProgress } = useScroll();
@@ -67,6 +69,14 @@ export default function GlobalUI() {
           }}
           transition={{ type: 'spring', stiffness: 500, damping: 28, mass: 0.2 }}
         />
+      </div>
+
+      <CartDrawer />
+      <SearchModal />
+
+      {/* Grain Overlay */}
+      <div className="fixed inset-0 pointer-events-none z-[9998] opacity-[0.03] contrast-150 brightness-100">
+        <div className="absolute inset-0 bg-repeat bg-[url('https://grainy-gradients.vercel.app/noise.svg')] animate-grain" />
       </div>
     </>
   );

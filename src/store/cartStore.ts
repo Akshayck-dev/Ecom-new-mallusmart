@@ -14,6 +14,9 @@ interface CartStore {
   isBouncing: boolean;
   setCartIconRef: (ref: React.RefObject<HTMLDivElement>) => void;
   triggerBounce: () => void;
+  isDrawerOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
   addItem: (product: Product) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -32,6 +35,9 @@ export const useCartStore = create<CartStore>()(
       savedItems: [],
       cartIconRef: null,
       isBouncing: false,
+      isDrawerOpen: false,
+      openDrawer: () => set({ isDrawerOpen: true }),
+      closeDrawer: () => set({ isDrawerOpen: false }),
       setCartIconRef: (ref) => set({ cartIconRef: ref }),
       triggerBounce: () => {
         set({ isBouncing: true });
@@ -52,6 +58,9 @@ export const useCartStore = create<CartStore>()(
         } else {
           set({ items: [...currentItems, { ...product, quantity: 1 }] });
         }
+        
+        // Auto open drawer when adding item
+        get().openDrawer();
       },
       removeItem: (productId) => {
         set({
