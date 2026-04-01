@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Product } from '../types';
 import React from 'react';
+import { ShoppingBag } from 'lucide-react';
 
 interface CartItem extends Product {
   quantity: number;
@@ -17,7 +18,7 @@ interface CartStore {
   isDrawerOpen: boolean;
   openDrawer: () => void;
   closeDrawer: () => void;
-  addItem: (product: Product) => void;
+  addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   saveForLater: (productId: string) => void;
@@ -43,25 +44,25 @@ export const useCartStore = create<CartStore>()(
         set({ isBouncing: true });
         setTimeout(() => set({ isBouncing: false }), 500);
       },
-      addItem: (product) => {
-        const currentItems = get().items;
-        const existingItem = currentItems.find((item) => item.id === product.id);
+  addItem: (product, quantity = 1) => {
+    const currentItems = get().items;
+    const existingItem = currentItems.find((item) => item.id === product.id);
 
-        if (existingItem) {
-          set({
-            items: currentItems.map((item) =>
-              item.id === product.id
-                ? { ...item, quantity: item.quantity + 1 }
-                : item
-            ),
-          });
-        } else {
-          set({ items: [...currentItems, { ...product, quantity: 1 }] });
-        }
-        
-        // Auto open drawer when adding item
-        get().openDrawer();
-      },
+    if (existingItem) {
+      set({
+        items: currentItems.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + (quantity || 1) }
+            : item
+        ),
+      });
+    } else {
+      set({ items: [...currentItems, { ...product, quantity: quantity || 1 }] });
+    }
+    
+    // Auto open drawer when adding item
+    get().openDrawer();
+  },
       removeItem: (productId) => {
         set({
           items: get().items.filter((item) => item.id !== productId),

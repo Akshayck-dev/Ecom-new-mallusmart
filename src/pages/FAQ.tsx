@@ -29,29 +29,29 @@ export default function FAQ() {
   ];
 
   return (
-    <main className="pt-32 pb-20 px-6 md:px-12 max-w-4xl mx-auto">
+    <main className="pt-8 pb-20 px-6 md:px-12 max-w-4xl mx-auto bg-brand-offwhite min-h-screen">
       <header className="text-center mb-20">
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-primary font-bold tracking-[0.2em] uppercase text-xs mb-6"
+          className="text-brand-green font-bold tracking-[0.3em] uppercase text-[10px] mb-6"
         >
-          Support Center
+          Concierge Support
         </motion.p>
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-display-md mb-8"
+          className="text-4xl md:text-5xl font-bold mb-8 tracking-tighter text-brand-gray"
         >
-          How can we <span className="text-primary">assist you</span> today?
+          How can we <span className="text-brand-green italic font-serif">assist you?</span>
         </motion.h1>
         <div className="relative max-w-lg mx-auto">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" size={18} />
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-brand-green/40" size={18} />
           <input 
             type="text" 
-            placeholder="Search for topics, shipping, returns..." 
-            className="w-full bg-surface-container-low border-none rounded-full py-4 pl-12 pr-6 text-sm focus:ring-1 focus:ring-primary/20 shadow-sm"
+            placeholder="Search our heritage knowledge base..." 
+            className="w-full bg-white border border-brand-green-100/20 rounded-2xl py-5 pl-14 pr-6 text-sm focus:outline-none focus:ring-4 focus:ring-brand-green/5 shadow-premium transition-all"
           />
         </div>
       </header>
@@ -67,11 +67,11 @@ export default function FAQ() {
           >
             <button 
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
-              className="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-surface-container-lowest transition-colors"
+              className="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-brand-offwhite transition-colors group"
             >
-              <span className="font-bold text-on-surface">{faq.question}</span>
-              <div className={`transition-transform duration-300 ${openIndex === i ? 'rotate-180' : ''}`}>
-                <ChevronDown size={20} className="text-primary" />
+              <span className={`font-bold transition-colors ${openIndex === i ? 'text-brand-green' : 'text-brand-gray'}`}>{faq.question}</span>
+              <div className={`transition-all duration-300 ${openIndex === i ? 'rotate-180 text-brand-gold' : 'text-brand-green'}`}>
+                <ChevronDown size={20} />
               </div>
             </button>
             <AnimatePresence>
@@ -82,7 +82,7 @@ export default function FAQ() {
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                 >
-                  <div className="px-8 pb-8 text-on-surface-variant text-sm leading-relaxed">
+                  <div className="px-8 pb-8 text-gray-500 text-sm leading-relaxed border-t border-brand-green-100/10 pt-4">
                     {faq.answer}
                   </div>
                 </motion.div>
@@ -92,14 +92,15 @@ export default function FAQ() {
         ))}
       </div>
 
-      <section className="mt-32 bg-primary-container p-12 rounded-3xl text-center">
-        <h3 className="text-2xl font-bold mb-4">Still have questions?</h3>
-        <p className="text-on-primary-container mb-8">Our curation team is available 24/7 to assist with your inquiries.</p>
+      <section className="mt-32 bg-brand-green-deep p-12 rounded-[2.5rem] text-center shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-brand-gold/30" />
+        <h3 className="text-2xl font-bold mb-4 text-white">Still have questions?</h3>
+        <p className="text-white/60 mb-10 max-w-md mx-auto text-sm">Our world-class curation team is available 24/7 to assist with your heritage inquiries.</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="bg-primary text-white px-8 py-3 rounded-md font-bold shadow-lg hover:shadow-primary/20 transition-all">
+          <button className="bg-brand-green text-white px-10 py-4 rounded-2xl font-bold shadow-lg hover:bg-brand-green-light hover:-translate-y-1 transition-all uppercase text-[10px] tracking-widest">
             Contact Support
           </button>
-          <button className="bg-white text-primary px-8 py-3 rounded-md font-bold shadow-sm hover:bg-surface-container transition-all">
+          <button className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-2xl font-bold hover:bg-white/20 transition-all uppercase text-[10px] tracking-widest">
             Live Chat
           </button>
         </div>

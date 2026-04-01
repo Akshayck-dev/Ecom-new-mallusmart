@@ -5,7 +5,7 @@ import Logo from '../components/Logo';
 
 export default function About() {
   return (
-    <main className="pt-32 pb-20">
+    <main className="pt-8 pb-20 bg-brand-offwhite min-h-screen">
       {/* Hero */}
       <section className="px-6 md:px-12 max-w-7xl mx-auto mb-32">
         <div className="text-center max-w-3xl mx-auto">
@@ -19,17 +19,17 @@ export default function About() {
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-primary font-bold tracking-[0.2em] uppercase text-xs mb-6"
+            className="text-brand-green font-bold tracking-[0.3em] uppercase text-[10px] mb-6"
           >
-            Our Story
+            The Mallu Smart Story
           </motion.p>
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-display-lg mb-8"
+            className="text-display-lg mb-8 text-brand-gray"
           >
-            Beauty as a <span className="italic font-serif">Fine Art.</span>
+            Artisanship as a <span className="italic font-serif text-brand-gold">Fine Art.</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -43,7 +43,7 @@ export default function About() {
       </section>
 
       {/* Philosophy */}
-      <section className="section-spacing bg-surface-container-low px-6 md:px-12">
+      <section className="section-spacing bg-white px-6 md:px-12 border-y border-brand-green-100/20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
           <div className="rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center bg-white p-12">
             <motion.div 
@@ -53,34 +53,34 @@ export default function About() {
               <Logo size="64px" />
             </motion.div>
           </div>
-          <div className="space-y-8">
-            <h2 className="text-display-md">Our Philosophy</h2>
-            <div className="space-y-6">
+          <div className="space-y-10">
+            <h2 className="text-display-md text-brand-gray">Our Philosophy</h2>
+            <div className="space-y-8">
               <div className="flex gap-6">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm flex-shrink-0">
-                  <Heart size={20} />
+                <div className="w-14 h-14 bg-brand-offwhite rounded-2xl flex items-center justify-center text-brand-green shadow-premium flex-shrink-0 border border-brand-green-100/20">
+                  <Heart size={22} />
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2">Clean Ingredients</h3>
-                  <p className="text-on-surface-variant text-sm leading-relaxed">Every item in our collection is chosen with purpose. We look for formulations that are safe, effective, and kind to your skin.</p>
+                  <h3 className="font-bold text-lg text-brand-gray mb-2">Kerala Heritage</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">Every item is sourced directly from homepreneurs who preserve the ancient traditions of Kerala in every creation.</p>
                 </div>
               </div>
               <div className="flex gap-6">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm flex-shrink-0">
-                  <Globe size={20} />
+                <div className="w-14 h-14 bg-brand-offwhite rounded-2xl flex items-center justify-center text-brand-green shadow-premium flex-shrink-0 border border-brand-green-100/20">
+                  <Globe size={22} />
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2">Ethical Sourcing</h3>
-                  <p className="text-on-surface-variant text-sm leading-relaxed">We partner with labs and artisans who share our commitment to sustainability and ethical practices.</p>
+                  <h3 className="font-bold text-lg text-brand-gray mb-2">Zero Middlemen</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">Our model empowers local creators by removing standard retail hurdles, ensuring fair value for both artisan and customer.</p>
                 </div>
               </div>
               <div className="flex gap-6">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm flex-shrink-0">
-                  <Award size={20} />
+                <div className="w-14 h-14 bg-brand-offwhite rounded-2xl flex items-center justify-center text-brand-green shadow-premium flex-shrink-0 border border-brand-green-100/20">
+                  <Award size={22} />
                 </div>
                 <div>
-                  <h3 className="font-bold mb-2">Uncompromising Quality</h3>
-                  <p className="text-on-surface-variant text-sm leading-relaxed">Quality isn't a luxury; it's a standard. We verify every material and every stitch before it reaches your hands.</p>
+                  <h3 className="font-bold text-lg text-brand-gray mb-2">Institutional Quality</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">Quality is our standard. We personally verify the origin and craftsmanship of every single piece in our collection.</p>
                 </div>
               </div>
             </div>
@@ -96,18 +96,18 @@ export default function About() {
             We are proud to support over 150 independent creators and small-scale manufacturers who share our vision for a more thoughtful world.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div className="bg-surface-container-low p-10 rounded-2xl text-center">
-            <div className="text-4xl font-black text-primary mb-4">150+</div>
-            <p className="font-bold text-sm uppercase tracking-widest">Artisans Supported</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-white p-12 rounded-[2.5rem] text-center shadow-premium border border-brand-green-100/10">
+            <div className="text-5xl font-bold text-brand-green mb-4 tracking-tighter">150+</div>
+            <p className="font-bold text-[10px] text-brand-gold uppercase tracking-[0.2em]">Homepreneurs Supported</p>
           </div>
-          <div className="bg-surface-container-low p-10 rounded-2xl text-center">
-            <div className="text-4xl font-black text-primary mb-4">24</div>
-            <p className="font-bold text-sm uppercase tracking-widest">Countries Reached</p>
+          <div className="bg-white p-12 rounded-[2.5rem] text-center shadow-premium border border-brand-green-100/10">
+            <div className="text-5xl font-bold text-brand-green mb-4 tracking-tighter">24</div>
+            <p className="font-bold text-[10px] text-brand-gold uppercase tracking-[0.2em]">Districts Reached</p>
           </div>
-          <div className="bg-surface-container-low p-10 rounded-2xl text-center">
-            <div className="text-4xl font-black text-primary mb-4">10k+</div>
-            <p className="font-bold text-sm uppercase tracking-widest">Curated Deliveries</p>
+          <div className="bg-white p-12 rounded-[2.5rem] text-center shadow-premium border border-brand-green-100/10">
+            <div className="text-5xl font-bold text-brand-green mb-4 tracking-tighter">10k+</div>
+            <p className="font-bold text-[10px] text-brand-gold uppercase tracking-[0.2em]">Authentic Deliveries</p>
           </div>
         </div>
       </section>

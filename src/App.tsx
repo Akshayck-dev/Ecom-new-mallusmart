@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
@@ -11,7 +6,6 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
 import About from './pages/About';
 import FAQ from './pages/FAQ';
@@ -56,14 +50,13 @@ export default function App() {
       <ScrollToTop />
       <GlobalUI />
       <Toaster position="bottom-right" richColors closeButton />
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col pt-16 md:pt-20">
         <Navbar />
         <PageWrapper>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/about" element={<About />} />
             <Route path="/faq" element={<FAQ />} />

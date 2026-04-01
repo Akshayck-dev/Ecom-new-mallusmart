@@ -3,78 +3,83 @@ import { Product } from "./types";
 export const PRODUCTS: Product[] = [
   {
     id: "1",
-    name: "Radiance Vitamin C Serum",
-    price: 48.0,
-    category: "Cosmetics",
+    name: "Pure Virgin Coconut Oil",
+    price: 450.0,
+    category: "Natural Care",
     parentCategory: "Natural Care Zone",
-    description: "A potent blend of 15% Vitamin C and Ferulic Acid to brighten skin tone and reduce signs of aging.",
+    description: "Cold-pressed from fresh Kerala coconuts. 100% natural, chemical-free, and nutrient-rich.",
     image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=800",
-    tag: "BESTSELLER",
-    material: "Liquid",
+    tag: "KERALA SPECIAL",
+    material: "Oil",
     color: "Clear",
-    artisan: "Glow Lab",
+    artisan: "Kerala Roots",
     rating: 4.9,
     inStock: true,
-    images: [
-      "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1598440499115-246249042820?auto=format&fit=crop&q=80&w=800"
-    ],
-    skinType: ["All", "Dry", "Normal"],
-    concern: ["Brightening", "Anti-Aging"]
+    images: ["https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=800"]
   },
   {
     id: "2",
-    name: "Tailored Linen Blazer",
-    price: 245.0,
-    category: "Dress",
+    name: "Hand-Woven Kasavu Saree",
+    price: 3500.0,
+    category: "Traditional",
     parentCategory: "Fashion Street",
-    description: "Expertly tailored from premium European linen. A timeless piece for any wardrobe.",
-    image: "https://images.unsplash.com/photo-1591047139829-d91aec36adad?auto=format&fit=crop&q=80&w=800",
-    tag: "PREMIUM",
-    material: "Linen",
-    color: "Oatmeal",
-    artisan: "The Atelier",
-    rating: 4.9,
+    description: "Authentic Balaramapuram Kasavu saree with intricate gold zari work and pure cotton weave.",
+    image: "https://images.unsplash.com/photo-1610030469668-935142b96fe4?auto=format&fit=crop&q=80&w=800",
+    tag: "HANDMADE",
+    material: "Cotton",
+    color: "Cream & Gold",
+    artisan: "The Weaver Colony",
+    rating: 5.0,
     inStock: true,
-    images: [
-      "https://images.unsplash.com/photo-1591047139829-d91aec36adad?auto=format&fit=crop&q=80&w=800"
-    ]
+    images: ["https://images.unsplash.com/photo-1610030469668-935142b96fe4?auto=format&fit=crop&q=80&w=800"]
   },
   {
     id: "3",
-    name: "Artisan Gold Necklace",
-    price: 185.0,
-    category: "Jewellery",
-    parentCategory: "Fashion Street",
-    description: "Hand-forged 18k gold necklace with a minimal geometric pendant.",
+    name: "Traditional Brass Nilavilakku",
+    price: 1850.0,
+    category: "Home Decor",
+    parentCategory: "Gift Corner",
+    description: "Masterfully hand-cast brass lamp, a symbol of heritage and tradition in every Kerala home.",
     image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800",
-    tag: "ETHICAL",
-    material: "Gold",
+    tag: "BEST SELLER",
+    material: "Brass",
     color: "Gold",
-    artisan: "Aurelius",
+    artisan: "Metals of Mannar",
     rating: 5.0,
     inStock: true,
-    images: [
-      "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800"
-    ]
+    images: ["https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800"]
   },
   {
     id: "4",
-    name: "Organic Himalayan Honey",
-    price: 32.0,
-    category: "Food Products",
+    name: "Wild Forest Honey",
+    price: 650.0,
+    category: "Food",
     parentCategory: "Healthy Kitchen",
-    description: "Pure, unprocessed honey collected from the wild flowers of the Himalayas.",
+    description: "Raw, unprocessed honey sourced from the deep forests of the Western Ghats.",
     image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=800",
     tag: "PURE",
     material: "Honey",
-    color: "Amber",
-    artisan: "Mountain Harvest",
+    color: "Deep Amber",
+    artisan: "Highrange Harvesters",
     rating: 4.9,
     inStock: true,
-    images: [
-      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=800"
-    ]
+    images: ["https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=800"]
+  },
+  {
+    id: "16",
+    name: "Home-Style Banana Chips",
+    price: 240.0,
+    category: "Snacks",
+    parentCategory: "Healthy Kitchen",
+    description: "Crispy Nendran banana chips fried in pure coconut oil. The ultimate taste of Kerala.",
+    image: "https://images.unsplash.com/photo-1590080875515-8a03b1447d9c?auto=format&fit=crop&q=80&w=800",
+    tag: "KERALA SPECIAL",
+    material: "Banana",
+    color: "Yellow",
+    artisan: "Mums Kitchen",
+    rating: 5.0,
+    inStock: true,
+    images: ["https://images.unsplash.com/photo-1590080875515-8a03b1447d9c?auto=format&fit=crop&q=80&w=800"]
   },
   {
     id: "5",
@@ -83,7 +88,7 @@ export const PRODUCTS: Product[] = [
     category: "Yoga",
     parentCategory: "Service Zone",
     description: "Eco-friendly, non-slip cork yoga mat for the ultimate grounding experience.",
-    image: "https://images.unsplash.com/photo-1592432676556-28403f27bc60?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=800",
     tag: "ECO",
     material: "Cork",
     color: "Natural",
@@ -91,7 +96,7 @@ export const PRODUCTS: Product[] = [
     rating: 4.8,
     inStock: true,
     images: [
-      "https://images.unsplash.com/photo-1592432676556-28403f27bc60?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=800"
     ]
   },
   {
@@ -119,7 +124,7 @@ export const PRODUCTS: Product[] = [
     category: "Kids Zone",
     parentCategory: "Kids Zone",
     description: "Ultra-soft GOTS certified organic cotton set for newborns.",
-    image: "https://images.unsplash.com/photo-1522771935876-04975b600e16?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1555009393-f20bdb245c4d?auto=format&fit=crop&q=80&w=800",
     tag: "ORGANIC",
     material: "Cotton",
     color: "Soft White",
@@ -127,7 +132,7 @@ export const PRODUCTS: Product[] = [
     rating: 4.7,
     inStock: true,
     images: [
-      "https://images.unsplash.com/photo-1522771935876-04975b600e16?auto=format&fit=crop&q=80&w=800"
+      "https://images.unsplash.com/photo-1555009393-f20bdb245c4d?auto=format&fit=crop&q=80&w=800"
     ]
   },
   {
@@ -269,7 +274,7 @@ export const PRODUCTS: Product[] = [
     images: ["https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=800"]
   },
   {
-    id: "16",
+    id: "27",
     name: "Artisan Dark Chocolate",
     price: 18.0,
     category: "Food Products",
@@ -469,7 +474,7 @@ export const CATEGORIES = [
   },
   { 
     name: "Kids Zone", 
-    image: "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?auto=format&fit=crop&q=80&w=1000",
+    image: "https://images.unsplash.com/photo-1515488442463-5af462e499e9?auto=format&fit=crop&q=80&w=1000",
     subcategories: ["Toys", "Apparel"]
   },
   { 

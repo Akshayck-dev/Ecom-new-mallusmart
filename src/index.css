@@ -1,46 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Anton&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Anton&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-headline: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Cormorant Garamond", serif;
+  --font-headline: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant+Garamond", serif;
   --font-display: "Anton", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   
-  --color-primary: #0059c6;
-  --color-primary-dim: #004eaf;
-  --color-primary-container: #d9e2ff;
-  --color-on-primary-container: #004dae;
+  --color-primary: #166534;
+  --color-primary-dim: #14532d;
+  --color-primary-container: #dcfce7;
+  --color-on-primary-container: #166534;
   
-  --color-surface: #f9f9f9;
-  --color-surface-bright: #f9f9f9;
-  --color-surface-dim: #d3dbdd;
-  --color-surface-container: #ebeeef;
-  --color-surface-container-low: #f2f4f4;
+  --color-surface: #FAF9F6;
+  --color-surface-bright: #ffffff;
+  --color-surface-dim: #f3f4f6;
+  --color-surface-container: #f9fafb;
+  --color-surface-container-low: #f8fafc;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-high: #e4e9ea;
-  --color-surface-container-highest: #dde4e5;
+  --color-surface-container-high: #f1f5f9;
+  --color-surface-container-highest: #e2e8f0;
   
-  --color-on-surface: #2d3435;
-  --color-on-surface-variant: #596061;
-  --color-on-background: #2d3435;
+  --color-on-surface: #111111;
+  --color-on-surface-variant: #4b5563;
+  --color-on-background: #111111;
   
-  --color-brand-green: #2E4F39;
-  --color-brand-yellow: #FFD966;
-  --color-brand-offwhite: #F7F7F7;
-  --color-brand-gray: #333333;
+  --brand-green-50: #f0fdf4;
+  --brand-green-100: #dcfce7;
+  --brand-green-200: #bbf7d0;
+  --brand-green-300: #86efac;
+  --brand-green-400: #4ade80;
+  --brand-green-500: #1a6b2f;
+  --brand-green-600: #1a6b2f;
+  --brand-green-700: #15803d;
+  --brand-green-800: #166534;
+  --brand-green-900: #0d2b12;
+  --brand-green-deep: #064e3b;
+  --brand-green: #1a6b2f;
+  --brand-gold: #D4AF37;
+  --brand-gold-muted: #D4AF3740;
+  --brand-offwhite: #FAF9F6;
+  --brand-gray: #1F2937;
+  --color-whatsapp: #25D366;
   
-  --color-outline: #757c7d;
-  --color-outline-variant: #acb3b4;
+  --color-outline: #e5e7eb;
+  --color-outline-variant: #d1d5db;
   
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
   --radius-3xl: 2.5rem;
-  --radius-4xl: 3rem;
+  --radius-4xl: 4rem;
 
-  --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
-  --shadow-premium-hover: 0 30px 60px -12px rgba(0, 0, 0, 0.12);
+  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 4px 12px -5px rgba(0, 0, 0, 0.03);
+  --shadow-premium-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
 
   @keyframes grain {
     0%, 100% { transform:translate(0, 0) }
@@ -99,6 +112,24 @@
 
 .section-spacing {
   @apply py-20 md:py-32;
+}
+
+@layer components {
+  .btn-luxury {
+    @apply relative px-8 py-4 bg-brand-green text-white text-[10px] font-black uppercase tracking-luxury rounded-full overflow-hidden shadow-premium transition-all duration-500 hover:bg-brand-green-deep hover:shadow-2xl hover:scale-[1.02] active:scale-95;
+  }
+
+  .btn-luxury-secondary {
+    @apply relative px-8 py-4 bg-white text-brand-green border border-brand-green-100/40 text-[10px] font-black uppercase tracking-luxury rounded-full shadow-sm transition-all duration-500 hover:bg-brand-offwhite hover:shadow-md hover:scale-[1.02] active:scale-95;
+  }
+
+  .card-luxury {
+    @apply bg-white rounded-[2.5rem] shadow-premium border border-brand-green-100/10 overflow-hidden transition-all duration-700 hover:shadow-premium-hover;
+  }
+
+  .input-luxury {
+    @apply w-full bg-brand-offwhite border-2 border-transparent rounded-full px-8 py-5 text-sm font-bold text-brand-gray focus:outline-none focus:border-brand-green/10 focus:bg-white transition-all duration-300 placeholder:text-gray-300;
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {

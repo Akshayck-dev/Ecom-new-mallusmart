@@ -1,272 +1,211 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Search, Menu, X, Heart, MessageCircle, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
-import { useCartStore } from '../store/cartStore';
+import { Search, Menu, X, Heart, ShoppingBag, MessageCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useWishlistStore } from '../store/wishlistStore';
+import { useCartStore } from '../store/cartStore';
 import { useSearchStore } from '../store/searchStore';
-import logo from '../assets/logo.png';
+import Logo from './Logo';
 
-const WHATSAPP_NUMBER = '919400000000'; // Replace with real number
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%2C%20I%20want%20to%20place%20an%20order%20from%20Mallu's%20Mart!`;
+const WHATSAPP_NUMBER = '919562854999';
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Hi%2C%20I%20want%20to%20place%20an%20order%20from%20Mallu%20Smart!`;
 
 const navLinks = [
   { name: 'Home', path: '/' },
-  { name: 'Categories', path: '/shop', hasDropdown: false },
-  { name: 'Products', path: '/shop', hasDropdown: false },
-  { name: 'About Us', path: '/about', hasDropdown: false },
-  { name: 'Contact', path: '/contact', hasDropdown: false },
+  { name: 'Shop', path: '/shop' },
+  { name: 'About', path: '/about' },
+  { name: 'Contact', path: '/contact' },
 ];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  const totalItems = useCartStore((state) => state.totalItems());
   const openSearch = useSearchStore((state) => state.openSearch);
-  const openDrawer = useCartStore((state) => state.openDrawer);
-  const setCartIconRef = useCartStore((state) => state.setCartIconRef);
   const wishlistItems = useWishlistStore((state) => state.items);
-  const { scrollY } = useScroll();
-  const cartRef = useRef<HTMLDivElement>(null);
+  const cartItemsCount = useCartStore((state) => state.totalItems());
+  const openCartDrawer = useCartStore((state) => state.openDrawer);
 
   useEffect(() => {
-    if (cartRef.current) setCartIconRef(cartRef);
-  }, [setCartIconRef]);
-
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    const direction = latest > lastScrollY ? 'down' : 'up';
-    setIsScrolled(latest > 60);
-    if (latest < 60) {
-      setIsVisible(true);
-    } else if (direction === 'down' && latest > 200) {
-      setIsVisible(false);
-    } else if (direction === 'up') {
-      setIsVisible(true);
-    }
-    setLastScrollY(latest);
-  });
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
   };
 
-
   return (
     <>
-      <motion.header
-        initial={{ y: 0 }}
-        animate={{ y: isVisible ? 0 : -100 }}
-        transition={{ duration: 0.45, ease: [0.33, 1, 0.68, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.08)]"
+      <header 
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
+          scrolled ? 'bg-white/80 backdrop-blur-2xl border-b border-brand-green-100/10 py-3 shadow-lg shadow-black/5' : 'bg-transparent py-5'
+        }`}
       >
-        <div className="max-w-7xl mx-auto px-5 md:px-10">
-          <div className="flex items-center justify-between h-[90px] md:h-[110px]">
+        <div className="max-w-7xl mx-auto px-4 md:px-12 w-full flex items-center justify-between gap-4">
+          
+          {/* Logo */}
+          <Link to="/" className="flex-shrink-0 group relative z-10">
+            <Logo size={scrolled ? 38 : 52} className="transition-all duration-500" />
+          </Link>
 
-            {/* ── Logo ── */}
-            <Link to="/" className="flex-shrink-0 group">
-              <motion.img
-                src={logo}
-                alt="Mallu's Mart"
-                className="h-[80px] md:h-[90px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                style={{
-                  filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.12))',
-                }}
-                initial={{ opacity: 0, x: -16 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              />
-            </Link>
-
-            {/* ── Desktop Nav Links ── */}
-            <nav className="hidden md:flex items-center gap-8">
-              {navLinks.map((link, i) => (
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-12">
+            {navLinks.map((link) => {
+              const active = isActive(link.path);
+              return (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`relative group text-[13px] font-semibold tracking-wide transition-colors duration-300 ${isActive(link.path)
-                    ? 'text-[#1a6b2f]'
-                    : 'text-gray-700 hover:text-[#1a6b2f]'
-                    }`}
+                  className={`relative text-[10px] font-black uppercase tracking-[0.25em] transition-all duration-300 ${
+                    active ? 'text-brand-green' : 'text-brand-gray/50 hover:text-brand-green hover:tracking-[0.35em]'
+                  }`}
                 >
                   {link.name}
-                  {/* Animated underline */}
-                  <span
-                    className={`absolute -bottom-1 left-0 h-[2px] rounded-full bg-[#FFA500] transition-all duration-300 ${isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
-                      }`}
-                  />
+                  {active && (
+                    <motion.div
+                      layoutId="nav-pill"
+                      className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-brand-gold rounded-full shadow-gold"
+                    />
+                  )}
                 </Link>
-              ))}
-            </nav>
+              );
+            })}
+          </nav>
 
-            {/* ── Desktop Right Actions ── */}
-            <div className="hidden md:flex items-center gap-3">
-              {/* Search */}
-              <button
-                onClick={openSearch}
-                className="p-2 rounded-full transition-all duration-300 hover:bg-black/10 text-gray-600 hover:text-gray-900"
-              >
-                <Search size={18} />
-              </button>
+          {/* Action Icons */}
+          <div className="flex items-center gap-1 md:gap-4 relative z-10">
+            {/* Search */}
+            <button
+              onClick={openSearch}
+              className="p-2 text-brand-gray/60 hover:text-brand-green transition-all hover:scale-110 active:scale-95"
+            >
+              <Search size={18} />
+            </button>
 
-              {/* Wishlist */}
-              <Link
-                to="/wishlist"
-                className="relative p-2 rounded-full transition-all duration-300 hover:bg-black/10 text-gray-600 hover:text-gray-900"
-              >
-                <Heart size={18} />
-                {wishlistItems.length > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#FFA500] text-white text-[8px] font-black flex items-center justify-center rounded-full">
-                    {wishlistItems.length}
-                  </span>
-                )}
-              </Link>
+            {/* Wishlist */}
+            <Link
+              to="/wishlist"
+              className="hidden md:flex relative p-2 text-brand-gray/60 hover:text-brand-green transition-all hover:scale-110 active:scale-95"
+            >
+              <Heart size={18} />
+              {wishlistItems.length > 0 && (
+                <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-brand-gold text-white text-[7px] font-black flex items-center justify-center rounded-full border-2 border-white">
+                  {wishlistItems.length}
+                </span>
+              )}
+            </Link>
 
-              {/* Cart */}
-              <button
-                onClick={openDrawer}
-                className="relative p-2 rounded-full transition-all duration-300 hover:bg-black/10"
-              >
-                <div ref={cartRef} className="text-gray-600">
-                  <ShoppingBag size={18} />
-                </div>
-                {totalItems > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#1a6b2f] text-white text-[8px] font-black flex items-center justify-center rounded-full">
-                    {totalItems}
-                  </span>
-                )}
-              </button>
+            {/* Cart */}
+            <button
+              onClick={openCartDrawer}
+              className="relative p-2 text-brand-gray/60 hover:text-brand-green transition-all hover:scale-110 active:scale-95"
+            >
+              <ShoppingBag size={18} />
+              {cartItemsCount > 0 && (
+                <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-brand-green text-white text-[7px] font-black flex items-center justify-center rounded-full border-2 border-white">
+                  {cartItemsCount}
+                </span>
+              )}
+            </button>
 
-              {/* WhatsApp CTA */}
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ml-2 flex items-center gap-2 px-5 py-2.5 bg-[#25D366] text-white text-[12px] font-bold rounded-full hover:bg-[#20b958] transition-all duration-300 shadow-md shadow-green-500/20 hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-0.5"
-              >
-                <MessageCircle size={14} />
-                Order on WhatsApp
-              </a>
-            </div>
+            {/* WhatsApp CTA */}
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-2 px-6 py-3 bg-brand-green text-white text-[9px] font-black rounded-full hover:bg-brand-green-deep transition-all duration-500 shadow-xl shadow-green-900/10 hover:shadow-green-900/20 uppercase tracking-widest active:scale-95"
+            >
+              <MessageCircle size={14} className="animate-pulse" />
+              Order
+            </a>
 
-            {/* ── Mobile Right ── */}
-            <div className="flex md:hidden items-center gap-3">
-              <button
-                onClick={openSearch}
-                className="text-gray-700"
-              >
-                <Search size={20} />
-              </button>
-              <button
-                onClick={openDrawer}
-                className="relative text-gray-700"
-              >
-                <div ref={cartRef}><ShoppingBag size={20} /></div>
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#1a6b2f] text-white text-[8px] font-black flex items-center justify-center rounded-full">
-                    {totalItems}
-                  </span>
-                )}
-              </button>
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-1 text-gray-700"
-              >
-                {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-              </button>
-            </div>
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="md:hidden p-2 text-brand-gray/80 hover:text-brand-green transition-all active:scale-90"
+            >
+              <Menu size={22} />
+            </button>
           </div>
         </div>
-      </motion.header>
+      </header>
 
-      {/* ── Mobile Slide-In Menu ── */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <>
-            {/* Backdrop */}
+          <div className="fixed inset-0 z-[200] overflow-hidden md:hidden">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/40 z-[90] md:hidden"
+              className="fixed inset-0 bg-brand-gray/60 backdrop-blur-xl"
             />
 
-            {/* Slide Panel */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-              className="fixed right-0 top-0 bottom-0 w-[80vw] max-w-[340px] bg-white z-[100] flex flex-col md:hidden shadow-2xl"
+              transition={{ type: 'spring', damping: 30, stiffness: 300, mass: 0.8 }}
+              className="fixed right-0 top-0 bottom-0 w-[85vw] max-w-[400px] bg-white z-[210] flex flex-col shadow-2xl p-8 pt-10"
             >
-              {/* Panel Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                <img src={logo} alt="Mallu's Mart" className="h-10 w-auto object-contain" />
+              <div className="flex items-center justify-between mb-16">
+                <Logo size={42} />
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
+                  className="w-10 h-10 rounded-full bg-brand-offwhite flex items-center justify-center text-brand-gray hover:bg-brand-green/10 hover:text-brand-green transition-all"
                 >
-                  <X size={18} />
+                  <X size={20} />
                 </button>
               </div>
 
-              {/* Nav Links */}
-              <nav className="flex-1 p-6 space-y-1 overflow-y-auto">
+              <nav className="flex flex-col gap-6 flex-1">
                 {navLinks.map((link, i) => (
                   <motion.div
                     key={link.name}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.06 + 0.1 }}
+                    transition={{ delay: i * 0.05 + 0.2 }}
                   >
                     <Link
                       to={link.path}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center justify-between w-full px-4 py-3.5 rounded-xl text-[15px] font-semibold transition-colors ${isActive(link.path)
-                        ? 'bg-[#1a6b2f]/8 text-[#1a6b2f]'
-                        : 'text-gray-700 hover:bg-gray-50'
-                        }`}
+                      className={`text-4xl font-black uppercase tracking-tight transition-all active:translate-x-2 block ${
+                        isActive(link.path) ? 'text-brand-green' : 'text-brand-gray/10 hover:text-brand-gray/30'
+                      }`}
                     >
                       {link.name}
-                      {isActive(link.path) && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#1a6b2f]" />
-                      )}
                     </Link>
                   </motion.div>
                 ))}
               </nav>
 
-              {/* CTA Footer */}
-              <div className="p-6 border-t border-gray-50 space-y-3">
+              <div className="pt-10 border-t border-brand-green-100/10 flex flex-col gap-6">
+                <p className="text-[10px] font-black text-brand-gold uppercase tracking-[0.2em]">Contact an Artisan</p>
                 <a
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#25D366] text-white text-[13px] font-bold rounded-xl hover:bg-[#20b958] transition-colors"
+                  className="w-full flex items-center justify-center gap-3 py-5 bg-brand-green text-white text-[11px] font-black rounded-full shadow-2xl shadow-green-900/20 uppercase tracking-[0.2em] active:scale-95"
                 >
-                  <MessageCircle size={16} />
-                  Order on WhatsApp
+                  <MessageCircle size={18} />
+                  Start WhatsApp Order
                 </a>
-                <Link
-                  to="/wishlist"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 border border-gray-200 text-gray-600 text-[13px] font-semibold rounded-xl hover:bg-gray-50 transition-colors"
-                >
-                  <Heart size={15} />
-                  Wishlist {wishlistItems.length > 0 && `(${wishlistItems.length})`}
-                </Link>
-                <p className="text-center text-[10px] text-gray-400 font-medium tracking-widest uppercase pt-1">
-                  Kerala HomePreneurs United
-                </p>
+                <div className="text-center space-y-1">
+                  <p className="text-[8px] font-black text-brand-green/40 uppercase tracking-[0.5em]">
+                    Heritage • Luxury • Trust
+                  </p>
+                  <p className="text-[7px] font-bold text-gray-300 uppercase tracking-widest">
+                    Mallu Smart Origins
+                  </p>
+                </div>
               </div>
             </motion.div>
-          </>
+          </div>
         )}
       </AnimatePresence>
     </>

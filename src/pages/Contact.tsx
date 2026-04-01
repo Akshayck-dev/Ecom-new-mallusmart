@@ -6,7 +6,7 @@ import logo from '../assets/logo.png';
 
 export default function Contact() {
   return (
-    <main className="pt-40 pb-20 bg-white min-h-screen">
+    <main className="pt-8 pb-20 bg-brand-offwhite min-h-screen">
       <section className="px-6 md:px-12 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Form Side */}
@@ -27,82 +27,82 @@ export default function Contact() {
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-5xl font-bold mb-6 tracking-tight"
+                className="text-5xl md:text-6xl font-bold mb-6 tracking-tighter text-brand-gray"
               >
-                Contact us
+                Let's <span className="text-brand-green italic font-serif">Connect.</span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-on-surface-variant text-lg leading-relaxed max-w-md"
+                className="text-gray-500 text-lg leading-relaxed max-w-md"
               >
-                Feel free to reach out by filling out the form below, or you can email us directly at <span className="font-bold text-on-background">hello@mallusmart.com</span>. Our team is available to help with any inquiries and guide you through anything you need.
+                Have a question about our heritage products? Reach out via the form below or email us at <span className="font-bold text-brand-green">support@mallusmart.com</span>.
               </motion.p>
             </div>
 
             <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="relative group">
-                  <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant z-10">First Name</label>
+                  <label className="absolute -top-2.5 left-4 bg-brand-offwhite px-2 text-[10px] font-bold uppercase tracking-widest text-brand-green z-10 transition-colors group-focus-within:text-brand-gold">First Name</label>
                   <input 
                     type="text" 
-                    placeholder="SAMANTHA" 
-                    className="w-full border border-outline-variant rounded-xl px-6 py-5 text-sm focus:outline-none focus:border-on-background transition-all placeholder:text-on-surface-variant/30" 
+                    placeholder="E.G. RAHUL" 
+                    className="input-luxury" 
                   />
                 </div>
                 <div className="relative group">
-                  <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant z-10">Last Name</label>
+                  <label className="absolute -top-2.5 left-4 bg-brand-offwhite px-2 text-[10px] font-bold uppercase tracking-widest text-brand-green z-10 transition-colors group-focus-within:text-brand-gold">Last Name</label>
                   <input 
                     type="text" 
-                    placeholder="SMITH" 
-                    className="w-full border border-outline-variant rounded-xl px-6 py-5 text-sm focus:outline-none focus:border-on-background transition-all placeholder:text-on-surface-variant/30" 
+                    placeholder="E.G. NAIR" 
+                    className="input-luxury" 
                   />
                 </div>
               </div>
 
               <div className="relative group">
-                <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant z-10">Email</label>
+                <label className="absolute -top-2.5 left-4 bg-brand-offwhite px-2 text-[10px] font-bold uppercase tracking-widest text-brand-green z-10 transition-colors group-focus-within:text-brand-gold">Email</label>
                 <input 
                   type="email" 
-                  placeholder="SAMANTHASMITH@EMAIL.COM" 
-                  className="w-full border border-outline-variant rounded-xl px-6 py-5 text-sm focus:outline-none focus:border-on-background transition-all placeholder:text-on-surface-variant/30" 
+                  placeholder="NAME@EMAIL.COM" 
+                  className="input-luxury" 
                 />
               </div>
 
               <div className="relative group">
-                <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant z-10">Phone Number</label>
+                <label className="absolute -top-2.5 left-4 bg-brand-offwhite px-2 text-[10px] font-bold uppercase tracking-widest text-brand-green z-10 transition-colors group-focus-within:text-brand-gold">Phone Number</label>
                 <input 
                   type="tel" 
-                  placeholder="YOUR PHONE NUMBER" 
-                  className="w-full border border-outline-variant rounded-xl px-6 py-5 text-sm focus:outline-none focus:border-on-background transition-all placeholder:text-on-surface-variant/30" 
+                  placeholder="+91 00000 00000" 
+                  className="input-luxury" 
                 />
               </div>
 
               <div className="relative group">
-                <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant z-10">What are you getting in touch about?</label>
+                <label className="absolute -top-2.5 left-4 bg-brand-offwhite px-2 text-[10px] font-bold uppercase tracking-widest text-brand-green z-10 transition-colors group-focus-within:text-brand-gold">Inquiry Type</label>
                 <div className="relative">
-                  <select className="w-full border border-outline-variant rounded-xl px-6 py-5 text-sm focus:outline-none focus:border-on-background transition-all appearance-none bg-transparent">
+                  <select className="input-luxury appearance-none bg-transparent">
                     <option>Order Inquiry</option>
-                    <option>Product Question</option>
-                    <option>Brand Partnership</option>
+                    <option>Bulk Order / Partner</option>
+                    <option>Artisan Spotlight</option>
                     <option>Other</option>
                   </select>
-                  <ChevronDown size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none" />
+                  <ChevronDown size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-brand-green pointer-events-none" />
                 </div>
               </div>
 
               <div className="relative group">
-                <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant z-10">Your Message</label>
+                <label className="absolute -top-2.5 left-4 bg-brand-offwhite px-2 text-[10px] font-bold uppercase tracking-widest text-brand-green z-10 transition-colors group-focus-within:text-brand-gold">Message</label>
                 <textarea 
                   rows={4} 
-                  placeholder="YOUR MESSAGE" 
-                  className="w-full border border-outline-variant rounded-xl px-6 py-5 text-sm focus:outline-none focus:border-on-background transition-all placeholder:text-on-surface-variant/30 resize-none"
+                  placeholder="TELL US MORE..." 
+                  className="input-luxury resize-none"
                 ></textarea>
               </div>
 
-              <button className="w-full bg-on-background text-white py-6 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-primary transition-all active:scale-[0.98] shadow-xl shadow-black/10 group">
-                SEND MESSAGE <div className="w-2 h-2 bg-white rounded-full group-hover:scale-150 transition-transform" />
+              <button className="btn-luxury w-full group">
+                SEND MESSAGE <Send size={16} className="transition-transform group-hover:translate-x-1" />
               </button>
             </form>
           </div>

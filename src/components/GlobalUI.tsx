@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useSpring } from 'motion/react';
 import { CartDrawer } from './CartDrawer';
 import { SearchModal } from './SearchModal';
+import { OrderModal } from './OrderModal';
 
 export default function GlobalUI() {
   const { scrollYProgress } = useScroll();
@@ -56,7 +57,7 @@ export default function GlobalUI() {
             x: mousePos.x - 16,
             y: mousePos.y - 16,
             scale: isHovering ? 2 : 1,
-            backgroundColor: isHovering ? 'rgba(0, 89, 198, 0.1)' : 'transparent'
+            backgroundColor: isHovering ? 'rgba(0, 89, 198, 0.1)' : 'rgba(0, 89, 198, 0)'
           }}
           transition={{ type: 'spring', stiffness: 250, damping: 20, mass: 0.5 }}
         />
@@ -73,6 +74,7 @@ export default function GlobalUI() {
 
       <CartDrawer />
       <SearchModal />
+      <OrderModal />
 
       {/* Grain Overlay */}
       <div className="fixed inset-0 pointer-events-none z-[9998] opacity-[0.03] contrast-150 brightness-100">
