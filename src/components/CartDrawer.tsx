@@ -29,7 +29,7 @@ export const CartDrawer = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeDrawer}
-            className="fixed inset-0 bg-brand-gray/60 backdrop-blur-md z-[100]"
+            className="fixed inset-0 bg-[#111111]/60 backdrop-blur-md z-[100]"
           />
 
           {/* Drawer: Absolute White with Black Typography */}
@@ -61,7 +61,7 @@ export const CartDrawer = () => {
               {items.length > 0 && (
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest">
-                    <span className={totalPrice() >= 500 ? "text-brand-green" : "text-black/60"}>
+                    <span className={totalPrice() >= 500 ? "text-secondary" : "text-black/60"}>
                       {totalPrice() >= 500 ? 'Complimentary Shipping Unlocked' : `₹${(500 - totalPrice()).toLocaleString()} more for free delivery`}
                     </span>
                     <span className="text-black">₹500.00</span>
@@ -156,7 +156,7 @@ export const CartDrawer = () => {
                   </div>
                   <div className="flex justify-between text-[10px] font-black tracking-widest text-black/40 uppercase">
                     <span>Shipping</span>
-                    <span className={totalPrice() >= 500 ? "text-brand-green font-black" : "text-black"}>
+                    <span className={totalPrice() >= 500 ? "text-secondary font-black" : "text-black"}>
                       {totalPrice() >= 500 ? 'Complimentary' : 'Calculated at checkout'}
                     </span>
                   </div>

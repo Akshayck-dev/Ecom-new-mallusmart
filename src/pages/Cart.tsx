@@ -65,6 +65,8 @@ export default function Cart() {
 
   // Dynamic Asset Resolver for Vite
   const getProductImage = (imagePath: string) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    if (imagePath.startsWith('http')) return imagePath;
     try {
       return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
     } catch {
@@ -156,13 +158,17 @@ export default function Cart() {
   };
 
   return (
-    <main className="bg-gray-50 min-h-screen pt-24 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">      <div>
-        <h1 className="text-[clamp(2.5rem,5vw,4rem)] leading-tight font-serif italic mb-4 text-gray-900">Your <span className="text-[#FDCB58] not-italic font-headline font-light">Selection.</span></h1>
-        <p className="text-gray-500 max-w-md font-light leading-relaxed">          Review your curated pieces before we prepare them for their journey to your home. Each item is inspected for quality and artisan integrity.
-        </p>
-      </div>
-        <Link to="/shop" className="group flex items-center gap-2 text-black font-semibold text-xs hover:opacity-70 transition">
+    <main className="bg-white min-h-screen pt-24 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 sm:mb-20 gap-8">
+        <div className="space-y-4">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold tracking-tighter text-primary">
+            Your <span className="text-secondary italic font-serif">Selection.</span>
+          </h1>
+          <p className="text-on-surface-variant max-w-md font-medium leading-relaxed text-sm sm:text-base">
+            Review your curated pieces before we prepare them for their journey to your home. Each item is inspected for quality and artisan integrity.
+          </p>
+        </div>
+        <Link to="/shop" className="group flex items-center gap-3 text-primary font-bold text-[10px] tracking-[0.25em] uppercase hover:text-secondary transition-colors">
           Continue Shopping
           <ArrowRight size={18} className="transition-transform group-hover:translate-x-2" />
         </Link>
@@ -196,7 +202,7 @@ export default function Cart() {
                         exit={{ opacity: 0 }}
                         className="absolute inset-0 bg-white/40 backdrop-blur-[2px] z-10 flex items-center justify-center"
                       >
-                        <Loader2 size={32} className="text-[#FDCB58] animate-spin" />
+                        <Loader2 size={32} className="text-secondary animate-spin" />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -207,7 +213,7 @@ export default function Cart() {
                   <div className="flex-grow w-full">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <p className="text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-[#FDCB58] mb-2">{item.category}</p>
+                        <p className="text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-secondary mb-2">{item.category}</p>
                         <h3 className="text-2xl font-headline font-medium leading-tight">{item.name}</h3>
                       </div>
                       <div className="text-right">
@@ -276,7 +282,7 @@ export default function Cart() {
                   style={{
                     background: useTransform(
                       [spotlightX, spotlightY],
-                      ([x, y]) => `radial-gradient(800px circle at ${x}% ${y}%, rgba(253, 203, 88, 0.1), transparent 70%)`
+                      ([x, y]) => `radial-gradient(800px circle at ${x}% ${y}%, rgba(249, 115, 22, 0.08), transparent 70%)`
                     )
                   }}
                   className="absolute inset-0 pointer-events-none"
@@ -285,11 +291,11 @@ export default function Cart() {
                 {/* Interactive Parallax Background Layers */}
                 <motion.div
                   style={{ x: layer1X, y: layer1Y }}
-                  className="absolute top-20 left-20 w-32 h-32 rounded-full bg-[#FDCB58]/10 blur-3xl pointer-events-none"
+                  className="absolute top-20 left-20 w-32 h-32 rounded-full bg-secondary/5 blur-3xl pointer-events-none"
                 />
                 <motion.div
                   style={{ x: layer2X, y: layer2Y }}
-                  className="absolute bottom-20 right-20 w-48 h-48 rounded-full bg-[#FDCB58]/10 blur-[100px] pointer-events-none"
+                  className="absolute bottom-20 right-20 w-48 h-48 rounded-full bg-secondary/5 blur-[100px] pointer-events-none"
                 />
 
                 {/* Floating Decorative Elements */}
@@ -297,14 +303,14 @@ export default function Cart() {
                   style={{ x: layer2X, y: layer1Y }}
                   animate={{ rotate: [0, 360] }}
                   transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                  className="absolute top-1/4 right-1/4 text-[#FDCB58]/10 pointer-events-none"
+                  className="absolute top-1/4 right-1/4 text-secondary/10 pointer-events-none"
                 >
                   <Bookmark size={120} strokeWidth={0.5} />
                 </motion.div>
 
                 <motion.div
                   style={{ x: layer1X, y: layer2Y }}
-                  className="absolute bottom-1/4 left-1/4 text-[#FDCB58]/10 pointer-events-none"
+                  className="absolute bottom-1/4 left-1/4 text-secondary/10 pointer-events-none"
                 >
                   <ShoppingBag size={120} strokeWidth={0.5} />
                 </motion.div>
@@ -316,12 +322,12 @@ export default function Cart() {
                       style={{ x: layer3X, y: layer3Y }}
                       animate={{ scale: [1, 1.05, 1] }}
                       transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                      className="absolute inset-0 bg-[#FDCB58]/10 rounded-full blur-[80px]"
+                      className="absolute inset-0 bg-secondary/10 rounded-full blur-[80px]"
                     />
 
                     <motion.div
                       style={{ x: layer1X, y: layer1Y }}
-                      className="absolute inset-4 border border-[#FDCB58]/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]"
+                      className="absolute inset-4 border border-secondary/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]"
                     />
 
                     <motion.div
@@ -364,7 +370,7 @@ export default function Cart() {
                         style={{ x: p.x, y: p.y, top: p.top, left: p.left }}
                         animate={{ y: [0, -20, 0], opacity: [0.1, 0.3, 0.1] }}
                         transition={{ duration: 4, repeat: Infinity, delay: p.delay }}
-                        className="absolute w-2 h-2 bg-[#FDCB58]/30 rounded-full pointer-events-none"
+                        className="absolute w-2 h-2 bg-secondary/30 rounded-full pointer-events-none"
                       />
                     ))}
                   </div>
@@ -374,16 +380,16 @@ export default function Cart() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <h3 className="text-4xl font-serif italic mb-6">Your gallery is <span className="text-[#FDCB58] not-italic font-headline font-light">Empty.</span></h3>
-                    <p className="text-on-surface-variant mb-14 max-w-sm mx-auto leading-relaxed text-lg font-light">
-                      Every great collection starts with a single piece. Discover yours in our curated gallery.
+                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tighter mb-6 text-primary">Your selection is <span className="text-secondary italic font-serif">Empty.</span></h3>
+                    <p className="text-on-surface-variant mb-14 max-w-sm mx-auto leading-relaxed text-base sm:text-lg font-medium italic">
+                      Every great selection starts with a single piece. Discover yours in our curated gallery.
                     </p>
                     <motion.div style={{ x: btnX, y: btnY }}>
                       <Link
                         to="/shop"
-                        className="inline-flex items-center gap-4 bg-[#FDCB58] text-black px-14 py-7 rounded-full font-bold shadow-premium hover:bg-[#FDCB58]/90 transition-all active:scale-95 group text-xs uppercase tracking-[0.2em]"
+                        className="btn-luxury group inline-flex items-center gap-4"
                       >
-                        Browse the Collection
+                        Explore the Gallery
                         <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                       </Link>
                     </motion.div>
@@ -467,46 +473,44 @@ export default function Cart() {
         {/* Order Summary */}
         <div className="lg:col-span-4">
           <div className="bg-surface-container-low p-10 rounded-[3rem] sticky top-32 border border-outline-variant/5 shadow-inner">
-            <h2 className="text-3xl font-serif italic mb-10">Order <span className="text-[#FDCB58] not-italic font-headline font-light">Summary.</span></h2>
+            <h2 className="text-3xl font-semibold tracking-tighter mb-10 text-primary">Order <span className="text-secondary italic font-serif">Summary.</span></h2>
             <div className="space-y-6 mb-10">
               <div className="flex justify-between text-xs font-mono tracking-widest uppercase">
-                <span className="text-on-surface-variant/60">Subtotal</span>
-                <span className="font-bold text-on-surface">${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <span className="text-on-surface-variant/60 font-bold">Subtotal</span>
+                <span className="font-bold text-primary">${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
               <div className="flex justify-between text-xs font-mono tracking-widest uppercase">
-                <span className="text-on-surface-variant/60">Shipping</span>
-                <span className="font-bold text-green-600">Complimentary</span>
+                <span className="text-on-surface-variant/60 font-bold">Shipping</span>
+                <span className="font-bold text-secondary">Complimentary</span>
               </div>
               <div className="flex justify-between text-xs font-mono tracking-widest uppercase">
-                <span className="text-on-surface-variant/60">Estimated Tax</span>
-                <span className="font-bold text-on-surface">${tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <span className="text-on-surface-variant/60 font-bold">Estimated Tax</span>
+                <span className="font-bold text-primary">${tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
             </div>
-            <div className="pt-8 border-t border-outline-variant/10 mb-10">
+            <div className="pt-8 border-t border-primary/5 mb-10">
               <p className="text-[10px] font-mono font-bold text-on-surface-variant/40 mb-3 uppercase tracking-[0.3em]">Total Investment</p>
-              <p className="text-5xl font-mono font-light text-on-surface tracking-tighter">${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              <p className="text-5xl font-mono font-bold text-primary tracking-tighter">${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
             </div>
             <motion.button
               onClick={() => setShowCheckout(true)}
               disabled={items.length === 0}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full bg-[#FDCB58] text-black py-6 rounded-3xl font-bold shadow-premium hover:bg-[#FDCB58]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed mb-8 text-xs uppercase tracking-[0.2em]"
+              className="btn-luxury w-full group mb-8"
             >
               Proceed to Checkout
             </motion.button>
-            <div className="flex items-center justify-center gap-3 text-[10px] font-mono font-bold text-on-surface-variant/40 uppercase tracking-[0.2em] mb-10">
-              <ShieldCheck size={14} /> Secure SSL Encrypted
+            <div className="flex items-center justify-center gap-3 text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-[0.2em] mb-10">
+              <ShieldCheck size={14} className="text-secondary" /> Secure SSL Encrypted
             </div>
 
-            <div className="space-y-5 pt-8 border-t border-outline-variant/10">
-              <div className="flex items-start gap-4 text-xs text-on-surface-variant leading-relaxed">
-                <Truck size={18} className="text-[#FDCB58] shrink-0" />
-                <span>Free worldwide priority shipping on all curated orders.</span>
+            <div className="space-y-5 pt-10 border-t border-primary/5">
+              <div className="flex items-start gap-4 text-sm text-on-surface-variant font-medium leading-relaxed">
+                <Truck size={18} className="text-secondary shrink-0" />
+                <span>Free priority shipping on all orders.</span>
               </div>
-              <div className="flex items-start gap-4 text-xs text-on-surface-variant leading-relaxed">
-                <ShieldCheck size={18} className="text-[#FDCB58] shrink-0" />
-                <span>30-day effortless returns and artisan guarantee.</span>
+              <div className="flex items-start gap-4 text-sm text-on-surface-variant font-medium leading-relaxed">
+                <ShieldCheck size={18} className="text-secondary shrink-0" />
+                <span>30-day effortless returns policy.</span>
               </div>
             </div>
           </div>
@@ -603,9 +607,9 @@ export default function Cart() {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full bg-[#FDCB58] text-black py-6 rounded-3xl font-bold flex items-center justify-center gap-4 shadow-premium hover:bg-[#FDCB58]/90 transition-all text-xs uppercase tracking-[0.2em]"
+                      className="btn-luxury w-full flex items-center justify-center gap-4 bg-primary text-white"
                     >
-                      <MessageCircle size={20} /> Order via WhatsApp
+                      <MessageCircle size={20} className="text-secondary" /> Order via WhatsApp
                     </motion.button>
                   </div>
                   <p className="text-[10px] text-center font-mono font-bold text-on-surface-variant/40 uppercase tracking-[0.2em]">

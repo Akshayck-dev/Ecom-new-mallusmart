@@ -1,63 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Anton&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Manrope:wght@200;300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Anton&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-headline: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Cormorant+Garamond", serif;
   --font-display: "Anton", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   
-  --color-primary: #166534;
-  --color-primary-dim: #14532d;
-  --color-primary-container: #dcfce7;
-  --color-on-primary-container: #166534;
+  /* Warm Artisan Heritage Palette */
+  --color-primary: #111111;
+  --color-secondary: #f97316;
   
-  --color-surface: #FAF9F6;
-  --color-surface-bright: #ffffff;
-  --color-surface-dim: #f3f4f6;
-  --color-surface-container: #f9fafb;
-  --color-surface-container-low: #f8fafc;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-high: #f1f5f9;
-  --color-surface-container-highest: #e2e8f0;
-  
+  --color-surface: #FDFCF0;
   --color-on-surface: #111111;
-  --color-on-surface-variant: #4b5563;
-  --color-on-background: #111111;
+  --color-on-surface-variant: #555555;
   
-  --color-brand-green-50: #f0fdf4;
-  --color-brand-green-100: #dcfce7;
-  --color-brand-green-200: #bbf7d0;
-  --color-brand-green-300: #86efac;
-  --color-brand-green-400: #4ade80;
-  --color-brand-green-500: #1a6b2f;
-  --color-brand-green-600: #1a6b2f;
-  --color-brand-green-700: #15803d;
-  --color-brand-green-800: #166534;
-  --color-brand-green-900: #0d2b12;
-  --color-brand-green-deep: #064e3b;
-  --color-brand-green: #1a6b2f;
-  --color-brand-gold: #D4AF37;
-  --color-brand-gold-muted: #D4AF3740;
-  --color-brand-offwhite: #FAF9F6;
-  --color-brand-gray: #1F2937;
-  --color-whatsapp: #25D366;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #fdfdf5;
+  --color-surface-container: #f9f9e8;
+  --color-surface-container-high: #f5f5dc;
   
-  --color-outline: #e5e7eb;
-  --color-outline-variant: #d1d5db;
-  
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.75rem;
-  --radius-3xl: 2.5rem;
-  --radius-4xl: 4rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2.5rem;
 
-  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 4px 12px -5px rgba(0, 0, 0, 0.03);
-  --shadow-premium-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
-  --shadow-editorial: 0 10px 30px rgba(17, 17, 17, 0.05);
+  --shadow-premium: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-premium-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
-  --tracking-luxury: 0.25em;
-  --tracking-institutional: 0.5em;
+  --tracking-luxury: 0.15em;
+  --tracking-institutional: 0.4em;
 }
 
 @keyframes fadeUp {
@@ -73,8 +46,18 @@
 
 @layer base {
   body {
-    @apply bg-surface text-on-surface font-sans antialiased;
+    @apply bg-surface text-on-surface font-['Inter'] antialiased overflow-x-hidden;
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline text-primary;
+  }
+}
+
+.label-small-caps {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .glass-nav {
@@ -90,24 +73,24 @@
 }
 
 .section-spacing {
-  @apply py-20 lg:py-40;
+  @apply py-6 sm:py-10 lg:py-16;
 }
 
 @layer components {
   .btn-luxury {
-    @apply relative px-10 py-5 bg-brand-green text-white text-[11px] md:text-[10px] font-black uppercase tracking-luxury rounded-full overflow-hidden shadow-premium transition-all duration-500 hover:bg-brand-green-deep hover:shadow-2xl hover:scale-[1.02] active:scale-95;
+    @apply relative px-8 py-4 bg-primary text-white text-[10px] font-bold uppercase tracking-luxury rounded-xl overflow-hidden transition-all duration-300 hover:opacity-90 active:scale-95;
   }
 
   .btn-luxury-secondary {
-    @apply relative px-10 py-5 bg-white text-brand-green border border-brand-green-100/40 text-[11px] md:text-[10px] font-black uppercase tracking-luxury rounded-full shadow-sm transition-all duration-500 hover:bg-brand-offwhite hover:shadow-md hover:scale-[1.02] active:scale-95;
+    @apply relative px-8 py-4 bg-white text-primary border border-primary/10 text-[10px] font-bold uppercase tracking-luxury rounded-xl transition-all duration-300 hover:bg-surface-container active:scale-95;
   }
 
   .card-luxury {
-    @apply bg-white rounded-[2.5rem] shadow-premium border border-brand-green-100/10 overflow-hidden transition-all duration-700 hover:shadow-premium-hover;
+    @apply bg-white rounded-2xl border border-primary/5 overflow-hidden transition-all duration-500 hover:border-primary/10 hover:shadow-premium-hover;
   }
 
   .input-luxury {
-    @apply w-full bg-brand-offwhite border-2 border-transparent rounded-full px-8 py-5 text-sm font-bold text-brand-gray focus:outline-none focus:border-brand-green/10 focus:bg-white transition-all duration-300 placeholder:text-gray-300;
+    @apply w-full bg-surface-container border border-transparent rounded-xl px-6 py-4 text-sm font-medium text-primary focus:outline-none focus:border-primary/20 focus:bg-white transition-all duration-300 placeholder:text-on-surface-variant/40;
   }
 }
 

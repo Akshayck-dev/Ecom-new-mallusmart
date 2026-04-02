@@ -29,49 +29,45 @@ export default function FAQ() {
   ];
 
   return (
-    <main className="pt-8 pb-20 px-6 md:px-12 max-w-4xl mx-auto bg-brand-offwhite min-h-screen">
-      <header className="text-center mb-20">
-        <motion.p 
+    <main className="pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto bg-white min-h-screen">
+      <header className="text-center mb-24 space-y-8">
+        <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-brand-green font-bold tracking-[0.3em] uppercase text-[10px] mb-6"
+          className="flex flex-col items-center gap-6"
         >
-          Concierge Support
-        </motion.p>
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl font-bold mb-8 tracking-tighter text-brand-gray"
-        >
-          How can we <span className="text-brand-green italic font-serif">assist you?</span>
-        </motion.h1>
-        <div className="relative max-w-lg mx-auto">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-brand-green/40" size={18} />
+          <span className="text-secondary font-bold tracking-[0.5em] uppercase text-[10px]">Concierge Support</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold tracking-tighter text-primary">
+            How can we <span className="text-secondary italic font-serif">assist you?</span>
+          </h1>
+        </motion.div>
+        
+        <div className="relative max-w-2xl mx-auto group">
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={20} />
           <input 
             type="text" 
-            placeholder="Search our heritage knowledge base..." 
-            className="w-full bg-white border border-brand-green-100/20 rounded-2xl py-5 pl-14 pr-6 text-sm focus:outline-none focus:ring-4 focus:ring-brand-green/5 shadow-premium transition-all"
+            placeholder="Search our knowledge base..." 
+            className="w-full bg-surface border border-primary/5 rounded-[2rem] py-6 pl-16 pr-8 text-sm focus:outline-none focus:ring-4 focus:ring-secondary/5 shadow-premium transition-all font-medium italic"
           />
         </div>
       </header>
 
-      <div className="space-y-4">
+      <div className="max-w-3xl mx-auto space-y-6">
         {faqs.map((faq, i) => (
           <motion.div 
             key={i}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bg-white rounded-2xl border border-outline-variant/10 overflow-hidden"
+            className="bg-white rounded-[2rem] border border-primary/5 overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-500"
           >
             <button 
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
-              className="w-full px-8 py-6 flex justify-between items-center text-left hover:bg-brand-offwhite transition-colors group"
+              className="w-full px-8 py-8 flex justify-between items-center text-left hover:bg-surface transition-colors group"
             >
-              <span className={`font-bold transition-colors ${openIndex === i ? 'text-brand-green' : 'text-brand-gray'}`}>{faq.question}</span>
-              <div className={`transition-all duration-300 ${openIndex === i ? 'rotate-180 text-brand-gold' : 'text-brand-green'}`}>
-                <ChevronDown size={20} />
+              <span className={`text-base sm:text-lg font-bold tracking-tight transition-colors ${openIndex === i ? 'text-secondary' : 'text-primary'}`}>{faq.question}</span>
+              <div className={`transition-all duration-500 ${openIndex === i ? 'rotate-180 text-secondary' : 'text-primary'}`}>
+                <ChevronDown size={24} />
               </div>
             </button>
             <AnimatePresence>
@@ -80,9 +76,9 @@ export default function FAQ() {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  transition={{ duration: 0.4, ease: 'easeInOut' }}
                 >
-                  <div className="px-8 pb-8 text-gray-500 text-sm leading-relaxed border-t border-brand-green-100/10 pt-4">
+                  <div className="px-8 pb-8 text-on-surface-variant text-sm sm:text-base leading-relaxed border-t border-primary/5 pt-6 font-medium italic">
                     {faq.answer}
                   </div>
                 </motion.div>
@@ -92,17 +88,19 @@ export default function FAQ() {
         ))}
       </div>
 
-      <section className="mt-32 bg-brand-green-deep p-12 rounded-[2.5rem] text-center shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-brand-gold/30" />
-        <h3 className="text-2xl font-bold mb-4 text-white">Still have questions?</h3>
-        <p className="text-white/60 mb-10 max-w-md mx-auto text-sm">Our world-class curation team is available 24/7 to assist with your heritage inquiries.</p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="bg-brand-green text-white px-10 py-4 rounded-2xl font-bold shadow-lg hover:bg-brand-green-light hover:-translate-y-1 transition-all uppercase text-[10px] tracking-widest">
-            Contact Support
-          </button>
-          <button className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-2xl font-bold hover:bg-white/20 transition-all uppercase text-[10px] tracking-widest">
-            Live Chat
-          </button>
+      <section className="mt-40 bg-primary p-12 sm:p-20 rounded-[3rem] text-center shadow-premium relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-transparent opacity-50" />
+        <div className="relative z-10 space-y-8">
+          <h3 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tighter uppercase">Still have questions?</h3>
+          <p className="text-white/60 mb-10 max-w-md mx-auto text-sm sm:text-base font-medium italic">Our world-class curation team is available 24/7 to assist with your heritage inquiries.</p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <button className="btn-luxury px-12 py-5 bg-secondary text-white border-none hover:bg-white hover:text-primary transition-all">
+              Contact Support
+            </button>
+            <button className="btn-luxury px-12 py-5 bg-transparent text-white border-white/20 hover:bg-white hover:text-primary transition-all">
+              Live Chat
+            </button>
+          </div>
         </div>
       </section>
     </main>

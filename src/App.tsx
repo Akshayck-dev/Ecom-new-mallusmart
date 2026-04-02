@@ -51,7 +51,7 @@ export default function App() {
       <GlobalUI />
       <Toaster position="bottom-right" richColors closeButton />
       {/* Global Artisan Texture Wrapper (noise-bg) */}
-      <div className="min-h-screen flex flex-col pt-16 md:pt-20 relative">
+      <div className="min-h-screen flex flex-col pt-16 md:pt-20 relative overflow-x-hidden">
         <Navbar />
         <PageWrapper>
           <Routes>

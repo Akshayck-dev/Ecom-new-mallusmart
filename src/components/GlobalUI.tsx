@@ -3,9 +3,12 @@ import { motion, useScroll, useSpring } from 'motion/react';
 import { CartDrawer } from './CartDrawer';
 import { SearchModal } from './SearchModal';
 import { OrderModal } from './OrderModal';
+import { QuickViewModal } from './QuickViewModal';
+import { useQuickViewStore } from '../store/quickViewStore';
 
 export default function GlobalUI() {
   const { scrollYProgress } = useScroll();
+  const { selectedProductId, closeQuickView } = useQuickViewStore();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
@@ -23,6 +26,7 @@ export default function GlobalUI() {
       <CartDrawer />
       <SearchModal />
       <OrderModal />
+      <QuickViewModal productId={selectedProductId} onClose={closeQuickView} />
 
       {/* Grain Overlay */}
       <div className="fixed inset-0 pointer-events-none z-[9998] opacity-[0.03] contrast-150 brightness-100">

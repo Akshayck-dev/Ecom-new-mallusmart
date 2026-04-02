@@ -60,7 +60,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-on-background/40 backdrop-blur-md"
+            className="absolute inset-0 bg-primary/40 backdrop-blur-md"
           />
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -70,7 +70,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
           >
             <button 
               onClick={onClose}
-              className="absolute top-8 right-8 z-10 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-xl"
+              className="absolute top-8 right-8 z-10 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-secondary hover:text-white transition-all shadow-xl"
             >
               <X size={20} />
             </button>
@@ -86,12 +86,12 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
             
             <div className="p-12 md:p-20 flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-8">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-primary">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-secondary">
                   {product.category}
                 </span>
                 <div className="w-1 h-1 bg-outline-variant/30 rounded-full" />
                 <div className="flex items-center gap-1.5 text-[10px] font-mono text-on-surface-variant/40">
-                  <Star size={10} className="fill-current text-primary" />
+                  <Star size={10} className="fill-current text-secondary" />
                   <span>{product.rating || 4.8} Rating</span>
                 </div>
               </div>
@@ -111,8 +111,8 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-[9px] font-mono uppercase text-on-surface-variant/40 mb-2">Availability</span>
-                  <span className="text-xs font-bold uppercase tracking-widest text-green-600 flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-secondary flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-secondary rounded-full animate-pulse" />
                     {product.inStock ? 'In Stock' : 'Out of Stock'}
                   </span>
                 </div>
@@ -122,7 +122,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
                 <button 
                   onClick={handleAddToCart}
                   disabled={!product.inStock || isAdding}
-                  className="flex-1 bg-on-background text-white py-6 rounded-[2rem] font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary transition-all shadow-2xl flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-primary text-white py-6 rounded-[2rem] font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-secondary transition-all shadow-2xl flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isAdding ? (
                     <Loader2 size={16} className="animate-spin" />

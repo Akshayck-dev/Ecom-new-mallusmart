@@ -27,17 +27,17 @@ export default function Skeleton({ className = "", ...props }: SkeletonProps) {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="bg-white rounded-xl p-3 space-y-3 border border-gray-100">
-      <div className="relative h-[160px] rounded-lg overflow-hidden bg-gray-50">
+    <div className="bg-white rounded-2xl p-4 space-y-4 border border-primary/5">
+      <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-surface-container">
         <Skeleton className="w-full h-full" />
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
         <Skeleton className="h-2 w-12 rounded-full" />
-        <Skeleton className="h-3 w-full rounded-md" />
-        <Skeleton className="h-2 w-2/3 rounded-md" />
-        <div className="flex items-center justify-between pt-2">
-          <Skeleton className="h-6 w-12 rounded-full" />
-          <Skeleton className="h-8 w-8 rounded-lg" />
+        <Skeleton className="h-4 w-full rounded-md" />
+        <Skeleton className="h-4 w-2/3 rounded-md" />
+        <div className="flex items-center justify-between pt-4">
+          <Skeleton className="h-6 w-16 rounded-full" />
+          <Skeleton className="h-10 w-10 rounded-xl" />
         </div>
       </div>
     </div>

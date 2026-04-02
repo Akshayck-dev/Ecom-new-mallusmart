@@ -1,14 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { PRODUCTS } from "../constants";
-import { ProductCard } from "../components/ProductCard";
-import { ShopHeader } from "../components/ShopHeader";
+import { AtelierProductCard } from "../components/AtelierProductCard";
+import { ShopSidebar } from "../components/ShopSidebar";
 import { Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function Shop() {
   const [selectedCategory, setSelectedCategory] = useState("All Products");
-  const [sortBy, setSortBy] = useState("Featured");
-  const [searchQuery, setSearchQuery] = useState("");
 
   // Sync scroll to top on category change
   useEffect(() => {
@@ -22,82 +20,82 @@ export default function Shop() {
         product.category === selectedCategory ||
         product.parentCategory === selectedCategory;
         
-      const matchesSearch = 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        product.maker?.toLowerCase().includes(searchQuery.toLowerCase());
-        
-      return matchesCategory && matchesSearch;
-    }).sort((a, b) => {
-      switch (sortBy) {
-        case "Price: Low to High":
-          return a.price - b.price;
-        case "Price: High to Low":
-          return b.price - a.price;
-        case "Newest Arrivals":
-          return b.id.localeCompare(a.id); // Assuming p12 is newer than p1
-        case "Top Rated":
-          return (b.rating || 0) - (a.rating || 0);
-        case "A-Z":
-          return a.name.localeCompare(b.name);
-        default:
-          return 0; // Featured / Default
-      }
+      return matchesCategory;
     });
-  }, [selectedCategory, searchQuery, sortBy]);
+  }, [selectedCategory]);
 
   return (
-    <main className="pt-8 pb-32 px-6 md:px-12 max-w-7xl mx-auto bg-[#fcfcfc] min-h-screen">
-      {/* Institutional Header: Cinematic Curation */}
-      <header className="mb-20 text-center">
-        <h1 className="text-7xl md:text-9xl font-serif italic text-black tracking-tighter leading-none mb-4">
-          Shop
-        </h1>
-      </header>
-
-      {/* Persistent Technical Navigation Header */}
-      <ShopHeader 
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        productsCount={filteredProducts.length}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
+    <div className="flex flex-col lg:flex-row bg-white min-h-screen text-primary">
+      {/* Sidebar Navigation */}
+      <ShopSidebar 
+        selectedCategory={selectedCategory} 
+        setSelectedCategory={setSelectedCategory} 
       />
 
-      {/* Responsive Institutional Grid: 4-Column Curation */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-        <AnimatePresence mode="popLayout">
-          {filteredProducts.map((product, i) => (
-            <motion.div
-              key={product.id}
-              layout
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.6, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-              className="h-full"
-            >
-              <ProductCard product={product} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-h-screen lg:pl-64">
+        {/* Page Content */}
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-24 w-full space-y-10 sm:space-y-16 lg:space-y-24">
+          {/* Section Header */}
+          <section className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 sm:gap-12 pb-10 border-b border-primary/5">
+            <div className="space-y-4">
+              <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-secondary">Archive Collection</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold text-primary tracking-tighter leading-none uppercase">
+                {selectedCategory === "All Products" ? "All Collections" : selectedCategory}
+              </h1>
+            </div>
+            <p className="text-xs sm:text-sm font-medium italic text-on-surface-variant max-w-xs leading-relaxed">
+              Curated by institutional standards, harvested with care, and authenticated by Kerala's leading homepreneurs.
+            </p>
+          </section>
 
-      {/* Empty State */}
-      {filteredProducts.length === 0 && (
-        <div className="py-40 text-center">
-          <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-10 text-black/10">
-            <Sparkles size={40} />
+          {/* Bento-style Grid (Responsive Columns) */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map((product, i) => (
+                <motion.div
+                  key={product.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.5, delay: i * 0.02, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <AtelierProductCard product={product} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
-          <h3 className="text-2xl font-serif italic text-black mb-6">No treasures found in this zone.</h3>
-          <p className="text-[10px] font-black text-black/30 uppercase tracking-[0.3em]">Try another category or refine your search.</p>
-          <button 
-            onClick={() => setSelectedCategory("All Products")}
-            className="mt-12 text-[10px] font-black uppercase tracking-[0.4em] text-black underline underline-offset-8 hover:text-brand-green transition-colors"
-          >
-            Reset All Filters
-          </button>
+
+          {/* Empty State */}
+          {filteredProducts.length === 0 && (
+            <div className="py-32 sm:py-48 text-center space-y-10">
+              <div className="w-24 h-24 bg-surface rounded-[2rem] border border-primary/5 flex items-center justify-center mx-auto text-primary/10 shadow-premium">
+                <Sparkles size={32} />
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-2xl sm:text-3xl font-semibold text-primary tracking-tight uppercase">No curated items found.</h2>
+                <p className="text-sm font-medium italic text-on-surface-variant max-w-xs mx-auto">Try another collection or refine your search criteria.</p>
+              </div>
+              <button 
+                onClick={() => setSelectedCategory("All Products")}
+                className="btn-luxury px-12 py-5"
+              >
+                Reset All Filters
+              </button>
+            </div>
+          )}
         </div>
-      )}
-    </main>
+
+        {/* Footer Space */}
+        <footer className="mt-auto py-10 px-4 sm:px-8 lg:px-12 border-t border-primary/5 flex flex-col sm:flex-row justify-between items-center gap-6 text-on-surface-variant/40">
+          <span className="text-[9px] uppercase tracking-[0.4em] font-bold">© 2026 Mallu's Mart • Authentically Crafted in Kerala</span>
+          <div className="flex gap-8 sm:gap-12">
+            <a className="text-[9px] uppercase tracking-[0.4em] font-bold hover:text-primary transition-colors" href="#">Privacy Protocol</a>
+            <a className="text-[9px] uppercase tracking-[0.4em] font-bold hover:text-primary transition-colors" href="#">Service Terms</a>
+          </div>
+        </footer>
+      </main>
+    </div>
   );
 }
