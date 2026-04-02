@@ -50,7 +50,8 @@ export default function App() {
       <ScrollToTop />
       <GlobalUI />
       <Toaster position="bottom-right" richColors closeButton />
-      <div className="min-h-screen flex flex-col pt-16 md:pt-20">
+      {/* Global Artisan Texture Wrapper (noise-bg) */}
+      <div className="min-h-screen flex flex-col pt-16 md:pt-20 relative">
         <Navbar />
         <PageWrapper>
           <Routes>

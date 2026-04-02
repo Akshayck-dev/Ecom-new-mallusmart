@@ -2,19 +2,23 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  category: string;
+  category: string; // This will map to specific zones (e.g., Healthy Kitchen)
   parentCategory?: string;
   description: string;
   image: string;
   images?: string[];
+  gallery?: string[]; // New field from catalog data
   tag?: string;
   material?: string;
   color?: string;
-  artisan?: string;
+  artisan?: string; // Legacy field, will sync with maker
+  maker?: string; // New field from catalog data
   rating?: number;
+  oldPrice?: number;
   inStock?: boolean;
   skinType?: string[];
   concern?: string[];
+  technicalSpecs?: string[]; // New field from catalog data
 }
 
 export interface Category {

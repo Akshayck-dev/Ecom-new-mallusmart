@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search as SearchIcon, X, ArrowRight, TrendingUp, Sparkles } from 'lucide-react';
+import { Search as SearchIcon, X, ArrowRight, TrendingUp, Sparkles, History, ShoppingBag } from 'lucide-react';
 import { useSearchStore } from '../store/searchStore';
+import { useHistoryStore } from '../store/historyStore';
 import { PRODUCTS, CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 export const SearchModal = () => {
   const { isSearchOpen, closeSearch } = useSearchStore();
+  const { viewedIds } = useHistoryStore();
   const [query, setQuery] = useState('');
-  
-  // Reset query on close
+
+  const recentProducts = useMemo(() => {
+    return viewedIds
+      .map(id => PRODUCTS.find(p => p.id === id))
+      .filter(Boolean)
+      .slice(0, 4);
+  }, [viewedIds]);
   useEffect(() => {
     if (!isSearchOpen) {
       setQuery('');
@@ -88,13 +95,13 @@ export const SearchModal = () => {
               />
             </div>
 
-            {/* Results Grid */}
+            {/* Results Grid / Discovery Area */}
             <div className="flex-1 overflow-y-auto no-scrollbar pb-20">
               {query ? (
                 <div>
-                  <div className="flex items-center justify-between mb-10">
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant">
-                      Search Results ({results.length})
+                  <div className="flex items-center justify-between mb-10 pb-6 border-b border-neutral-100">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-400">
+                      Discovery Results ({results.length})
                     </h3>
                   </div>
                   {results.length > 0 ? (
@@ -104,38 +111,69 @@ export const SearchModal = () => {
                           key={product.id}
                           to={`/product/${product.id}`}
                           onClick={closeSearch}
-                          className="flex gap-6 group p-4 rounded-3xl hover:bg-surface-container/50 transition-all border border-transparent hover:border-outline-variant/10"
+                          className="flex gap-6 group p-6 rounded-[2.5rem] bg-neutral-50 hover:bg-white transition-all border border-transparent hover:border-neutral-100 hover:shadow-xl hover:shadow-black/5"
                         >
-                          <div className="w-24 h-24 bg-surface-container rounded-2xl overflow-hidden flex-shrink-0">
-                            <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <div className="w-24 h-24 bg-white rounded-2xl overflow-hidden flex-shrink-0 shadow-inner">
+                            <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                           </div>
                           <div className="flex flex-col justify-center">
-                            <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-primary mb-1">
+                            <p className="text-[9px] font-bold uppercase tracking-widest text-[#A68900] mb-2">
                               {product.category}
                             </p>
-                            <h4 className="font-bold text-lg leading-tight mb-2 group-hover:text-primary transition-colors">
+                            <h4 className="font-bold text-base leading-tight mb-2 group-hover:text-black transition-colors uppercase tracking-tight">
                               {product.name}
                             </h4>
-                            <p className="font-black text-sm">${product.price}</p>
+                            <p className="font-black text-sm text-black">₹{product.price.toLocaleString()}</p>
                           </div>
                         </Link>
                       ))}
                     </div>
                   ) : (
-                    <div className="py-20 text-center">
-                      <p className="text-2xl font-bold text-on-surface-variant mb-4">No results found for "{query}"</p>
-                      <p className="text-on-surface-variant/60">Try searching for "Serum", "Lipstick", or "Fragrance"</p>
+                    <div className="py-32 text-center fade-up">
+                      <p className="text-xl font-bold text-black mb-4 uppercase tracking-tighter">No Treasures Found</p>
+                      <p className="text-neutral-400 text-[10px] uppercase tracking-widest leading-relaxed">
+                        Try searching for "Snacks", "Fashion", or "Honey"
+                      </p>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-                  {/* Trending Categories */}
-                  <div>
-                    <div className="flex items-center gap-3 mb-8">
-                      <TrendingUp size={16} className="text-primary" />
-                      <h3 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant">
-                        Trending Categories
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+                  {/* Recently Viewed - Dynamic */}
+                  {recentProducts.length > 0 && (
+                    <div className="fade-up">
+                      <div className="flex items-center gap-3 mb-10">
+                        <History size={16} className="text-black" />
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-black">
+                          Recently Explored
+                        </h3>
+                      </div>
+                      <div className="grid grid-cols-1 gap-4">
+                        {recentProducts.map((product) => (
+                          <Link
+                            key={product?.id}
+                            to={`/product/${product?.id}`}
+                            onClick={closeSearch}
+                            className="flex items-center gap-6 p-4 rounded-3xl bg-neutral-50 hover:bg-white border border-transparent hover:border-neutral-100 transition-all group"
+                          >
+                            <img src={product?.image} className="w-16 h-16 rounded-2xl object-cover shadow-sm" />
+                            <div className="flex-1">
+                              <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">{product?.category}</p>
+                              <p className="text-sm font-bold text-black uppercase tracking-tight">{product?.name}</p>
+                            </div>
+                            <ArrowRight size={14} className="text-neutral-200 group-hover:text-black group-hover:translate-x-1 transition-all" />
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Trending Categories - Refined */}
+                  <div className="fade-up" style={{ animationDelay: '0.1s' }}>
+                    <div className="flex items-center gap-3 mb-10">
+                      <TrendingUp size={16} className="text-black" />
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-black">
+                        Top Collections
                       </h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -144,32 +182,14 @@ export const SearchModal = () => {
                           key={cat.name}
                           to="/shop"
                           onClick={closeSearch}
-                          className="relative h-32 rounded-3xl overflow-hidden group"
+                          className="relative h-40 rounded-[2rem] overflow-hidden group border border-neutral-100"
                         >
-                          <img src={cat.image} alt={cat.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
-                            <span className="text-white font-bold uppercase tracking-widest text-xs">{cat.name}</span>
+                          <img src={cat.image} alt={cat.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" />
+                          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/40 transition-colors flex items-end p-6">
+                            <span className="text-white font-black uppercase tracking-[0.2em] text-[10px] translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all">
+                              Discover {cat.name}
+                            </span>
                           </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Featured Collections */}
-                  <div>
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-on-surface-variant mb-8">
-                      Featured Collections
-                    </h3>
-                    <div className="space-y-4">
-                      {['Clean Beauty Essentials', 'The Fragrance Gallery', 'Midnight Bloom Series'].map((collection) => (
-                        <Link
-                          key={collection}
-                          to="/shop"
-                          onClick={closeSearch}
-                          className="flex items-center justify-between p-6 rounded-3xl bg-surface-container/30 hover:bg-surface-container transition-all group"
-                        >
-                          <span className="font-bold">{collection}</span>
-                          <ArrowRight size={18} className="-translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all text-primary" />
                         </Link>
                       ))}
                     </div>

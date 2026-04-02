@@ -63,6 +63,15 @@ export default function Cart() {
   const p3X = useTransform(xSpring, [-0.5, 0.5], [-10, 10]);
   const p3Y = useTransform(ySpring, [-0.5, 0.5], [10, -10]);
 
+  // Dynamic Asset Resolver for Vite
+  const getProductImage = (imagePath: string) => {
+    try {
+      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
+    } catch {
+      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000"; // Fallback
+    }
+  };
+
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shipping = 0;
   const tax = subtotal * 0.0824;
@@ -70,13 +79,13 @@ export default function Cart() {
 
   const handleQuantityUpdate = async (id: string, delta: number, currentQty: number) => {
     if (processingIds.has(id)) return;
-    
+
     setProcessingIds(prev => new Set(prev).add(id));
     setAnimatingId(id);
-    
+
     // Simulate async operation
     await new Promise(resolve => setTimeout(resolve, 600));
-    
+
     updateQuantity(id, currentQty + delta);
     setAnimatingId(null);
     setProcessingIds(prev => {
@@ -89,10 +98,10 @@ export default function Cart() {
   const handleRemoveItem = async (id: string) => {
     if (processingIds.has(id)) return;
     setProcessingIds(prev => new Set(prev).add(id));
-    
+
     // Simulate async operation
     await new Promise(resolve => setTimeout(resolve, 600));
-    
+
     removeItem(id);
     setProcessingIds(prev => {
       const next = new Set(prev);
@@ -104,10 +113,10 @@ export default function Cart() {
   const handleSaveForLater = async (id: string) => {
     if (processingIds.has(id)) return;
     setProcessingIds(prev => new Set(prev).add(id));
-    
+
     // Simulate async operation
     await new Promise(resolve => setTimeout(resolve, 600));
-    
+
     saveForLater(id);
     setProcessingIds(prev => {
       const next = new Set(prev);
@@ -119,10 +128,10 @@ export default function Cart() {
   const handleMoveToCart = async (id: string) => {
     if (processingIds.has(id)) return;
     setProcessingIds(prev => new Set(prev).add(id));
-    
+
     // Simulate async operation
     await new Promise(resolve => setTimeout(resolve, 600));
-    
+
     moveToCart(id);
     setProcessingIds(prev => {
       const next = new Set(prev);
@@ -134,10 +143,10 @@ export default function Cart() {
   const handleRemoveSavedItem = async (id: string) => {
     if (processingIds.has(id)) return;
     setProcessingIds(prev => new Set(prev).add(id));
-    
+
     // Simulate async operation
     await new Promise(resolve => setTimeout(resolve, 600));
-    
+
     removeSavedItem(id);
     setProcessingIds(prev => {
       const next = new Set(prev);
@@ -147,15 +156,13 @@ export default function Cart() {
   };
 
   return (
-    <main className="pt-32 pb-20 px-6 md:px-12 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
-        <div>
-          <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.1] font-serif italic mb-6">Your <span className="text-[#FDCB58] not-italic font-headline font-light">Selection.</span></h1>
-          <p className="text-on-surface-variant max-w-md font-light leading-relaxed">
-            Review your curated pieces before we prepare them for their journey to your home. Each item is inspected for quality and artisan integrity.
-          </p>
-        </div>
-        <Link to="/shop" className="group flex items-center gap-3 text-[#FDCB58] font-bold text-xs tracking-[0.2em] uppercase">
+    <main className="bg-gray-50 min-h-screen pt-24 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">      <div>
+        <h1 className="text-[clamp(2.5rem,5vw,4rem)] leading-tight font-serif italic mb-4 text-gray-900">Your <span className="text-[#FDCB58] not-italic font-headline font-light">Selection.</span></h1>
+        <p className="text-gray-500 max-w-md font-light leading-relaxed">          Review your curated pieces before we prepare them for their journey to your home. Each item is inspected for quality and artisan integrity.
+        </p>
+      </div>
+        <Link to="/shop" className="group flex items-center gap-2 text-black font-semibold text-xs hover:opacity-70 transition">
           Continue Shopping
           <ArrowRight size={18} className="transition-transform group-hover:translate-x-2" />
         </Link>
@@ -167,12 +174,12 @@ export default function Cart() {
           <div className="space-y-8">
             <AnimatePresence mode="popLayout">
               {items.map((item) => (
-                <motion.div 
+                <motion.div
                   key={item.id}
                   layout
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ 
-                    opacity: processingIds.has(item.id) ? 0.6 : 1, 
+                  animate={{
+                    opacity: processingIds.has(item.id) ? 0.6 : 1,
                     y: 0,
                     scale: animatingId === item.id ? 1.02 : 1,
                   }}
@@ -183,7 +190,7 @@ export default function Cart() {
                   {/* Loading Overlay */}
                   <AnimatePresence>
                     {processingIds.has(item.id) && (
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -195,7 +202,7 @@ export default function Cart() {
                   </AnimatePresence>
 
                   <div className="w-40 h-40 rounded-3xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={getProductImage(item.image)} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   </div>
                   <div className="flex-grow w-full">
                     <div className="flex justify-between items-start mb-4">
@@ -208,17 +215,17 @@ export default function Cart() {
                         <p className="text-[10px] font-mono text-on-surface-variant/40 mt-1 uppercase tracking-widest">${item.price.toFixed(2)} / unit</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex flex-wrap items-center justify-between gap-6 mt-8">
                       <div className="flex items-center bg-surface-container-low rounded-2xl border border-outline-variant/5 p-1">
-                        <button 
-                          onClick={() => handleQuantityUpdate(item.id, -1, item.quantity)} 
+                        <button
+                          onClick={() => handleQuantityUpdate(item.id, -1, item.quantity)}
                           disabled={processingIds.has(item.id)}
                           className="p-3 hover:text-primary transition-colors disabled:opacity-30"
                         >
                           <Minus size={16} />
                         </button>
-                        <motion.span 
+                        <motion.span
                           key={item.quantity}
                           initial={{ scale: 1.2, color: 'var(--primary)' }}
                           animate={{ scale: 1, color: 'inherit' }}
@@ -226,8 +233,8 @@ export default function Cart() {
                         >
                           {item.quantity.toString().padStart(2, '0')}
                         </motion.span>
-                        <button 
-                          onClick={() => handleQuantityUpdate(item.id, 1, item.quantity)} 
+                        <button
+                          onClick={() => handleQuantityUpdate(item.id, 1, item.quantity)}
                           disabled={processingIds.has(item.id)}
                           className="p-3 hover:text-primary transition-colors disabled:opacity-30"
                         >
@@ -235,15 +242,15 @@ export default function Cart() {
                         </button>
                       </div>
                       <div className="flex items-center gap-8">
-                        <button 
+                        <button
                           onClick={() => handleSaveForLater(item.id)}
                           disabled={processingIds.has(item.id)}
                           className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-primary transition-colors uppercase tracking-[0.2em] disabled:opacity-30"
                         >
                           <Bookmark size={14} className="group-hover:fill-current" /> Save for Later
                         </button>
-                        <button 
-                          onClick={() => handleRemoveItem(item.id)} 
+                        <button
+                          onClick={() => handleRemoveItem(item.id)}
                           disabled={processingIds.has(item.id)}
                           className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-red-500 transition-colors uppercase tracking-[0.2em] disabled:opacity-30"
                         >
@@ -256,7 +263,7 @@ export default function Cart() {
               ))}
             </AnimatePresence>
             {items.length === 0 && (
-              <motion.div 
+              <motion.div
                 ref={containerRef}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -265,8 +272,8 @@ export default function Cart() {
                 className="text-center py-40 bg-surface-container-low rounded-[4rem] border border-outline-variant/10 relative overflow-hidden group shadow-inner"
               >
                 {/* Spotlight effect that follows mouse */}
-                <motion.div 
-                  style={{ 
+                <motion.div
+                  style={{
                     background: useTransform(
                       [spotlightX, spotlightY],
                       ([x, y]) => `radial-gradient(800px circle at ${x}% ${y}%, rgba(253, 203, 88, 0.1), transparent 70%)`
@@ -276,17 +283,17 @@ export default function Cart() {
                 />
 
                 {/* Interactive Parallax Background Layers */}
-                <motion.div 
+                <motion.div
                   style={{ x: layer1X, y: layer1Y }}
                   className="absolute top-20 left-20 w-32 h-32 rounded-full bg-[#FDCB58]/10 blur-3xl pointer-events-none"
                 />
-                <motion.div 
+                <motion.div
                   style={{ x: layer2X, y: layer2Y }}
                   className="absolute bottom-20 right-20 w-48 h-48 rounded-full bg-[#FDCB58]/10 blur-[100px] pointer-events-none"
                 />
-                
+
                 {/* Floating Decorative Elements */}
-                <motion.div 
+                <motion.div
                   style={{ x: layer2X, y: layer1Y }}
                   animate={{ rotate: [0, 360] }}
                   transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -295,7 +302,7 @@ export default function Cart() {
                   <Bookmark size={120} strokeWidth={0.5} />
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   style={{ x: layer1X, y: layer2Y }}
                   className="absolute bottom-1/4 left-1/4 text-[#FDCB58]/10 pointer-events-none"
                 >
@@ -305,21 +312,21 @@ export default function Cart() {
                 <div className="relative z-10">
                   <div className="relative w-64 h-64 mx-auto mb-12">
                     {/* Multi-layered animated illustration */}
-                    <motion.div 
+                    <motion.div
                       style={{ x: layer3X, y: layer3Y }}
                       animate={{ scale: [1, 1.05, 1] }}
                       transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                       className="absolute inset-0 bg-[#FDCB58]/10 rounded-full blur-[80px]"
                     />
-                    
-                    <motion.div 
+
+                    <motion.div
                       style={{ x: layer1X, y: layer1Y }}
                       className="absolute inset-4 border border-[#FDCB58]/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]"
                     />
 
-                    <motion.div 
-                      style={{ 
-                        x: layer3X, 
+                    <motion.div
+                      style={{
+                        x: layer3X,
                         y: layer3Y,
                         rotateX: iconRotateX,
                         rotateY: iconRotateY,
@@ -328,14 +335,14 @@ export default function Cart() {
                       className="absolute inset-0 flex items-center justify-center"
                     >
                       <div className="w-40 h-40 bg-white rounded-[2.5rem] shadow-premium border border-outline-variant/10 flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-700">
-                        <motion.div 
+                        <motion.div
                           animate={{ y: [0, -12, 0] }}
                           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                         >
                           <Logo size="64px" />
                         </motion.div>
-                        
-                        <motion.div 
+
+                        <motion.div
                           animate={{ x: [-150, 250] }}
                           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
                           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent -skew-x-12 pointer-events-none"
@@ -372,8 +379,8 @@ export default function Cart() {
                       Every great collection starts with a single piece. Discover yours in our curated gallery.
                     </p>
                     <motion.div style={{ x: btnX, y: btnY }}>
-                      <Link 
-                        to="/shop" 
+                      <Link
+                        to="/shop"
                         className="inline-flex items-center gap-4 bg-[#FDCB58] text-black px-14 py-7 rounded-full font-bold shadow-premium hover:bg-[#FDCB58]/90 transition-all active:scale-95 group text-xs uppercase tracking-[0.2em]"
                       >
                         Browse the Collection
@@ -401,13 +408,13 @@ export default function Cart() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <AnimatePresence mode="popLayout">
                   {savedItems.map((item) => (
-                    <motion.div 
+                    <motion.div
                       key={item.id}
                       layout
                       initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ 
-                        opacity: processingIds.has(item.id) ? 0.6 : 1, 
-                        scale: 1 
+                      animate={{
+                        opacity: processingIds.has(item.id) ? 0.6 : 1,
+                        scale: 1
                       }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       className="bg-white p-6 rounded-[2rem] border border-outline-variant/10 flex gap-6 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500 relative overflow-hidden"
@@ -415,7 +422,7 @@ export default function Cart() {
                       {/* Loading Overlay */}
                       <AnimatePresence>
                         {processingIds.has(item.id) && (
-                          <motion.div 
+                          <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -427,20 +434,20 @@ export default function Cart() {
                       </AnimatePresence>
 
                       <div className="w-24 h-24 rounded-2xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
+                        <img src={getProductImage(item.image)} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
                       </div>
                       <div className="flex-grow min-w-0">
                         <h4 className="font-headline font-medium text-lg truncate mb-1">{item.name}</h4>
                         <p className="font-mono text-sm text-on-surface-variant mb-4">${item.price.toFixed(2)}</p>
                         <div className="flex gap-6">
-                          <button 
+                          <button
                             onClick={() => handleMoveToCart(item.id)}
                             disabled={processingIds.has(item.id)}
                             className="text-[10px] font-mono font-bold text-primary hover:underline uppercase tracking-[0.2em] disabled:opacity-30"
                           >
                             Move to Cart
                           </button>
-                          <button 
+                          <button
                             onClick={() => handleRemoveSavedItem(item.id)}
                             disabled={processingIds.has(item.id)}
                             className="text-[10px] font-mono font-bold text-on-surface-variant/40 hover:text-red-500 uppercase tracking-[0.2em] disabled:opacity-30"
@@ -479,7 +486,7 @@ export default function Cart() {
               <p className="text-[10px] font-mono font-bold text-on-surface-variant/40 mb-3 uppercase tracking-[0.3em]">Total Investment</p>
               <p className="text-5xl font-mono font-light text-on-surface tracking-tighter">${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
             </div>
-            <motion.button 
+            <motion.button
               onClick={() => setShowCheckout(true)}
               disabled={items.length === 0}
               whileHover={{ scale: 1.02 }}
@@ -491,7 +498,7 @@ export default function Cart() {
             <div className="flex items-center justify-center gap-3 text-[10px] font-mono font-bold text-on-surface-variant/40 uppercase tracking-[0.2em] mb-10">
               <ShieldCheck size={14} /> Secure SSL Encrypted
             </div>
-            
+
             <div className="space-y-5 pt-8 border-t border-outline-variant/10">
               <div className="flex items-start gap-4 text-xs text-on-surface-variant leading-relaxed">
                 <Truck size={18} className="text-[#FDCB58] shrink-0" />
@@ -510,14 +517,14 @@ export default function Cart() {
       <AnimatePresence>
         {showCheckout && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowCheckout(false)}
               className="absolute inset-0 bg-on-background/60 backdrop-blur-xl"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 40 }}
@@ -533,7 +540,7 @@ export default function Cart() {
                   {items.map(item => (
                     <div key={item.id} className="flex gap-6 items-center">
                       <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white flex-shrink-0 shadow-sm">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        <img src={getProductImage(item.image)} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                       <div className="flex-grow">
                         <p className="font-headline font-medium text-base leading-tight mb-1">{item.name}</p>
@@ -560,7 +567,7 @@ export default function Cart() {
               </div>
 
               <div className="flex-1 p-12 relative overflow-y-auto no-scrollbar">
-                <button 
+                <button
                   onClick={() => setShowCheckout(false)}
                   className="absolute top-8 right-8 p-4 hover:bg-surface-container rounded-3xl transition-all border border-outline-variant/10 text-on-surface-variant hover:text-primary"
                 >
@@ -593,7 +600,7 @@ export default function Cart() {
                     </div>
                   </div>
                   <div className="pt-6">
-                    <motion.button 
+                    <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       className="w-full bg-[#FDCB58] text-black py-6 rounded-3xl font-bold flex items-center justify-center gap-4 shadow-premium hover:bg-[#FDCB58]/90 transition-all text-xs uppercase tracking-[0.2em]"

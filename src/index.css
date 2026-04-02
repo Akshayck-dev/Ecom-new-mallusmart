@@ -26,22 +26,22 @@
   --color-on-surface-variant: #4b5563;
   --color-on-background: #111111;
   
-  --brand-green-50: #f0fdf4;
-  --brand-green-100: #dcfce7;
-  --brand-green-200: #bbf7d0;
-  --brand-green-300: #86efac;
-  --brand-green-400: #4ade80;
-  --brand-green-500: #1a6b2f;
-  --brand-green-600: #1a6b2f;
-  --brand-green-700: #15803d;
-  --brand-green-800: #166534;
-  --brand-green-900: #0d2b12;
-  --brand-green-deep: #064e3b;
-  --brand-green: #1a6b2f;
-  --brand-gold: #D4AF37;
-  --brand-gold-muted: #D4AF3740;
-  --brand-offwhite: #FAF9F6;
-  --brand-gray: #1F2937;
+  --color-brand-green-50: #f0fdf4;
+  --color-brand-green-100: #dcfce7;
+  --color-brand-green-200: #bbf7d0;
+  --color-brand-green-300: #86efac;
+  --color-brand-green-400: #4ade80;
+  --color-brand-green-500: #1a6b2f;
+  --color-brand-green-600: #1a6b2f;
+  --color-brand-green-700: #15803d;
+  --color-brand-green-800: #166534;
+  --color-brand-green-900: #0d2b12;
+  --color-brand-green-deep: #064e3b;
+  --color-brand-green: #1a6b2f;
+  --color-brand-gold: #D4AF37;
+  --color-brand-gold-muted: #D4AF3740;
+  --color-brand-offwhite: #FAF9F6;
+  --color-brand-gray: #1F2937;
   --color-whatsapp: #25D366;
   
   --color-outline: #e5e7eb;
@@ -54,41 +54,20 @@
 
   --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 4px 12px -5px rgba(0, 0, 0, 0.03);
   --shadow-premium-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
+  --shadow-editorial: 0 10px 30px rgba(17, 17, 17, 0.05);
 
-  @keyframes grain {
-    0%, 100% { transform:translate(0, 0) }
-    10% { transform:translate(-5%, -10%) }
-    20% { transform:translate(-15%, 5%) }
-    30% { transform:translate(7%, -25%) }
-    40% { transform:translate(-5%, 25%) }
-    50% { transform:translate(-15%, 10%) }
-    60% { transform:translate(15%, 0%) }
-    70% { transform:translate(0%, 15%) }
-    80% { transform:translate(3%, 35%) }
-    90% { transform:translate(-10%, 10%) }
-  }
+  --tracking-luxury: 0.25em;
+  --tracking-institutional: 0.5em;
+}
 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @layer utilities {
-  .tracking-luxury {
-    letter-spacing: 0.25em;
-  }
-  
-  .tracking-institutional {
-    letter-spacing: 0.5em;
-  }
-
-  .font-display {
-    font-family: inherit;
-    font-weight: 300;
-  }
-
-  .text-glass {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+  .fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 }
 
@@ -111,16 +90,16 @@
 }
 
 .section-spacing {
-  @apply py-20 md:py-32;
+  @apply py-20 lg:py-40;
 }
 
 @layer components {
   .btn-luxury {
-    @apply relative px-8 py-4 bg-brand-green text-white text-[10px] font-black uppercase tracking-luxury rounded-full overflow-hidden shadow-premium transition-all duration-500 hover:bg-brand-green-deep hover:shadow-2xl hover:scale-[1.02] active:scale-95;
+    @apply relative px-10 py-5 bg-brand-green text-white text-[11px] md:text-[10px] font-black uppercase tracking-luxury rounded-full overflow-hidden shadow-premium transition-all duration-500 hover:bg-brand-green-deep hover:shadow-2xl hover:scale-[1.02] active:scale-95;
   }
 
   .btn-luxury-secondary {
-    @apply relative px-8 py-4 bg-white text-brand-green border border-brand-green-100/40 text-[10px] font-black uppercase tracking-luxury rounded-full shadow-sm transition-all duration-500 hover:bg-brand-offwhite hover:shadow-md hover:scale-[1.02] active:scale-95;
+    @apply relative px-10 py-5 bg-white text-brand-green border border-brand-green-100/40 text-[11px] md:text-[10px] font-black uppercase tracking-luxury rounded-full shadow-sm transition-all duration-500 hover:bg-brand-offwhite hover:shadow-md hover:scale-[1.02] active:scale-95;
   }
 
   .card-luxury {

@@ -8,13 +8,13 @@ const WA_HELP_URL = `https://wa.me/${WA_HELP_NUMBER}?text=Hi%2C%20I%20need%20hel
 
 export default function Footer() {
   return (
-    <footer className="relative bg-brand-gray text-white pt-24 pb-12 overflow-hidden">
+    <footer className="relative bg-brand-gray text-white pt-16 pb-8 overflow-hidden">
       {/* Decorative Accents */}
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand-gold/20 to-transparent" />
       <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-brand-gold/5 rounded-full blur-3xl pointer-events-none" />
       
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-12 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-12 mb-16">
           
           {/* Brand Column */}
           <div className="space-y-8">
@@ -47,8 +47,8 @@ export default function Footer() {
 
           {/* Catalog Column */}
           <div>
-            <h4 className="text-[9px] font-black uppercase tracking-[0.5em] text-brand-gold mb-10">Marketplace</h4>
-            <ul className="space-y-5">
+            <h4 className="text-[9px] font-black uppercase tracking-[0.5em] text-brand-gold mb-6">Marketplace</h4>
+            <ul className="space-y-3">
               {['All Treasures', 'Healthy Kitchen', 'Fashion Street', 'Natural Care', 'Kids Zone'].map((item) => (
                 <li key={item}>
                   <Link 
@@ -65,8 +65,8 @@ export default function Footer() {
 
           {/* Institutional Column */}
           <div>
-            <h4 className="text-[9px] font-black uppercase tracking-[0.5em] text-brand-gold mb-10">Institutional</h4>
-            <ul className="space-y-5">
+            <h4 className="text-[9px] font-black uppercase tracking-[0.5em] text-brand-gold mb-6">Institutional</h4>
+            <ul className="space-y-3">
               {['Our Story', 'The Artisans', 'Contact Support', 'Privacy Policy'].map((item) => (
                 <li key={item}>
                   <Link 
@@ -124,7 +124,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="pt-6 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-[9px] font-black text-gray-500 uppercase tracking-[0.5em]">
             © 2026 Mallu Smart • Authentically Crafted in Kerala
           </p>

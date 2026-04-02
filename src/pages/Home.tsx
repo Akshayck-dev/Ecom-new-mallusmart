@@ -19,10 +19,42 @@ const CATEGORIES_DATA = [
 
 const TRUST_DATA = [
   { icon: Heart, title: '100% Homemade', desc: 'Crafted with love by real Kerala homepreneurs' },
-  { icon: UserCheck, title: 'Kerala Local Sellers', desc: 'Supporting heritage and direct artisan livelihoods' },
+  { icon: UserCheck, title: 'Local Sellers', desc: 'Supporting heritage and direct artisan livelihoods' },
   { icon: ShieldCheck, title: 'Natural & Safe', desc: 'Chemical-free and trusted ingredients used' },
   { icon: MessageCircle, title: 'Direct WhatsApp', desc: 'Order directly from sellers in one tap' },
 ];
+
+const CategoryCard = ({ cat }: { cat: any }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    className="group relative h-[450px] rounded-[2.5rem] overflow-hidden shadow-premium transition-all duration-700"
+  >
+    <Link to={`/shop/${cat.id}`} className="block w-full h-full">
+      <img 
+        src={cat.image} 
+        alt={cat.name} 
+        className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" 
+      />
+      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-700" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+      
+      <div className="absolute inset-0 p-10 flex flex-col justify-end items-start text-left">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
+            <cat.icon size={20} />
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-gold">{cat.count}</span>
+        </div>
+        <h4 className="text-2xl md:text-3xl font-serif text-white italic tracking-tighter leading-none mb-3 group-hover:translate-x-2 transition-transform duration-700">
+          {cat.name}
+        </h4>
+        <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] group-hover:text-white transition-colors">Explore Collection</p>
+      </div>
+    </Link>
+  </motion.div>
+);
 
 export default function Home() {
   const [slideIndex, setSlideIndex] = useState(0);
@@ -61,11 +93,11 @@ export default function Home() {
   const featuredProducts = useMemo(() => PRODUCTS.slice(0, 8), []);
 
   return (
-    <main className="overflow-x-hidden w-full bg-brand-offwhite">
+    <main className="overflow-x-hidden w-full bg-[#fcfcfc]">
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden"
+        className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
@@ -82,50 +114,52 @@ export default function Home() {
               src={HERO_SLIDES[slideIndex].src}
               alt=""
               className="w-full h-full object-cover"
-              initial={{ scale: 1.1 }}
+              initial={{ scale: 1.2 }}
               animate={{ scale: 1 }}
-              transition={{ duration: 10, ease: 'linear' }}
+              transition={{ duration: 12, ease: 'linear' }}
             />
           </motion.div>
         </AnimatePresence>
 
-        {/* Overlays */}
-        <div className="absolute inset-0 bg-brand-gray/40 z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-gray/20 via-transparent to-brand-gray/80 z-10" />
+        <div className="absolute inset-0 bg-black/30 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 z-10" />
 
         <div className="relative z-20 text-center px-6 max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="w-12 h-px bg-brand-gold/50" />
-              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-gold drop-shadow-lg">
+            <div className="flex items-center justify-center gap-6 mb-8">
+              <div className="w-16 h-px bg-brand-gold/60" />
+              <span className="text-[11px] font-black uppercase tracking-[0.6em] text-brand-gold drop-shadow-2xl">
                 Kerala Homepreneurs United
               </span>
-              <div className="w-12 h-px bg-brand-gold/50" />
+              <div className="w-16 h-px bg-brand-gold/60" />
             </div>
 
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-black text-white tracking-tighter leading-[1.1] md:leading-[1.05] mb-6 md:mb-8 uppercase font-headline break-words">
+            <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-serif italic text-white tracking-tighter leading-[0.9] mb-8 select-none">
               {HERO_SLIDES[slideIndex].title.split(' ')[0]} <br />
-              <span className="italic font-light text-brand-gold lowercase opacity-90">{HERO_SLIDES[slideIndex].title.split(' ').slice(1).join(' ')}</span>
+              <span className="text-brand-gold not-italic font-sans font-black uppercase text-4xl md:text-6xl tracking-widest opacity-90">{HERO_SLIDES[slideIndex].title.split(' ').slice(1).join(' ')}</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed font-bold">
-              Connecting you directly to Kerala's finest artisans. Authentic, handmade, and delivered with trust.
+            <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-14 leading-relaxed font-medium">
+              Connecting you directly to Kerala's finest artisans. Authentic, handmade, and delivered with absolute trust.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <Link
                 to="/shop"
-                className="btn-luxury !px-12 !py-5 flex items-center gap-3 text-sm shadow-2xl"
+                className="group relative px-16 py-7 bg-white text-black rounded-full overflow-hidden transition-all duration-700 hover:shadow-[0_40px_80px_rgba(255,255,255,0.2)] active:scale-95"
               >
-                Shop Collection <ArrowRight size={18} />
+                <span className="relative z-10 text-[11px] font-black uppercase tracking-[0.4em] flex items-center gap-3">
+                  Shop Curation <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform duration-500" />
+                </span>
+                <div className="absolute inset-0 bg-brand-gold translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-[0.16,1,0.3,1]" />
               </Link>
               <Link
                 to="/about"
-                className="px-12 py-5 border-2 border-white/20 text-white text-[11px] font-black uppercase tracking-widest rounded-full backdrop-blur-md hover:bg-white/10 hover:border-white/50 transition-all"
+                className="px-16 py-7 border-2 border-white/20 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-full backdrop-blur-md bg-white/5 hover:bg-white hover:text-black hover:border-white transition-all duration-700"
               >
                 Our Heritage
               </Link>
@@ -133,187 +167,148 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Indicators */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+        <div className="absolute bottom-16 left-12 flex flex-col gap-4 z-30">
           {HERO_SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => setSlideIndex(i)}
-              className={`h-1.5 rounded-full transition-all duration-500 ${
-                i === slideIndex ? 'w-10 bg-brand-gold' : 'w-2 bg-white/30'
+              className={`w-1 transition-all duration-700 ${
+                i === slideIndex ? 'h-12 bg-brand-gold' : 'h-4 bg-white/20 hover:bg-white/40'
               }`}
             />
           ))}
         </div>
       </section>
 
-      {/* Categories Grid Section */}
-      <section className="py-10 md:py-16 px-4 md:px-12 max-w-7xl mx-auto">
-        <div className="text-center mb-10">
-          <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-green/60 mb-2">Explore Origins</h2>
-          <h3 className="text-3xl md:text-5xl font-black text-brand-gray tracking-tighter uppercase font-headline">The Heritage <span className="text-brand-green italic font-light lowercase">Zones.</span></h3>
+      {/* Symmetrical Grid Categories */}
+      <section className="py-24 md:py-40 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row items-end justify-between mb-24 gap-8">
+          <div className="max-w-2xl">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.5em] text-black/30 mb-6">Archive Discovery</h2>
+            <h3 className="text-5xl md:text-7xl font-serif text-black italic tracking-tighter leading-none">
+              The Heritage <br /> <span className="text-brand-green not-italic">Zones.</span>
+            </h3>
+          </div>
+          <p className="text-[11px] font-black text-black/40 uppercase tracking-[0.3em] max-w-xs leading-relaxed">
+            Curated by precise standards, harvested with care, and authenticated by Kerala's leading homepreneurs.
+          </p>
         </div>
         
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-6">
-          {CATEGORIES_DATA.map((cat, i) => (
-            <motion.div
-              key={cat.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="group relative"
-            >
-              <Link to={`/shop/${cat.id}`} className="block relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-premium group-hover:shadow-premium-hover transition-all duration-500 group-hover:-translate-y-2">
-                <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-gray/90 via-transparent to-transparent opacity-80" />
-                <div className="absolute inset-0 p-6 flex flex-col justify-end items-center text-center">
-                  <div className="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-brand-gold mb-3 group-hover:scale-110 transition-transform">
-                    <cat.icon size={20} />
-                  </div>
-                  <h4 className="text-xs font-black text-white uppercase tracking-widest mb-1 truncate w-full">{cat.name}</h4>
-                  <p className="text-[8px] font-bold text-gray-400 uppercase tracking-[0.2em]">{cat.count}</p>
-                </div>
-                {/* Hover Glow */}
-                <div className="absolute inset-x-0 bottom-0 h-1 bg-brand-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-              </Link>
-            </motion.div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-6">
+          {CATEGORIES_DATA.map((cat) => (
+            <CategoryCard key={cat.id} cat={cat} />
           ))}
         </div>
       </section>
 
       {/* Discover Section */}
-      <section className="py-10 md:py-16 px-4 md:px-12 max-w-7xl mx-auto border-t border-brand-green-100/10">
-        <div className="flex flex-col md:flex-row items-end justify-between mb-10 gap-6">
+      <section className="py-24 md:py-40 px-6 md:px-12 max-w-7xl mx-auto border-t border-gray-100">
+        <div className="flex flex-col md:flex-row items-end justify-between mb-24 gap-8">
           <div className="max-w-2xl">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-green/60">Curated Masterpieces</span>
-              <div className="w-10 h-px bg-brand-gold/30" />
+            <div className="flex items-center gap-5 mb-6">
+              <span className="text-[11px] font-black uppercase tracking-[0.4em] text-black/40">Curated Masterpieces</span>
+              <div className="w-16 h-px bg-black/10" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-brand-gray tracking-tighter uppercase leading-none font-headline">
-              Discover <br /> <span className="text-brand-green italic font-light lowercase">Kerala's best.</span>
+            <h2 className="text-5xl md:text-7xl font-serif text-black italic tracking-tighter leading-none">
+              Discover <br /> <span className="text-brand-green not-italic lowercase">Kerala's best.</span>
             </h2>
           </div>
-          <Link to="/shop" className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-green">
-            View Full Catalog <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          <Link to="/shop" className="group flex items-center gap-5 text-[11px] font-black uppercase tracking-[0.4em] text-black">
+            View Full Catalog <ArrowRight size={20} className="group-hover:translate-x-3 transition-transform duration-500" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
           {featuredProducts.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
+            <motion.div 
+              key={p.id} 
+              className="h-full"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <ProductCard product={p} />
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Trust Banner / Features Section */}
-      <section className="bg-white py-12 md:py-20 px-4 md:px-12 border-t border-brand-green-100/10">
+      {/* Trust Banner */}
+      <section className="bg-white py-24 md:py-40 px-6 md:px-12 border-t border-gray-100">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-green/60 mb-2">The Standard</h2>
-            <h3 className="text-3xl md:text-5xl font-black text-brand-gray tracking-tighter uppercase font-headline">Why Trust <span className="text-brand-green italic font-light lowercase">Mallu Smart?</span></h3>
+          <div className="text-center mb-24">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.6em] text-black/30 mb-8">The Institutional Standard</h2>
+            <h3 className="text-4xl md:text-7xl font-serif italic text-black tracking-tighter leading-none">Why Trust <span className="not-italic text-brand-green">Mallu Smart?</span></h3>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
             {TRUST_DATA.map((item, i) => (
               <motion.div 
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-brand-offwhite p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] border border-gray-100 shadow-premium hover:shadow-2xl transition-all group text-center"
+                className="group text-center"
               >
-                <div className="w-14 h-14 rounded-2xl bg-brand-green/5 border border-brand-green/10 flex items-center justify-center mx-auto mb-6 text-brand-green group-hover:scale-110 transition-transform">
-                  <item.icon size={28} />
+                <div className="w-20 h-20 rounded-[2rem] bg-gray-50 border border-gray-100 flex items-center justify-center mx-auto mb-8 text-black group-hover:bg-black group-hover:text-white transition-all duration-700 shadow-sm group-hover:shadow-2xl">
+                  <item.icon size={30} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-xs font-black text-brand-gray mb-3 uppercase tracking-widest">{item.title}</h3>
-                <p className="text-[10px] font-bold text-gray-400 leading-relaxed uppercase tracking-widest">{item.desc}</p>
+                <h3 className="text-[13px] font-black text-black mb-4 uppercase tracking-[0.3em]">{item.title}</h3>
+                <p className="text-[11px] font-bold text-black/40 leading-relaxed uppercase tracking-[0.2em]">{item.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Call to Action - Optimized Hero CTA */}
-      <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden">
-        {/* Full-width Kerala background */}
+      {/* Call to Action */}
+      <section className="relative w-full h-[80vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={heroDelivery}
             alt="Authentic Kerala"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover grayscale opacity-20"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0f3d1f]/80 to-[#1a6b2f]/90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#fcfcfc] via-transparent to-transparent" />
         </div>
 
-        {/* Centered Content */}
-        <div className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center text-center gap-5 md:gap-6">
-          
-          {/* Label */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-px bg-[#D4AF37]/60" />
-            <span className="text-[9px] font-black uppercase tracking-[0.4em] text-[#D4AF37]">Kerala Homepreneurs United</span>
-            <div className="w-8 h-px bg-[#D4AF37]/60" />
+        <div className="relative z-10 w-full max-w-5xl px-6 flex flex-col items-center text-center gap-10">
+          <div className="flex items-center gap-8">
+            <div className="w-16 h-px bg-black/20" />
+            <span className="text-[11px] font-black uppercase tracking-[0.8em] text-black/40">Heritage Protocol</span>
+            <div className="w-16 h-px bg-black/20" />
           </div>
 
-          {/* Heading */}
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="text-white text-3xl md:text-5xl font-black tracking-tighter uppercase leading-[1.05] font-headline"
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="text-6xl md:text-8xl lg:text-9xl font-serif italic text-black tracking-tighter leading-[0.85] select-none"
           >
-            Experience the Genuine<br />
-            <span className="text-[#D4AF37]">Kerala</span> Heritage
+            Experience the <br />
+            <span className="text-brand-green not-italic">Genuine.</span>
           </motion.h2>
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.15 }}
-            className="text-white/75 text-sm md:text-lg font-medium leading-relaxed max-w-md"
-          >
-            Authentic handmade products from Kerala's most trusted homepreneurs — straight to your door.
-          </motion.p>
-
-          {/* WhatsApp Button */}
           <motion.a
             href="https://wa.me/919562854999"
             target="_blank"
             rel="noopener noreferrer"
-            initial={{ opacity: 0, scale: 0.92 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.25 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center justify-center gap-3 bg-[#25D366] text-white font-bold text-base px-8 py-4 rounded-full shadow-xl shadow-black/30 hover:bg-[#20c75a] transition-colors duration-200 w-full sm:w-auto"
+            transition={{ delay: 0.4 }}
+            className="group relative px-16 py-7 bg-black text-white rounded-full overflow-hidden transition-all duration-700 shadow-2xl active:scale-95"
           >
-            <MessageCircle size={20} />
-            Order on WhatsApp
+            <span className="relative z-10 text-[11px] font-black uppercase tracking-[0.5em] flex items-center gap-4">
+              <MessageCircle size={20} className="fill-white" />
+              Order on WhatsApp
+            </span>
+            <div className="absolute inset-0 bg-[#25D366] translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-[0.16,1,0.3,1]" />
           </motion.a>
-
-          {/* Compact Trust badges */}
-          <div className="flex flex-wrap items-center justify-center gap-5 md:gap-8 mt-1">
-            {[
-              { icon: ShieldCheck, label: 'Quality Verified' },
-              { icon: Zap, label: 'Fast Delivery' },
-              { icon: Star, label: 'Top Rated' }
-            ].map((badge, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/70">
-                <badge.icon size={13} className="text-[#D4AF37] shrink-0" />
-                {badge.label}
-              </div>
-            ))}
-          </div>
         </div>
-
-        {/* Scroll hint — bottom fade so next section peeks through */}
-        <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-brand-offwhite/60 to-transparent pointer-events-none" />
       </section>
     </main>
   );
