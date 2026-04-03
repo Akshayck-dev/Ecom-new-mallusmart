@@ -5,13 +5,14 @@ import { Product } from '../types';
 import { useCartStore } from '../store/cartStore';
 import { useQuickViewStore } from '../store/quickViewStore';
 import { toast } from 'sonner';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface AtelierProductCardProps {
   product: Product;
+  showCategory?: boolean;
 }
 
-export const AtelierProductCard: React.FC<AtelierProductCardProps> = ({ product }) => {
+export const AtelierProductCard: React.FC<AtelierProductCardProps> = ({ product, showCategory = true }) => {
   const addItem = useCartStore((state) => state.addItem);
   const openQuickView = useQuickViewStore((state) => state.openQuickView);
 
@@ -49,14 +50,14 @@ export const AtelierProductCard: React.FC<AtelierProductCardProps> = ({ product 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative bg-surface-container-low rounded-[2rem] overflow-hidden shadow-sm hover:shadow-premium transition-all duration-700 h-full flex flex-col border border-primary/5 p-2 sm:p-3"
+      className="group relative bg-surface-container-low rounded-2xl overflow-hidden shadow-sm hover:shadow-premium transition-all duration-700 h-full flex flex-col border border-primary/5 p-1.5 sm:p-3"
     >
       <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-surface group/img">
         <Link to={`/product/${product.id}`} className="block h-full">
           <img
             src={getProductImage(product.image)}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-[2.5s] ease-out group-hover/img:scale-110"
+            className="block w-full h-full object-cover transition-transform duration-[2.5s] ease-out group-hover/img:scale-110"
             referrerPolicy="no-referrer"
           />
         </Link>
@@ -68,15 +69,15 @@ export const AtelierProductCard: React.FC<AtelierProductCardProps> = ({ product 
         <div className="absolute top-4 right-4 flex flex-col gap-3 z-30 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-hover:translate-x-0 md:translate-x-4 transition-all duration-700">
           <button 
             onClick={handleAddToCart}
-            className="w-12 h-12 bg-white rounded-full shadow-premium flex items-center justify-center hover:bg-secondary hover:text-white transition-all duration-500 hover:scale-110 active:scale-95"
+            className="w-10 h-10 bg-white rounded-full shadow-premium flex items-center justify-center hover:bg-secondary hover:text-white transition-all duration-500 hover:scale-110 active:scale-95"
           >
-            <ShoppingBag size={18} />
+            <ShoppingBag size={16} />
           </button>
           <button 
             onClick={handleQuickView}
-            className="w-12 h-12 bg-white rounded-full shadow-premium flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-500 hover:scale-110 active:scale-95"
+            className="w-10 h-10 bg-white rounded-full shadow-premium flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-500 hover:scale-110 active:scale-95"
           >
-            <Eye size={18} />
+            <Eye size={16} />
           </button>
         </div>
 
@@ -90,13 +91,15 @@ export const AtelierProductCard: React.FC<AtelierProductCardProps> = ({ product 
         )}
       </div>
 
-      <div className="p-3 sm:p-4 space-y-2 flex flex-col flex-1">
-        <p className="text-xs uppercase tracking-wide text-secondary font-medium">
-          {product.category}
-        </p>
+      <div className="p-2.5 sm:p-4 space-y-1.5 flex flex-col flex-1">
+        {showCategory && (
+          <p className="text-xs uppercase tracking-wide text-secondary font-medium">
+            {product.category}
+          </p>
+        )}
 
         <Link to={`/product/${product.id}`} className="block">
-          <h3 className="text-base sm:text-lg font-medium text-primary leading-snug line-clamp-2 group-hover:text-secondary transition-colors duration-500">
+          <h3 className="text-base sm:text-lg font-bold text-primary leading-snug line-clamp-2 group-hover:text-secondary transition-colors duration-500">
             {product.name}
           </h3>
         </Link>

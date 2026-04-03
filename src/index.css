@@ -49,7 +49,7 @@
     @apply bg-surface text-on-surface font-['Inter'] antialiased overflow-x-hidden;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-headline text-primary;
+    @apply font-headline font-bold text-primary;
   }
 }
 
@@ -94,10 +94,12 @@
   }
 }
 
-.no-scrollbar::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-.no-scrollbar {
+.no-scrollbar,
+.scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

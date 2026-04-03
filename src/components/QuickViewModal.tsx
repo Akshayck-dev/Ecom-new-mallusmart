@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingCart, Star, Heart, ArrowRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Product } from '../types';
@@ -18,6 +18,17 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
   const product = PRODUCTS.find(p => p.id === productId);
   const addItem = useCartStore((state) => state.addItem);
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore();
+
+  // Dynamic Asset Resolver for Vite
+  const getProductImage = (imagePath: string) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    if (imagePath.startsWith('http')) return imagePath;
+    try {
+      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
+    } catch {
+      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    }
+  };
 
   if (!product && productId) return null;
 
@@ -54,7 +65,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
   return (
     <AnimatePresence>
       {productId && product && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8">
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -66,84 +77,86 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-5xl bg-white rounded-[4rem] overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2"
+            className="relative w-full max-w-5xl bg-white rounded-3xl sm:rounded-[3rem] overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2 max-h-[90vh] overflow-y-auto no-scrollbar"
           >
             <button 
               onClick={onClose}
-              className="absolute top-8 right-8 z-10 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-secondary hover:text-white transition-all shadow-xl"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-secondary hover:text-white transition-all shadow-xl border border-primary/5 active:scale-90"
             >
-              <X size={20} />
+              <X size={18} className="sm:w-5 sm:h-5" />
             </button>
             
-            <div className="aspect-square md:aspect-auto bg-surface-container-lowest overflow-hidden">
+            <div className="aspect-square md:aspect-auto bg-surface-container-lowest overflow-hidden border-b md:border-b-0 md:border-r border-primary/5">
               <img 
-                src={product.image} 
+                src={getProductImage(product.image)} 
                 alt={product.name} 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
             </div>
             
-            <div className="p-12 md:p-20 flex flex-col justify-center">
-              <div className="flex items-center gap-3 mb-8">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-secondary">
+            <div className="p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 sm:space-y-6">
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-secondary">
                   {product.category}
                 </span>
-                <div className="w-1 h-1 bg-outline-variant/30 rounded-full" />
-                <div className="flex items-center gap-1.5 text-[10px] font-mono text-on-surface-variant/40">
+                <div className="w-1 h-1 bg-primary/10 rounded-full" />
+                <div className="flex items-center gap-1.5 text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">
                   <Star size={10} className="fill-current text-secondary" />
-                  <span>{product.rating || 4.8} Rating</span>
+                  <span>{product.rating || 4.8} Certified</span>
                 </div>
               </div>
               
-              <h2 className="text-5xl font-serif italic mb-6 leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tighter uppercase leading-tight text-primary">
                 {product.name}
               </h2>
               
-              <p className="text-on-surface-variant text-lg font-light leading-relaxed mb-10">
+              <p className="text-on-surface-variant text-sm sm:text-base font-medium leading-relaxed italic">
                 {product.description || "A meticulously crafted piece designed for longevity and aesthetic harmony in your daily life."}
               </p>
               
-              <div className="flex items-end justify-between mb-12 border-b border-outline-variant/10 pb-10">
+              <div className="flex items-end justify-between border-b border-primary/5 pb-6 sm:pb-8">
                 <div className="flex flex-col">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/40 mb-2">Price</span>
-                  <span className="text-4xl font-mono font-light">${product.price.toFixed(2)}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-on-surface-variant/40 mb-1.5 sm:mb-2">Investment</span>
+                  <span className="text-3xl sm:text-4xl font-bold tracking-tighter text-primary">₹{product.price.toLocaleString()}</span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/40 mb-2">Availability</span>
-                  <span className="text-xs font-bold uppercase tracking-widest text-secondary flex items-center gap-2">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-on-surface-variant/40 mb-1.5 sm:mb-2">Archive Status</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-secondary rounded-full animate-pulse" />
-                    {product.inStock ? 'In Stock' : 'Out of Stock'}
+                    {product.inStock ? 'Available' : 'Sold Out'}
                   </span>
                 </div>
               </div>
               
-              <div className="flex gap-4">
+              <div className="flex flex-wrap sm:flex-nowrap gap-3 sm:gap-4">
                 <button 
                   onClick={handleAddToCart}
                   disabled={!product.inStock || isAdding}
-                  className="flex-1 bg-primary text-white py-6 rounded-[2rem] font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-secondary transition-all shadow-2xl flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-primary text-white py-4 sm:py-5 rounded-2xl font-bold text-[10px] uppercase tracking-[0.3em] hover:bg-secondary transition-all shadow-xl flex items-center justify-center gap-3 group disabled:opacity-50 active:scale-[0.98]"
                 >
                   {isAdding ? (
                     <Loader2 size={16} className="animate-spin" />
                   ) : (
                     <ShoppingCart size={16} className="group-hover:scale-110 transition-transform" />
                   )}
-                  {isAdding ? 'Adding...' : (product.inStock ? 'Add to Collection' : 'Sold Out')}
+                  {isAdding ? 'Securing...' : (product.inStock ? 'Add to Collection' : 'Sold Out')}
                 </button>
-                <button 
-                  onClick={handleWishlist}
-                  className={`w-20 h-20 border rounded-[2rem] flex items-center justify-center transition-all shadow-sm ${isInWishlist(product.id) ? 'bg-red-50 border-red-100 text-red-500' : 'border-outline-variant/20 hover:bg-surface-container'}`}
-                >
-                  <Heart size={24} className={isInWishlist(product.id) ? 'fill-current' : ''} />
-                </button>
-                <Link 
-                  to={`/product/${product.id}`}
-                  onClick={onClose}
-                  className="w-20 h-20 border border-outline-variant/20 rounded-[2rem] flex items-center justify-center hover:bg-surface-container transition-all shadow-sm"
-                >
-                  <ArrowRight size={24} className="text-on-surface-variant" />
-                </Link>
+                <div className="flex gap-3 sm:gap-4 w-full sm:w-auto">
+                  <button 
+                    onClick={handleWishlist}
+                    className={`flex-1 sm:w-14 sm:h-14 border rounded-2xl flex items-center justify-center transition-all shadow-sm active:scale-95 ${isInWishlist(product.id) ? 'bg-secondary/5 border-secondary/20 text-secondary' : 'border-primary/5 hover:bg-surface-container'}`}
+                  >
+                    <Heart size={20} className={isInWishlist(product.id) ? 'fill-current' : ''} />
+                  </button>
+                  <Link 
+                    to={`/product/${product.id}`}
+                    onClick={onClose}
+                    className="flex-1 sm:w-14 sm:h-14 border border-primary/5 rounded-2xl flex items-center justify-center hover:bg-surface-container transition-all shadow-sm active:scale-95"
+                  >
+                    <ArrowRight size={20} className="text-primary" />
+                  </Link>
+                </div>
               </div>
             </div>
           </motion.div>

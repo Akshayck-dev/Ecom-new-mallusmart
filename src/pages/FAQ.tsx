@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, Search, ChevronDown } from 'lucide-react';
 
 export default function FAQ() {
@@ -29,45 +29,45 @@ export default function FAQ() {
   ];
 
   return (
-    <main className="pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto bg-white min-h-screen">
-      <header className="text-center mb-24 space-y-8">
+    <main className="pt-20 sm:pt-28 pb-16 lg:pb-24 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto bg-white min-h-screen">
+      <header className="text-center mb-12 sm:mb-16 space-y-5 sm:space-y-6">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-3 sm:gap-4"
         >
-          <span className="text-secondary font-bold tracking-[0.5em] uppercase text-[10px]">Concierge Support</span>
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold tracking-tighter text-primary">
-            How can we <span className="text-secondary italic font-serif">assist you?</span>
+          <span className="text-secondary font-bold tracking-[0.5em] uppercase text-[9px] sm:text-[10px]">Concierge Support</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold tracking-tighter text-primary uppercase leading-tight">
+            How can we <br className="sm:hidden" /> <span className="text-secondary italic font-serif lowercase">assist you?</span>
           </h1>
         </motion.div>
         
-        <div className="relative max-w-2xl mx-auto group">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={20} />
+        <div className="relative max-w-xl mx-auto group">
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={16} />
           <input 
             type="text" 
             placeholder="Search our knowledge base..." 
-            className="w-full bg-surface border border-primary/5 rounded-[2rem] py-6 pl-16 pr-8 text-sm focus:outline-none focus:ring-4 focus:ring-secondary/5 shadow-premium transition-all font-medium italic"
+            className="w-full bg-surface border border-primary/5 rounded-xl sm:rounded-2xl py-4 sm:py-5 pl-14 sm:pl-16 pr-8 text-xs sm:text-sm focus:outline-none focus:ring-4 focus:ring-secondary/5 shadow-premium transition-all font-medium italic"
           />
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-2xl mx-auto space-y-3 sm:space-y-4">
         {faqs.map((faq, i) => (
           <motion.div 
             key={i}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bg-white rounded-[2rem] border border-primary/5 overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-500"
+            className="bg-white rounded-xl sm:rounded-2xl border border-primary/5 overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-500"
           >
             <button 
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
-              className="w-full px-8 py-8 flex justify-between items-center text-left hover:bg-surface transition-colors group"
+              className="w-full px-5 py-5 sm:px-7 sm:py-7 flex justify-between items-center text-left hover:bg-surface transition-colors group"
             >
-              <span className={`text-base sm:text-lg font-bold tracking-tight transition-colors ${openIndex === i ? 'text-secondary' : 'text-primary'}`}>{faq.question}</span>
+              <span className={`text-base sm:text-lg font-bold tracking-tight transition-colors uppercase ${openIndex === i ? 'text-secondary' : 'text-primary'}`}>{faq.question}</span>
               <div className={`transition-all duration-500 ${openIndex === i ? 'rotate-180 text-secondary' : 'text-primary'}`}>
-                <ChevronDown size={24} />
+                <ChevronDown size={18} className="sm:w-5 sm:h-5" />
               </div>
             </button>
             <AnimatePresence>
@@ -78,7 +78,7 @@ export default function FAQ() {
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.4, ease: 'easeInOut' }}
                 >
-                  <div className="px-8 pb-8 text-on-surface-variant text-sm sm:text-base leading-relaxed border-t border-primary/5 pt-6 font-medium italic">
+                  <div className="px-5 pb-5 sm:px-7 sm:pb-7 text-on-surface-variant text-sm sm:text-base leading-relaxed border-t border-primary/5 pt-4 sm:pt-5 font-medium italic">
                     {faq.answer}
                   </div>
                 </motion.div>
@@ -88,16 +88,16 @@ export default function FAQ() {
         ))}
       </div>
 
-      <section className="mt-40 bg-primary p-12 sm:p-20 rounded-[3rem] text-center shadow-premium relative overflow-hidden group">
+      <section className="mt-16 sm:mt-24 bg-primary p-8 sm:p-14 rounded-2xl sm:rounded-[3rem] text-center shadow-premium relative overflow-hidden group">
         <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-transparent opacity-50" />
-        <div className="relative z-10 space-y-8">
-          <h3 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tighter uppercase">Still have questions?</h3>
-          <p className="text-white/60 mb-10 max-w-md mx-auto text-sm sm:text-base font-medium italic">Our world-class curation team is available 24/7 to assist with your heritage inquiries.</p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button className="btn-luxury px-12 py-5 bg-secondary text-white border-none hover:bg-white hover:text-primary transition-all">
+        <div className="relative z-10 space-y-5 sm:space-y-6">
+          <h3 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tighter uppercase leading-tight">Still have <br className="sm:hidden" /> questions?</h3>
+          <p className="text-white/60 mb-6 sm:mb-8 max-w-sm mx-auto text-sm sm:text-base font-medium italic font-serif">Our world-class curation team is available 24/7 to assist with your heritage inquiries.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="btn-luxury px-10 py-4 bg-secondary text-white border-none hover:bg-white hover:text-primary transition-all rounded-full w-full sm:w-auto">
               Contact Support
             </button>
-            <button className="btn-luxury px-12 py-5 bg-transparent text-white border-white/20 hover:bg-white hover:text-primary transition-all">
+            <button className="btn-luxury px-10 py-4 bg-white/10 text-white border-white/20 hover:bg-white hover:text-primary transition-all rounded-full w-full sm:w-auto">
               Live Chat
             </button>
           </div>

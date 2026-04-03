@@ -12,6 +12,17 @@ export default function Wishlist() {
   const addItemToCart = useCartStore((state) => state.addItem);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Dynamic Asset Resolver for Vite
+  const getProductImage = (imagePath: string) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    if (imagePath.startsWith('http')) return imagePath;
+    try {
+      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
+    } catch {
+      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    }
+  };
+
   // Mouse tracking for parallax
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -62,28 +73,28 @@ export default function Wishlist() {
   };
 
   return (
-    <main className="pt-24 sm:pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto min-h-[80vh] bg-white">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 sm:mb-24 gap-8">
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
+    <main className="pt-16 sm:pt-28 pb-16 lg:pb-24 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto min-h-[80vh] bg-white">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 sm:mb-16 gap-8">
+        <div className="space-y-4 sm:space-y-6 text-center lg:text-left w-full lg:w-auto">
+          <div className="flex items-center justify-center lg:justify-start gap-4">
             <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-secondary">Private Curation</span>
-            <div className="w-12 h-px bg-primary/10" />
+            <div className="w-12 h-px bg-primary/10 hidden lg:block" />
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold tracking-tighter text-primary uppercase">
-            Your <span className="text-secondary italic font-serif lowercase">Wishlist.</span>
+          <h1 className="text-4xl sm:text-6xl lg:text-8xl font-semibold tracking-tighter text-primary uppercase leading-none">
+            Your <span className="text-secondary italic font-serif">Wishlist.</span>
           </h1>
-          <p className="text-on-surface-variant max-w-md font-medium leading-relaxed text-sm sm:text-base italic">
+          <p className="text-on-surface-variant max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed text-sm sm:text-lg italic">
             A curated sanctuary for the heritage pieces that caught your eye. Keep them close until you're ready to make them yours.
           </p>
         </div>
-        <Link to="/shop" className="group flex items-center gap-4 text-primary font-bold text-[10px] tracking-[0.3em] uppercase hover:text-secondary transition-colors">
+        <Link to="/shop" className="group flex items-center justify-center lg:justify-start gap-4 text-primary font-bold text-[10px] tracking-[0.4em] uppercase hover:text-secondary transition-colors w-full lg:w-auto py-5 border border-primary/10 rounded-full lg:border-none lg:py-0">
           Explore The Archive
           <ArrowRight size={18} className="transition-transform group-hover:translate-x-2" />
         </Link>
       </div>
 
       {items.length > 0 ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {items.map((product, i) => (
             <motion.div 
               key={product.id}
@@ -91,30 +102,30 @@ export default function Wishlist() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="group flex flex-col h-full bg-white p-4 sm:p-6 rounded-[2rem] sm:rounded-[3rem] border border-primary/5 shadow-premium hover:shadow-premium-hover transition-all duration-500"
+              className="group flex flex-col h-full bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-primary/5 shadow-premium hover:shadow-premium-hover transition-all duration-500"
             >
-              <div className="aspect-[3/4] rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden mb-8 bg-surface relative shrink-0 shadow-sm">
-                <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" referrerPolicy="no-referrer" />
+              <div className="aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-6 bg-surface relative shrink-0 shadow-sm">
+                <img src={getProductImage(product.image)} alt={product.name} className="block w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" referrerPolicy="no-referrer" />
                 <button 
                   onClick={() => removeItem(product.id)}
-                  className="absolute top-4 right-4 p-3.5 rounded-2xl bg-white/90 backdrop-blur-md text-primary/40 hover:text-red-500 transition-all shadow-premium border border-primary/5"
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2.5 sm:p-3 rounded-xl bg-white/90 backdrop-blur-md text-primary/40 hover:text-red-500 transition-all shadow-premium border border-primary/5"
                 >
-                  <Trash2 size={18} />
+                  <Trash2 size={16} />
                 </button>
               </div>
               
-              <div className="flex-1 flex flex-col space-y-4">
-                <div className="space-y-2">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-secondary">{product.category}</p>
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-primary uppercase leading-tight group-hover:text-secondary transition-colors">{product.name}</h3>
+              <div className="flex-1 flex flex-col space-y-3 px-2 sm:px-0">
+                <div className="space-y-1.5">
+                  <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.3em] text-secondary">{product.category}</p>
+                  <h3 className="text-base sm:text-lg font-bold tracking-tight text-primary uppercase leading-tight group-hover:text-secondary transition-colors line-clamp-1">{product.name}</h3>
                 </div>
-                <p className="text-xl font-semibold text-primary tracking-tighter italic">₹{product.price.toLocaleString()}</p>
+                <p className="text-lg sm:text-xl font-bold text-primary tracking-tighter italic">₹{product.price.toLocaleString()}</p>
                 
                 <button 
                   onClick={() => handleMoveToCart(product)}
-                  className="btn-luxury w-full py-5 flex items-center justify-center gap-3 transition-all"
+                  className="btn-luxury w-full py-4 sm:py-5 flex items-center justify-center gap-2.5 sm:gap-3 transition-all rounded-2xl sm:rounded-[1.5rem] shadow-lg active:scale-95"
                 >
-                  <ShoppingBag size={18} /> <span className="text-[10px] uppercase font-bold tracking-widest">Move to Cart</span>
+                  <ShoppingBag size={16} className="sm:w-[18px] sm:h-[18px]" /> <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest">Move to Cart</span>
                 </button>
               </div>
             </motion.div>
@@ -127,7 +138,7 @@ export default function Wishlist() {
           animate={{ opacity: 1, y: 0 }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative text-center py-48 sm:py-64 bg-surface rounded-[4rem] sm:rounded-[6rem] border border-primary/5 overflow-hidden group shadow-premium"
+          className="relative text-center py-32 sm:py-48 bg-surface rounded-3xl sm:rounded-[4rem] border border-primary/5 overflow-hidden group shadow-premium"
         >
           {/* Spotlight effect */}
           <motion.div 

@@ -20,22 +20,22 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-surface-container pt-16 sm:pt-24 pb-8 overflow-hidden font-sans border-t border-surface-container-high">
+    <footer className="relative bg-surface-container pt-12 sm:pt-16 pb-6 overflow-hidden font-sans border-t border-surface-container-high">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16 lg:gap-12 mb-16 sm:mb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 lg:gap-10 mb-12 sm:mb-16">
           
           {/* Brand Identity */}
-          <div className="space-y-6 sm:space-y-8">
+          <div className="space-y-4 sm:space-y-6">
             <Link to="/" className="inline-block group transition-transform duration-500 hover:scale-105">
-              <Logo size={48} className="opacity-90 group-hover:opacity-100 transition-opacity" />
+              <Logo size={40} className="opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-secondary">Kerala Heritage United</p>
               <p className="text-sm font-medium text-on-surface-variant leading-relaxed max-w-xs">
                 Empowering Kerala’s homepreneurs by bringing authentic, handmade treasures directly to your home. Curated with care, delivered with trust.
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {[
                 { icon: Instagram, label: 'Instagram', href: '#' },
                 { icon: Facebook, label: 'Facebook', href: '#' },
@@ -53,47 +53,50 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="sm:pt-2">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-6 sm:mb-8 text-primary">Discover</h4>
-            <ul className="grid grid-cols-1 gap-4">
-              {['New Arrivals', 'Best Sellers', 'Artisan Stories', 'Heritage Collection'].map((item) => (
-                <li key={item}>
-                  <Link 
-                    to="/shop" 
-                    className="text-[11px] font-bold text-on-surface-variant hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-secondary scale-0 group-hover:scale-100 transition-transform" />
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Navigation Links Grid - Rearranged for Mobile */}
+          <div className="grid grid-cols-2 lg:contents gap-10 sm:gap-12 lg:gap-10">
+            {/* Quick Links */}
+            <div className="sm:pt-1">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-4 sm:mb-6 text-primary">Discover</h4>
+              <ul className="grid grid-cols-1 gap-3">
+                {['New Arrivals', 'Best Sellers', 'Artisan Stories', 'Heritage Collection'].map((item) => (
+                  <li key={item}>
+                    <Link 
+                      to="/shop" 
+                      className="text-[11px] font-bold text-on-surface-variant hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest text-left"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-secondary scale-0 group-hover:scale-100 transition-transform flex-shrink-0" />
+                      {item}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Institutional */}
-          <div className="sm:pt-2">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-6 sm:mb-8 text-primary">Community</h4>
-            <ul className="grid grid-cols-1 gap-4">
-              {['Our Philosophy', 'Shipping Policy', 'Returns', 'Privacy Protocol'].map((item) => (
-                <li key={item}>
-                  <Link 
-                    to="/shop" 
-                    className="text-[11px] font-bold text-on-surface-variant hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-secondary scale-0 group-hover:scale-100 transition-transform" />
-                    {item}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* Institutional */}
+            <div className="sm:pt-1">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-4 sm:mb-6 text-primary">Community</h4>
+              <ul className="grid grid-cols-1 gap-3">
+                {['Our Philosophy', 'Shipping Policy', 'Returns', 'Privacy Protocol'].map((item) => (
+                  <li key={item}>
+                    <Link 
+                      to="/shop" 
+                      className="text-[11px] font-bold text-on-surface-variant hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest text-left"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-secondary scale-0 group-hover:scale-100 transition-transform flex-shrink-0" />
+                      {item}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Artisan Support Card */}
           <div className="lg:col-span-1">
-            <div className="bg-surface rounded-2xl p-6 sm:p-8 border border-surface-container-high space-y-6 sm:space-y-8 relative overflow-hidden group shadow-sm hover:shadow-lg transition-shadow">
-              <div className="relative z-10 space-y-2">
-                <h3 className="text-base sm:text-lg font-bold text-primary uppercase tracking-tight">Direct Support</h3>
+            <div className="bg-surface rounded-2xl p-6 border border-surface-container-high space-y-5 sm:space-y-6 relative overflow-hidden group shadow-sm hover:shadow-lg transition-shadow">
+              <div className="relative z-10 space-y-1.5">
+                <h3 className="text-base font-bold text-primary uppercase tracking-tight">Direct Support</h3>
                 <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-widest leading-loose">
                   Consult with heritage experts for custom orders.
                 </p>
@@ -128,7 +131,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-surface-container-high flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="pt-6 border-t border-surface-container-high flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-[0.4em] text-center sm:text-left">
             © {currentYear} Mallu's Mart • Authentic Heritage Retail
           </p>

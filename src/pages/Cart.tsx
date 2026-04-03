@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Trash2, Minus, Plus, ShieldCheck, Truck, ArrowRight, X, Bookmark, ShoppingBag, MessageCircle, Loader2 } from 'lucide-react';
 import { PRODUCTS } from '../constants';
 import { Link } from 'react-router-dom';
@@ -158,26 +158,27 @@ export default function Cart() {
   };
 
   return (
-    <main className="bg-white min-h-screen pt-24 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 sm:mb-20 gap-8">
-        <div className="space-y-4">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-semibold tracking-tighter text-primary">
+    <main className="bg-white min-h-screen pt-16 sm:pt-28 pb-16 lg:pb-24 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 sm:mb-16 gap-8">
+        <div className="space-y-4 sm:space-y-6 text-center lg:text-left w-full lg:w-auto">
+          <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-secondary">Awaiting Commission</span>
+          <h1 className="text-4xl sm:text-6xl lg:text-8xl font-semibold tracking-tighter text-primary uppercase leading-none">
             Your <span className="text-secondary italic font-serif">Selection.</span>
           </h1>
-          <p className="text-on-surface-variant max-w-md font-medium leading-relaxed text-sm sm:text-base">
+          <p className="text-on-surface-variant max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed text-sm sm:text-lg italic">
             Review your curated pieces before we prepare them for their journey to your home. Each item is inspected for quality and artisan integrity.
           </p>
         </div>
-        <Link to="/shop" className="group flex items-center gap-3 text-primary font-bold text-[10px] tracking-[0.25em] uppercase hover:text-secondary transition-colors">
-          Continue Shopping
+        <Link to="/shop" className="group flex items-center justify-center lg:justify-start gap-4 text-primary font-bold text-[10px] tracking-[0.4em] uppercase hover:text-secondary transition-colors w-full lg:w-auto py-5 border border-primary/10 rounded-full lg:border-none lg:py-0">
+          Continue Discovery
           <ArrowRight size={18} className="transition-transform group-hover:translate-x-2" />
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
         {/* Cart Items */}
-        <div className="lg:col-span-8 space-y-16">
-          <div className="space-y-8">
+        <div className="lg:col-span-8 space-y-8 sm:space-y-12">
+          <div className="space-y-6 sm:space-y-10">
             <AnimatePresence mode="popLayout">
               {items.map((item) => (
                 <motion.div
@@ -191,7 +192,7 @@ export default function Cart() {
                   }}
                   exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="bg-white/60 backdrop-blur-md p-8 rounded-[2.5rem] border border-outline-variant/10 flex flex-col sm:flex-row gap-8 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500 relative overflow-hidden"
+                  className="bg-white p-5 sm:p-8 rounded-3xl border border-outline-variant/10 flex flex-col sm:flex-row gap-6 sm:gap-8 items-center shadow-premium hover:shadow-premium-hover transition-all duration-500 relative overflow-hidden"
                 >
                   {/* Loading Overlay */}
                   <AnimatePresence>
@@ -207,27 +208,27 @@ export default function Cart() {
                     )}
                   </AnimatePresence>
 
-                  <div className="w-40 h-40 rounded-3xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
+                  <div className="w-full sm:w-40 h-40 sm:h-40 rounded-2xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
                     <img src={getProductImage(item.image)} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   </div>
-                  <div className="flex-grow w-full">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <p className="text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-secondary mb-2">{item.category}</p>
-                        <h3 className="text-2xl font-headline font-medium leading-tight">{item.name}</h3>
+                  <div className="flex-grow w-full space-y-4 sm:space-y-6">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                      <div className="space-y-1">
+                        <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-secondary">{item.category}</p>
+                        <h3 className="text-xl sm:text-2xl font-headline font-semibold leading-tight uppercase tracking-tight">{item.name}</h3>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-mono font-light">${(item.price * item.quantity).toFixed(2)}</p>
-                        <p className="text-[10px] font-mono text-on-surface-variant/40 mt-1 uppercase tracking-widest">${item.price.toFixed(2)} / unit</p>
+                      <div className="text-left sm:text-right w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-none border-primary/5">
+                        <p className="text-xl sm:text-2xl font-bold font-mono tracking-tighter">₹{(item.price * item.quantity).toLocaleString()}</p>
+                        <p className="text-[10px] font-bold text-on-surface-variant/40 mt-1 uppercase tracking-[0.2em]">Individual: ₹{item.price.toLocaleString()}</p>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-6 mt-8">
-                      <div className="flex items-center bg-surface-container-low rounded-2xl border border-outline-variant/5 p-1">
+                    <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-primary/5">
+                      <div className="flex items-center bg-surface-container-low rounded-2xl border border-outline-variant/10 p-1 shadow-sm">
                         <button
                           onClick={() => handleQuantityUpdate(item.id, -1, item.quantity)}
                           disabled={processingIds.has(item.id)}
-                          className="p-3 hover:text-primary transition-colors disabled:opacity-30"
+                          className="p-3 hover:text-primary transition-colors disabled:opacity-30 active:scale-90"
                         >
                           <Minus size={16} />
                         </button>
@@ -235,32 +236,32 @@ export default function Cart() {
                           key={item.quantity}
                           initial={{ scale: 1.2, color: 'var(--primary)' }}
                           animate={{ scale: 1, color: 'inherit' }}
-                          className="w-10 text-center font-mono font-bold text-base"
+                          className="w-12 text-center font-bold text-base"
                         >
-                          {item.quantity.toString().padStart(2, '0')}
+                          {item.quantity}
                         </motion.span>
                         <button
                           onClick={() => handleQuantityUpdate(item.id, 1, item.quantity)}
                           disabled={processingIds.has(item.id)}
-                          className="p-3 hover:text-primary transition-colors disabled:opacity-30"
+                          className="p-3 hover:text-primary transition-colors disabled:opacity-30 active:scale-90"
                         >
                           <Plus size={16} />
                         </button>
                       </div>
-                      <div className="flex items-center gap-8">
+                      <div className="flex items-center gap-6 sm:gap-8">
                         <button
                           onClick={() => handleSaveForLater(item.id)}
                           disabled={processingIds.has(item.id)}
-                          className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-primary transition-colors uppercase tracking-[0.2em] disabled:opacity-30"
+                          className="group flex items-center gap-2.5 text-[10px] font-bold text-on-surface-variant/60 hover:text-primary transition-all uppercase tracking-[0.3em] disabled:opacity-30"
                         >
-                          <Bookmark size={14} className="group-hover:fill-current" /> Save for Later
+                          <Bookmark size={14} className="group-hover:fill-current" /> <span className="hidden sm:inline">Save for Later</span><span className="sm:hidden">Save</span>
                         </button>
                         <button
                           onClick={() => handleRemoveItem(item.id)}
                           disabled={processingIds.has(item.id)}
-                          className="group flex items-center gap-2 text-[10px] font-mono font-bold text-on-surface-variant/60 hover:text-red-500 transition-colors uppercase tracking-[0.2em] disabled:opacity-30"
+                          className="group flex items-center gap-2.5 text-[10px] font-bold text-on-surface-variant/60 hover:text-red-500 transition-all uppercase tracking-[0.3em] disabled:opacity-30"
                         >
-                          <Trash2 size={14} /> Remove
+                          <Trash2 size={14} /> <span className="hidden sm:inline">Remove Item</span><span className="sm:hidden">Delete</span>
                         </button>
                       </div>
                     </div>
@@ -401,8 +402,8 @@ export default function Cart() {
 
           {/* Saved for Later Section */}
           {savedItems.length > 0 && (
-            <div className="pt-20 border-t border-outline-variant/10">
-              <div className="flex items-center gap-4 mb-12">
+            <div className="pt-16 border-t border-outline-variant/10">
+              <div className="flex items-center gap-4 mb-8">
                 <div className="p-3 bg-primary/5 rounded-2xl text-primary">
                   <Bookmark size={24} className="fill-current" />
                 </div>
@@ -472,8 +473,8 @@ export default function Cart() {
 
         {/* Order Summary */}
         <div className="lg:col-span-4">
-          <div className="bg-surface-container-low p-10 rounded-[3rem] sticky top-32 border border-outline-variant/5 shadow-inner">
-            <h2 className="text-3xl font-semibold tracking-tighter mb-10 text-primary">Order <span className="text-secondary italic font-serif">Summary.</span></h2>
+          <div className="bg-surface-container-low p-6 sm:p-8 rounded-3xl sticky top-32 border border-outline-variant/5 shadow-inner">
+            <h2 className="text-2xl font-semibold tracking-tighter mb-8 text-primary uppercase">Summary</h2>
             <div className="space-y-6 mb-10">
               <div className="flex justify-between text-xs font-mono tracking-widest uppercase">
                 <span className="text-on-surface-variant/60 font-bold">Subtotal</span>
@@ -488,19 +489,19 @@ export default function Cart() {
                 <span className="font-bold text-primary">${tax.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
               </div>
             </div>
-            <div className="pt-8 border-t border-primary/5 mb-10">
-              <p className="text-[10px] font-mono font-bold text-on-surface-variant/40 mb-3 uppercase tracking-[0.3em]">Total Investment</p>
-              <p className="text-5xl font-mono font-bold text-primary tracking-tighter">${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            <div className="pt-6 border-t border-primary/5 mb-8">
+              <p className="text-[9px] font-mono font-bold text-on-surface-variant/40 mb-2 uppercase tracking-[0.3em]">Total Amount</p>
+              <p className="text-4xl font-mono font-bold text-primary tracking-tighter">₹{total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
             </div>
             <motion.button
               onClick={() => setShowCheckout(true)}
               disabled={items.length === 0}
-              className="btn-luxury w-full group mb-8"
+              className="btn-luxury w-full group mb-6 py-5"
             >
-              Proceed to Checkout
+              Checkout Order
             </motion.button>
-            <div className="flex items-center justify-center gap-3 text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-[0.2em] mb-10">
-              <ShieldCheck size={14} className="text-secondary" /> Secure SSL Encrypted
+            <div className="flex items-center justify-center gap-3 text-[9px] font-bold text-on-surface-variant/40 uppercase tracking-[0.2em] mb-8">
+              <ShieldCheck size={12} className="text-secondary" /> Secure SSL Encrypted
             </div>
 
             <div className="space-y-5 pt-10 border-t border-primary/5">
@@ -533,7 +534,7 @@ export default function Cart() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 40 }}
               transition={{ type: "spring", stiffness: 300, damping: 35 }}
-              className="relative w-full max-w-5xl bg-white rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col lg:flex-row max-h-[90vh]"
+              className="relative w-full max-w-4xl bg-white rounded-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col lg:flex-row max-h-[90vh]"
             >
               <div className="lg:w-[40%] bg-surface-container-low p-12 overflow-y-auto no-scrollbar border-r border-outline-variant/10">
                 <div className="mb-12">

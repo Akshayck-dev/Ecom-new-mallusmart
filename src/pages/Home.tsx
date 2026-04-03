@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PRODUCTS } from '../constants';
 import { ProductCard } from '../components/ProductCard';
 import Logo from '../components/Logo';
+import artisanHero from '../assets/kerala_artisanal_flatlay.png';
+import wellnessHero from '../assets/kerala_skincare_lifestyle.png';
 
 const CATEGORIES_DATA = [
   { id: 'Food', name: 'Traditional Food', icon: Utensils, image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=600', count: '12+ Items' },
@@ -29,13 +31,13 @@ export default function Home() {
   const HERO_SLIDES = [
     {
       id: 0,
-      src: "https://images.unsplash.com/photo-1590424753242-f59cdd9f41b2?auto=format&fit=crop&q=80&w=2600", // Kerala Brass Lamp / Nilavilakku vibe
+      src: artisanHero,
       title: 'Local Hands',
       subtitle: 'From Heritage Makers to Your Home'
     },
     {
       id: 1,
-      src: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=2600", // Spices / Natural Wood vibe
+      src: wellnessHero, // Wellness Kerala Ingredients in Garden
       title: 'Artisan Souls',
       subtitle: 'Supporting Kerala Homepreneurs'
     },
@@ -51,7 +53,7 @@ export default function Home() {
     if (isPaused) return;
     const timer = setInterval(() => {
       setSlideIndex(prev => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
+    }, 4000);
     return () => clearInterval(timer);
   }, [isPaused, slideIndex]);
 
@@ -62,98 +64,78 @@ export default function Home() {
       {/* Warm Artisan Hero Section */}
       <section
         ref={heroRef}
-        className="relative h-screen min-h-[750px] flex items-center justify-center overflow-hidden bg-surface-container-low"
+        className="relative h-[60vh] flex items-center justify-center overflow-hidden bg-surface"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Background Layer */}
+        {/* ... (Previous Background Layer remains the same) ... */}
         <AnimatePresence initial={false} mode="wait">
           <motion.div
             key={slideIndex}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 2, ease: 'easeInOut' }}
+            transition={{ duration: 1.2, ease: 'easeInOut' }}
             className="absolute inset-0 z-0"
           >
-            <div className="absolute inset-0 bg-[#111111]/30 z-10" />
+            <div className="absolute inset-0 bg-black/40 z-10" />
             <motion.img
               src={HERO_SLIDES[slideIndex].src}
               alt=""
-              className="w-full h-full object-cover grayscale-[20%] brightness-[0.85]"
+              className="w-full h-full object-cover bg-center grayscale-[20%] brightness-[0.85]"
               initial={{ scale: 1.15 }}
               animate={{ scale: 1 }}
-              transition={{ duration: 8, ease: 'linear' }}
+              transition={{ duration: 6, ease: 'linear' }}
             />
           </motion.div>
         </AnimatePresence>
 
         {/* Content Layer */}
-        <div className="relative z-20 w-full max-w-screen-2xl mx-auto px-6 sm:px-12 lg:px-20 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="relative z-20 w-full max-w-screen-xl mx-auto px-10 sm:px-12 lg:px-20 text-center flex flex-col items-center justify-center h-full">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-start text-left space-y-10"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col items-center text-center space-y-4 sm:space-y-6"
           >
-            <div className="flex items-center gap-4 text-secondary font-bold uppercase tracking-[0.4em] text-[10px]">
-              <div className="w-10 h-px bg-secondary/30" />
+            <p className="text-xs uppercase tracking-widest text-secondary">
               100% Locally Sourced
-            </div>
-
-            <h1 className="text-7xl sm:text-8xl lg:text-[10rem] font-semibold text-white leading-[0.85] tracking-tighter uppercase drop-shadow-2xl">
-              From Local <br /> 
-              <span className="italic font-serif text-secondary lowercase font-normal italic">Hands</span> <br />
-              to Your Home.
-            </h1>
-
-            <p className="text-lg sm:text-xl text-white/90 max-w-lg leading-relaxed font-medium italic drop-shadow-md">
-              Supporting 50+ local Kerala artisans. Authentic, handmade, and delivered with absolute trust directly to your doorstep.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto pt-4">
+            <h1 className="text-2xl sm:text-4xl lg:text-6xl font-semibold text-white leading-tight">
+              From Local <span className="text-secondary italic">Hands</span> to Your Home.
+            </h1>
+
+            <p className="text-sm sm:text-base text-gray-200 max-w-md mx-auto">
+              Supporting local Kerala artisans. Authentic, handmade, and trusted products.
+            </p>
+
+            <div className="flex flex-col gap-3 w-full max-w-xs mx-auto">
               <Link
                 to="/shop"
-                className="btn-luxury px-12 py-6 bg-secondary text-white border-none hover:bg-white hover:text-primary transition-all duration-500 w-full sm:min-w-[220px] rounded-full text-center"
+                className="w-full bg-secondary text-white py-3 rounded-full text-sm font-bold uppercase tracking-widest text-center hover:opacity-90 transition-opacity"
               >
                 Explore Products
               </Link>
               <Link
                 to="/contact"
-                className="btn-luxury-secondary bg-white/10 backdrop-blur-md text-white border-white/20 hover:bg-white hover:text-primary px-12 py-6 transition-all duration-500 w-full sm:min-w-[220px] rounded-full text-center"
+                className="w-full border border-white text-white py-3 rounded-full text-sm font-bold uppercase tracking-widest text-center hover:bg-white hover:text-primary transition-all duration-300"
               >
                 Become a Seller
               </Link>
             </div>
           </motion.div>
 
-          {/* Floating Visual Accent (Desktop) */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            className="hidden lg:block relative aspect-[4/5] w-full max-w-md mx-auto"
-          >
-            <div className="absolute -inset-4 bg-secondary/20 rounded-[4rem] blur-3xl animate-pulse" />
-            <div className="relative h-full w-full rounded-[4rem] overflow-hidden border border-white/20 shadow-2xl">
-              <img 
-                src="https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&q=80&w=1200" 
-                className="w-full h-full object-cover"
-                alt="Kerala Artisan Craft"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#111111]/60 to-transparent" />
-            </div>
-          </motion.div>
         </div>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-12 left-6 sm:left-12 lg:left-20 flex items-center gap-4 z-30">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
           {HERO_SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => setSlideIndex(i)}
-              className={`h-1 transition-all duration-700 rounded-full ${
-                i === slideIndex ? 'w-20 bg-secondary' : 'w-8 bg-white/30 hover:bg-white/60'
+              className={`h-1.5 transition-all duration-700 rounded-full ${
+                i === slideIndex ? 'w-12 bg-secondary' : 'w-6 bg-white/30 hover:bg-white/60'
               }`}
             />
           ))}
@@ -161,20 +143,20 @@ export default function Home() {
       </section>
 
       {/* Symmetrical Grid Categories */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-end justify-between mb-20 gap-12">
-          <div className="space-y-6">
-            <h2 className="text-[10px] font-bold uppercase tracking-[0.5em] text-on-surface-variant">Archive Discovery</h2>
-            <h3 className="text-4xl sm:text-5xl lg:text-7xl font-semibold text-primary tracking-tighter leading-none">
-              The Heritage <span className="text-secondary italic font-serif">Zones.</span>
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto border-t border-primary/5">
+        <div className="flex flex-col md:flex-row items-end justify-between mb-10 sm:mb-16 gap-6 sm:gap-8 text-center md:text-left">
+          <div className="space-y-3 sm:space-y-4 w-full md:w-auto">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary">Archive Discovery</h2>
+            <h3 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-primary tracking-tighter leading-none">
+              The Heritage <br className="sm:hidden" /> <span className="text-secondary italic font-serif lowercase">Zones.</span>
             </h3>
           </div>
-          <p className="text-base sm:text-lg text-on-surface-variant max-w-md leading-relaxed font-medium italic">
+          <p className="text-sm sm:text-base text-on-surface-variant max-w-md leading-relaxed font-medium italic mx-auto md:mx-0">
             Curated by precise standards, harvested with care, and authenticated by Kerala's leading homepreneurs.
           </p>
         </div>
         
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
           {CATEGORIES_DATA.map((cat, i) => (
             <motion.div
               key={cat.id}
@@ -182,18 +164,18 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group relative aspect-[3/4] rounded-3xl overflow-hidden border border-primary/5 shadow-premium"
+              className="group relative aspect-[3/4] rounded-xl overflow-hidden border border-primary/5 shadow-premium"
             >
               <Link to={`/shop`} className="block w-full h-full">
                 <img 
                   src={cat.image} 
                   alt={cat.name} 
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                  className="block w-full h-full object-cover transition-transform duration-[2s] ease-[0.16, 1, 0.3, 1] group-hover:scale-110" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-secondary mb-3">{cat.count}</span>
-                  <h4 className="text-xl font-bold text-white uppercase tracking-tighter group-hover:translate-x-2 transition-transform duration-500">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                <div className="absolute inset-0 p-4 sm:p-6 flex flex-col justify-end">
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.3em] text-secondary mb-1.5 sm:mb-2">{cat.count}</span>
+                  <h4 className="text-sm sm:text-base font-bold text-white uppercase tracking-tighter group-hover:translate-x-2 transition-transform duration-500">
                     {cat.name}
                   </h4>
                 </div>
@@ -204,46 +186,40 @@ export default function Home() {
       </section>
 
       {/* Discover Section */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto border-t border-primary/5">
-        <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-12">
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-on-surface-variant">Curated Masterpieces</span>
-              <div className="w-16 h-px bg-primary/10" />
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto border-t border-primary/5">
+        <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-10 sm:mb-16 gap-6 text-center md:text-left">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-center md:justify-start gap-3">
+              <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary">Curated Masterpieces</span>
+              <div className="hidden sm:block w-12 h-px bg-primary/10" />
             </div>
-            <h2 className="text-4xl sm:text-5xl lg:text-7xl font-semibold text-primary tracking-tighter leading-none uppercase">
-              Discover <span className="text-secondary italic font-serif">Authenticity.</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-primary tracking-tighter leading-none uppercase">
+              Discover <br className="sm:hidden" /> <span className="text-secondary italic font-serif lowercase">Authenticity.</span>
             </h2>
           </div>
-          <Link to="/shop" className="group flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.3em] text-primary hover:text-secondary transition-colors">
-            View All <ArrowRight size={18} className="transition-transform group-hover:translate-x-2" />
+          <Link to="/shop" className="group flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-primary hover:text-secondary transition-colors w-full sm:w-auto justify-center py-4 border border-border rounded-full sm:border-none sm:py-0">
+            View All <ArrowRight size={16} className="transition-transform group-hover:translate-x-2" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {featuredProducts.map((p, i) => (
-            <motion.div 
-              key={p.id} 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-            >
+            <div key={p.id}>
               <ProductCard product={p} />
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
 
       {/* Trust Banner */}
-      <section className="bg-surface py-24 sm:py-32 px-4 sm:px-6 lg:px-8 border-t border-primary/5">
+      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 border-t border-primary/5 bg-surface">
         <div className="max-w-screen-xl mx-auto">
-          <div className="text-center mb-24 space-y-6">
-            <h2 className="text-[10px] font-bold uppercase tracking-[0.6em] text-on-surface-variant">Institutional Standard</h2>
-            <h3 className="text-4xl sm:text-5xl lg:text-7xl font-semibold text-primary tracking-tighter uppercase">Why Trust Us?</h3>
+          <div className="text-center mb-10 sm:mb-16 space-y-3 sm:space-y-4">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.6em] text-primary">Institutional Standard</h2>
+            <h3 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-primary tracking-tighter uppercase leading-tight">Why Trust Us?</h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {TRUST_DATA.map((item, i) => (
               <motion.div 
                 key={i}
@@ -251,13 +227,13 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group p-10 bg-white rounded-[2.5rem] border border-primary/5 shadow-premium hover:shadow-premium-hover transition-all duration-500"
+                className="group p-6 sm:p-10 bg-white rounded-2xl border border-primary/5 shadow-premium hover:shadow-premium-hover transition-all duration-500"
               >
-                <div className="w-16 h-16 rounded-2xl bg-surface flex items-center justify-center mb-8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500">
-                  <item.icon size={28} strokeWidth={1.5} />
+                <div className="w-12 h-12 rounded-xl bg-surface flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                  <item.icon size={20} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-xs font-bold text-primary mb-4 uppercase tracking-[0.2em]">{item.title}</h3>
-                <p className="text-xs font-medium text-on-surface-variant leading-relaxed uppercase tracking-widest">{item.desc}</p>
+                <h3 className="text-[10px] font-bold text-primary mb-3 uppercase tracking-[0.2em]">{item.title}</h3>
+                <p className="text-[10px] font-medium text-on-surface-variant leading-relaxed uppercase tracking-widest">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -265,41 +241,51 @@ export default function Home() {
       </section>
 
       {/* Call to Action */}
-      <section className="relative w-full h-[60vh] flex items-center justify-center overflow-hidden bg-primary">
-        <div className="absolute inset-0 opacity-20 transition-transform duration-[10s] hover:scale-110">
+      <section className="relative w-full min-h-[60vh] flex items-center justify-center overflow-hidden bg-primary">
+        <div className="absolute inset-0 opacity-15">
           <img
             src="https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&q=80&w=2000"
             alt=""
-            className="w-full h-full object-cover grayscale"
+            className="block w-full h-full object-cover grayscale"
           />
         </div>
 
-        <div className="relative z-10 w-full max-w-5xl px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-10">
-          <div className="flex items-center gap-6">
-            <div className="w-16 h-px bg-white/20" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.8em] text-white/40">Heritage Protocol</span>
-            <div className="w-16 h-px bg-white/20" />
+        <div className="relative z-10 w-full max-w-screen-xl px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center gap-6 sm:gap-10">
+          <div className="space-y-3">
+            <div className="flex items-center justify-center gap-4">
+              <div className="w-8 h-px bg-white/20" />
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.8em] text-white/50">Heritage Protocol</span>
+              <div className="w-8 h-px bg-white/20" />
+            </div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-5xl lg:text-7xl font-semibold text-white tracking-tighter uppercase leading-[0.9]"
+            >
+              Experience <br />
+              <span className="text-secondary italic font-serif lowercase">Genuine Luxury.</span>
+            </motion.h2>
           </div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-5xl sm:text-7xl lg:text-9xl font-semibold text-white tracking-tighter uppercase leading-[0.85]"
+            transition={{ delay: 0.2 }}
+            className="w-full max-w-xs mx-auto"
           >
-            Experience <br />
-            <span className="text-secondary italic font-serif lowercase">Genuine Luxury.</span>
-          </motion.h2>
-
-          <motion.a
-            href="https://wa.me/919562854999"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-luxury px-16 py-7 bg-white text-primary border-none hover:bg-secondary hover:text-white flex items-center gap-4 text-xs font-bold"
-          >
-            <MessageCircle size={20} />
-            Order on WhatsApp
-          </motion.a>
+            <a
+              href="https://wa.me/919562854999"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 w-full bg-white text-primary px-8 py-5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-secondary hover:text-white transition-all shadow-premium"
+            >
+              <MessageCircle size={18} />
+              Order on WhatsApp
+            </a>
+          </motion.div>
         </div>
       </section>
     </main>

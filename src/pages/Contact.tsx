@@ -7,20 +7,20 @@ import Logo from '../components/Logo';
 
 export default function Contact() {
   return (
-    <main className="pt-24 sm:pt-32 pb-20 bg-white min-h-screen">
+    <main className="pt-16 sm:pt-24 pb-16 bg-white min-h-screen">
       <section className="px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           {/* Form Side */}
-          <div className="space-y-12">
-            <div className="space-y-8">
+          <div className="space-y-8 sm:space-y-10">
+            <div className="space-y-6 sm:space-y-8">
               <motion.div 
                 animate={{ y: [0, -12, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="mb-8"
               >
-                <Logo size="64px" />
+                <Logo size="48px" />
               </motion.div>
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-5">
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -39,8 +39,8 @@ export default function Contact() {
               </div>
             </div>
 
-            <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <form className="space-y-6 sm:space-y-8" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                 <div className="relative group">
                   <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold uppercase tracking-widest text-secondary z-10 transition-colors group-focus-within:text-primary">First Name</label>
                   <input 
@@ -112,7 +112,7 @@ export default function Contact() {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="hidden lg:block sticky top-40"
           >
-            <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-premium border border-primary/5">
+            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-premium border border-primary/5">
               <img 
                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=1200" 
                 alt="Beauty products" 

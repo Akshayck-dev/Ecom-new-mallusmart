@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Plus, Minus, ShoppingBag, X, ArrowRight, MessageCircle, Sparkles, ShieldCheck } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { useOrderStore } from '../store/orderStore';
@@ -8,6 +8,17 @@ import Logo from './Logo';
 export const CartDrawer = () => {
   const { items, isDrawerOpen, closeDrawer, removeItem, updateQuantity, totalPrice } = useCartStore();
   const { openOrderModal } = useOrderStore();
+  
+  // Dynamic Asset Resolver for Vite
+  const getProductImage = (imagePath: string) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    if (imagePath.startsWith('http')) return imagePath;
+    try {
+      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
+    } catch {
+      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    }
+  };
 
   const handleCheckout = () => {
     closeDrawer();
@@ -101,7 +112,7 @@ export const CartDrawer = () => {
                   <div key={item.id} className="flex gap-6 group">
                     <div className="w-24 h-32 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50">
                       <img
-                        src={item.image}
+                        src={getProductImage(item.image)}
                         alt={item.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"

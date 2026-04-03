@@ -12,7 +12,7 @@ import FAQ from './pages/FAQ';
 import Contact from './pages/Contact';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import GlobalUI from './components/GlobalUI';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -25,6 +25,8 @@ function ScrollToTop() {
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const isHome = location.pathname === '/';
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -36,7 +38,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
           duration: 0.6, 
           ease: [0.16, 1, 0.3, 1] 
         }}
-        className="flex-grow"
+        className={`flex-grow ${!isHome ? 'pt-16 sm:pt-20' : ''}`}
       >
         {children}
       </motion.div>
@@ -51,7 +53,7 @@ export default function App() {
       <GlobalUI />
       <Toaster position="bottom-right" richColors closeButton />
       {/* Global Artisan Texture Wrapper (noise-bg) */}
-      <div className="min-h-screen flex flex-col pt-16 md:pt-20 relative overflow-x-hidden">
+      <div className="min-h-screen flex flex-col relative overflow-x-hidden">
         <Navbar />
         <PageWrapper>
           <Routes>

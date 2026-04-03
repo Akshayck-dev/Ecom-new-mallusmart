@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle, User, Phone, MapPin, Package, AlertCircle, ShoppingBag, ChevronDown } from 'lucide-react';
 import { useOrderStore } from '../store/orderStore';
 import { useCartStore } from '../store/cartStore';
@@ -10,6 +10,17 @@ const WHATSAPP_NUMBER = '919562854999';
 export const OrderModal = () => {
   const { isOpen, closeOrderModal, orderType, product, initialQuantity } = useOrderStore();
   const { items, totalPrice, clearCart } = useCartStore();
+
+  // Dynamic Asset Resolver for Vite
+  const getProductImage = (imagePath: string) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    if (imagePath.startsWith('http')) return imagePath;
+    try {
+      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
+    } catch {
+      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
+    }
+  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -119,36 +130,36 @@ export const OrderModal = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-premium pointer-events-auto overflow-hidden flex flex-col max-h-[90vh]"
+              className="bg-white w-full max-w-lg rounded-3xl shadow-premium pointer-events-auto overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Header */}
-              <div className="p-8 border-b border-primary/5 flex items-center justify-between bg-surface">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
-                    <ShoppingBag size={24} />
+              <div className="p-5 sm:p-6 border-b border-primary/5 flex items-center justify-between bg-surface">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+                    <ShoppingBag size={18} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-primary tracking-tight uppercase">Checkout Details</h2>
-                    <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-0.5">Heritage Protocol Support</p>
+                    <h2 className="text-base sm:text-lg font-bold text-primary tracking-tight uppercase">Checkout</h2>
+                    <p className="text-[8px] sm:text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">Heritage Protocol</p>
                   </div>
                 </div>
                 <button
                   onClick={closeOrderModal}
-                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary/40 hover:text-secondary border border-primary/5 shadow-sm transition-all"
+                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary/40 hover:text-secondary border border-primary/5 shadow-sm transition-all active:scale-90"
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
-                <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="flex-1 overflow-y-auto p-5 sm:p-7 no-scrollbar">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   
                   {/* Order Summary Toggle */}
                   <div className="bg-surface rounded-3xl border border-primary/5 overflow-hidden">
                     <button
                       type="button"
                       onClick={() => setShowSummary(!showSummary)}
-                      className="w-full px-6 py-5 flex items-center justify-between text-left"
+                      className="w-full px-5 py-4 flex items-center justify-between text-left"
                     >
                       <div className="flex items-center gap-4">
                         <Package size={20} className="text-secondary" />
@@ -176,7 +187,7 @@ export const OrderModal = () => {
                           <div className="pt-6 space-y-4 max-h-[300px] overflow-y-auto no-scrollbar">
                             {orderType === 'single' && product ? (
                               <div className="flex items-center gap-4">
-                                <img src={product.image} className="w-14 h-14 rounded-2xl object-cover shadow-premium" />
+                                <img src={getProductImage(product.image)} className="w-14 h-14 rounded-2xl object-cover shadow-premium" />
                                 <div className="flex-1 min-w-0">
                                   <p className="text-xs font-bold text-primary uppercase truncate">{product.name}</p>
                                   <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">₹{product.price.toLocaleString()} x {formData.quantity}</p>
@@ -185,7 +196,7 @@ export const OrderModal = () => {
                             ) : (
                               items.map((item) => (
                                 <div key={item.id} className="flex items-center gap-4">
-                                  <img src={item.image} className="w-14 h-14 rounded-2xl object-cover shadow-premium" />
+                                  <img src={getProductImage(item.image)} className="w-14 h-14 rounded-2xl object-cover shadow-premium" />
                                   <div className="flex-1 min-w-0">
                                     <p className="text-xs font-bold text-primary uppercase truncate">{item.name}</p>
                                     <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">₹{item.price.toLocaleString()} x {item.quantity}</p>
@@ -199,71 +210,71 @@ export const OrderModal = () => {
                     </AnimatePresence>
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-5">
                     {/* Name */}
-                    <div className="space-y-2.5">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ml-4 block">Delivery Name</label>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant ml-4 block font-serif italic">Delivery Name</label>
                       <div className="relative">
-                        <User className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={20} />
+                        <User className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={18} />
                         <input
                           type="text"
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
                           placeholder="Full Name"
-                          className={`input-luxury pl-16 py-6 !rounded-[2rem] ${errors.name ? 'border-red-500/30' : ''}`}
+                          className={`input-luxury pl-14 py-4 sm:py-5 !rounded-2xl ${errors.name ? 'border-red-500/30' : ''}`}
                         />
                       </div>
-                      {errors.name && <p className="text-[9px] font-bold text-red-500 uppercase tracking-widest ml-6">{errors.name}</p>}
+                      {errors.name && <p className="text-[8px] font-bold text-red-500 uppercase tracking-widest ml-6">{errors.name}</p>}
                     </div>
 
                     {/* Phone */}
-                    <div className="space-y-2.5">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ml-4 block">WhatsApp Number</label>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant ml-4 block font-serif italic">WhatsApp Number</label>
                       <div className="relative">
-                        <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={20} />
+                        <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={18} />
                         <input
                           type="tel"
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="10-digit mobile number"
-                          className={`input-luxury pl-16 py-6 !rounded-[2rem] ${errors.phone ? 'border-red-500/30' : ''}`}
+                          className={`input-luxury pl-14 py-4 sm:py-5 !rounded-2xl ${errors.phone ? 'border-red-500/30' : ''}`}
                         />
                       </div>
-                      {errors.phone && <p className="text-[9px] font-bold text-red-500 uppercase tracking-widest ml-6">{errors.phone}</p>}
+                      {errors.phone && <p className="text-[8px] font-bold text-red-500 uppercase tracking-widest ml-6">{errors.phone}</p>}
                     </div>
 
                     {/* Address */}
-                    <div className="space-y-2.5">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ml-4 block">Delivery Address</label>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant ml-4 block font-serif italic">Delivery Address</label>
                       <div className="relative">
-                        <MapPin className="absolute left-6 top-6 text-secondary" size={20} />
+                        <MapPin className="absolute left-6 top-5 text-secondary" size={18} />
                         <textarea
                           name="address"
                           value={formData.address}
                           onChange={handleChange}
                           rows={3}
                           placeholder="Street, Landmark, City, Pincode"
-                          className={`input-luxury pl-16 pt-5 resize-none !rounded-[2rem] ${errors.address ? 'border-red-500/30' : ''}`}
+                          className={`input-luxury pl-14 pt-4 resize-none !rounded-2xl ${errors.address ? 'border-red-500/30' : ''}`}
                         />
                       </div>
-                      {errors.address && <p className="text-[9px] font-bold text-red-500 uppercase tracking-widest ml-6">{errors.address}</p>}
+                      {errors.address && <p className="text-[8px] font-bold text-red-500 uppercase tracking-widest ml-6">{errors.address}</p>}
                     </div>
 
                     {/* Quantity (Single Only) */}
                     {orderType === 'single' && (
-                      <div className="space-y-2.5">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ml-4 block">Order Quantity</label>
+                      <div className="space-y-2">
+                        <label className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant ml-4 block font-serif italic">Order Quantity</label>
                         <div className="relative">
-                          <Package className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={20} />
+                          <Package className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" size={18} />
                           <input
                             type="number"
                             name="quantity"
                             min="1"
                             value={formData.quantity}
                             onChange={handleChange}
-                            className="input-luxury pl-16 py-6 !rounded-[2rem]"
+                            className="input-luxury pl-14 py-4 sm:py-5 !rounded-2xl"
                           />
                         </div>
                       </div>
@@ -274,18 +285,18 @@ export const OrderModal = () => {
                   <button
                     type="submit"
                     disabled={isProcessing}
-                    className="btn-luxury w-full py-7 flex items-center justify-center gap-4 shadow-xl disabled:opacity-50"
+                    className="btn-luxury w-full py-5 sm:py-6 flex items-center justify-center gap-4 shadow-xl disabled:opacity-50"
                   >
-                    <MessageCircle size={22} className={isProcessing ? 'animate-spin' : ''} />
-                    <span className="text-xs uppercase font-bold tracking-widest">{isProcessing ? 'Processing...' : 'Confirm on WhatsApp'}</span>
+                    <MessageCircle size={20} className={isProcessing ? 'animate-spin' : ''} />
+                    <span className="text-[10px] uppercase font-bold tracking-widest">{isProcessing ? 'Processing...' : 'Confirm Order'}</span>
                   </button>
                 </form>
               </div>
 
               {/* Trust Footer */}
-              <div className="p-8 bg-surface border-t border-primary/5 flex items-center justify-center gap-3">
-                <AlertCircle size={16} className="text-secondary/60" />
-                <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-[0.3em] text-center">
+              <div className="p-6 bg-surface border-t border-primary/5 flex items-center justify-center gap-3">
+                <AlertCircle size={14} className="text-secondary/60" />
+                <p className="text-[8px] font-bold text-on-surface-variant uppercase tracking-[0.3em] text-center">
                   Institutional Support • 100% Verified Origins
                 </p>
               </div>

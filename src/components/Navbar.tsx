@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Menu, X, Heart, ShoppingBag, MessageCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Search, 
+  Menu, 
+  X, 
+  Heart, 
+  ShoppingBag, 
+  MessageCircle, 
+  Instagram, 
+  Facebook, 
+  ArrowRight,
+  Globe,
+  MapPin,
+  Shield
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useWishlistStore } from '../store/wishlistStore';
 import { useCartStore } from '../store/cartStore';
 import { useSearchStore } from '../store/searchStore';
@@ -16,6 +29,9 @@ const navLinks = [
   { name: 'About', path: '/about' },
   { name: 'Contact', path: '/contact' },
 ];
+
+const DISCOVER_LINKS = ['New Arrivals', 'Best Sellers', 'Artisan Stories', 'Heritage Collection'];
+const COMMUNITY_LINKS = ['Our Philosophy', 'Shipping Policy', 'Returns', 'Privacy Protocol'];
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,37 +54,39 @@ export default function Navbar() {
     return location.pathname.startsWith(path);
   };
 
+  const isHome = location.pathname === '/';
+  const showSolidNav = scrolled || !isHome;
+
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 ${
-          scrolled 
-            ? 'bg-white/70 backdrop-blur-md border-b border-gray-50 py-2 sm:py-3' 
-            : 'bg-transparent py-4 sm:py-6'
+        className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-700 ease-in-out ${
+          showSolidNav 
+            ? "bg-white/80 backdrop-blur-xl border-primary/5 py-0 shadow-premium" 
+            : "bg-transparent border-transparent py-4"
         }`}
       >
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between gap-4 md:gap-8 text-on-surface">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4 md:gap-8 transition-colors duration-500">
           
-          {/* Logo: Premium Expansion & Hover Scale */}
+          {/* Logo Section */}
           <Link to="/" className="flex-shrink-0 group relative z-10 transition-transform duration-500 hover:scale-105">
             <Logo size={scrolled ? 40 : 48} className="transition-all duration-700" />
           </Link>
 
-          {/* Desktop Navigation: High-Contrast Monochrome (text-on-surface) */}
-          <nav className="hidden md:flex items-center gap-8 lg:gap-12">
+          {/* Desktop Navigation Links */}
+          <nav className={`hidden md:flex items-center gap-6 lg:gap-8 transition-colors duration-500 ${!showSolidNav ? 'text-white' : 'text-on-surface'}`}>
             {navLinks.map((link) => {
               const active = isActive(link.path);
               return (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`group relative text-sm font-semibold uppercase tracking-widest transition-all duration-500 ${
-                    active ? 'text-on-surface' : 'text-on-surface/60 hover:text-on-surface'
+                  className={`group relative text-sm font-bold uppercase tracking-widest transition-all duration-500 ${
+                    active ? (showSolidNav ? 'text-on-surface' : 'text-white') : (showSolidNav ? 'text-on-surface/60 hover:text-on-surface' : 'text-white/60 hover:text-white')
                   }`}
                 >
                   {link.name}
-                  {/* Luxury Underline Animation */}
-                  <span className={`absolute -bottom-1.5 left-0 h-[1.5px] bg-on-surface origin-left transition-transform duration-700 ${
+                  <span className={`absolute -bottom-1.5 left-0 h-[1.5px] origin-left transition-transform duration-700 ${showSolidNav ? 'bg-on-surface' : 'bg-white'} ${
                     active ? 'w-full scale-x-100' : 'w-full scale-x-0 group-hover:scale-x-100'
                   }`} />
                 </Link>
@@ -77,7 +95,7 @@ export default function Navbar() {
           </nav>
 
           {/* Action Icons */}
-          <div className="flex items-center gap-3 sm:gap-6 relative z-10">
+          <div className={`flex items-center gap-1 sm:gap-2 relative z-10 transition-colors duration-500 ${!showSolidNav ? 'text-white' : 'text-on-surface'}`}>
             {/* Search */}
             <button
               onClick={openSearch}
@@ -141,54 +159,61 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300, mass: 0.8 }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-sm bg-surface z-[210] flex flex-col p-6 sm:p-8"
+              className="fixed right-0 top-0 bottom-0 w-full bg-surface z-[210] flex flex-col p-6 sm:p-10 overflow-y-auto"
             >
-              <div className="flex items-center justify-between mb-12">
+              {/* Header: Icons + Close */}
+              <div className="flex items-center justify-between mb-10 shrink-0">
                 <Logo size={42} />
-                <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-on-surface hover:text-surface transition-all transform active:scale-90"
-                >
-                  <X size={20} />
-                </button>
+                <div className="flex items-center gap-2">
+                   <button onClick={openSearch} className="w-10 h-10 flex items-center justify-center text-on-surface/60"><Search size={22} /></button>
+                   <button onClick={openCartDrawer} className="w-10 h-10 flex items-center justify-center text-on-surface/60"><ShoppingBag size={22} /></button>
+                   <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-on-surface hover:text-surface transition-all transform active:scale-90 ml-2"
+                   >
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
 
-              <nav className="flex flex-col gap-6 flex-1">
-                {navLinks.map((link, i) => (
-                  <motion.div
-                    key={link.name}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 + 0.2 }}
-                  >
-                    <Link
-                      to={link.path}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`text-3xl font-semibold tracking-tight transition-all active:translate-x-2 block ${
-                        isActive(link.path) ? 'text-on-surface' : 'text-on-surface/40 hover:text-on-surface'
-                      }`}
+              {/* Primary Menu List */}
+              <nav className="flex-1 pt-6 space-y-6 sm:space-y-10">
+                {navLinks.map((link, i) => {
+                  const active = isActive(link.path);
+                  return (
+                    <motion.div
+                      key={link.name}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      whileHover={{ x: 10 }}
+                      className="group"
                     >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        to={link.path}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`text-4xl sm:text-5xl font-black uppercase tracking-[0.2em] transition-all flex items-center gap-6 ${
+                          active ? 'text-primary' : 'text-on-surface/30 hover:text-on-surface'
+                        }`}
+                      >
+                        {link.name}
+                        <AnimatePresence>
+                          {active && (
+                            <motion.div 
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              exit={{ scale: 0 }}
+                              layoutId="active-dot-mobile"
+                              className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-secondary shadow-lg shadow-secondary/20"
+                            />
+                          )}
+                        </AnimatePresence>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </nav>
 
-              <div className="pt-8 border-t border-surface-container-high flex flex-col gap-6">
-                <div className="space-y-1">
-                  <p className="text-xs font-bold text-on-surface/40 uppercase tracking-widest">Customer Support</p>
-                  <p className="text-sm text-on-surface/60">Connect with an artisan via WhatsApp</p>
-                </div>
-                <a
-                  href={WHATSAPP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-3 py-3 bg-on-surface text-surface text-sm font-semibold rounded-lg shadow-lg active:scale-95 transition-transform"
-                >
-                  <MessageCircle size={18} />
-                  Contact Support
-                </a>
-              </div>
             </motion.div>
           </div>
         )}
