@@ -1,15 +1,17 @@
 import React from 'react';
 import { TrendingUp, Users, ShoppingCart, DollarSign, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useProductStore } from '../../store/productStore';
+import { useAdminStore } from '../../store/adminStore';
 
 export default function AdminDashboard() {
   const { products } = useProductStore();
+  const { analytics } = useAdminStore();
   
   const stats = [
-    { name: 'Total Revenue', value: '₹45,231.00', change: '+12.5%', icon: DollarSign, trend: 'up' },
+    { name: 'Total Revenue', value: `₹${analytics.revenue.toLocaleString()}`, change: analytics.revenueChange, icon: DollarSign, trend: analytics.revenue.toString().startsWith('-') ? 'down' : 'up' },
     { name: 'Active SKU', value: products.length.toString(), change: '+8.2%', icon: ShoppingCart, trend: 'up' },
-    { name: 'Total Customers', value: '2,420', change: '+14.6%', icon: Users, trend: 'up' },
-    { name: 'Avg. Order Growth', value: '18.4%', change: '-2.1%', icon: TrendingUp, trend: 'down' },
+    { name: 'Total Customers', value: analytics.customers.toLocaleString(), change: analytics.customersChange, icon: Users, trend: 'up' },
+    { name: 'Total Orders', value: analytics.orders.toLocaleString(), change: analytics.ordersChange, icon: TrendingUp, trend: 'up' },
   ];
   return (
     <div className="space-y-10 selection:bg-vibrant-orange/10 selection:text-vibrant-orange">

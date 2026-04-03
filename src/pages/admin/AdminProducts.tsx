@@ -11,6 +11,7 @@ import {
   X
 } from 'lucide-react';
 import { useProductStore } from '../../store/productStore';
+import { useAdminStore } from '../../store/adminStore';
 import { toast } from 'sonner';
 
 const CATEGORIES = [
@@ -25,6 +26,7 @@ const CATEGORIES = [
 
 export default function AdminProducts() {
   const { products, addProduct, deleteProduct } = useProductStore();
+  const { resetAnalytics } = useAdminStore();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -78,13 +80,26 @@ export default function AdminProducts() {
           <h1 className="text-3xl font-black uppercase tracking-widest text-forest font-headline">Manage Products</h1>
           <p className="text-xs font-bold text-forest/40 uppercase tracking-[0.2em] mt-2">Inventory Protocol & Catalog Management</p>
         </div>
-        <button 
-          onClick={() => setShowAddForm(true)}
-          className="flex items-center gap-3 px-8 py-4 bg-vibrant-orange text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:shadow-xl hover:shadow-vibrant-orange/20 transition-all active:scale-95 group"
-        >
-          <Plus size={16} className="group-hover:rotate-90 transition-transform" />
-          Add New Product
-        </button>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => {
+              if (window.confirm('PROTOCOL: Reset all administrative analytics (Revenue, Customers, Orders)? Catalog will remain intact.')) {
+                resetAnalytics();
+                toast.success('Operational analytics initialized.');
+              }
+            }}
+            className="px-6 py-4 border border-red-100 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-50 transition-all"
+          >
+            Reset Analytics
+          </button>
+          <button 
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center gap-3 px-8 py-4 bg-vibrant-orange text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:shadow-xl hover:shadow-vibrant-orange/20 transition-all active:scale-95 group"
+          >
+            <Plus size={16} className="group-hover:rotate-90 transition-transform" />
+            Add New Product
+          </button>
+        </div>
       </div>
 
       {/* Stats Bar */}
