@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { PRODUCTS, CATEGORIES } from "../constants";
+import { CATEGORIES } from "../constants";
+import { useProductStore } from "../store/productStore";
 import { AtelierProductCard } from "../components/AtelierProductCard";
 import { ModernSort } from "../components/ModernSort";
 import { ShopSidebar } from "../components/ShopSidebar";
@@ -7,6 +8,7 @@ import { ChevronDown, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Shop() {
+  const { products } = useProductStore();
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [sortBy, setSortBy] = useState("Featured");
 
@@ -23,7 +25,7 @@ export default function Shop() {
   }, [selectedCategory]);
 
   const filteredProducts = useMemo(() => {
-    let result = [...PRODUCTS].filter((product) => {
+    let result = [...products].filter((product) => {
       const matchesCategory = 
         selectedCategory === "All Products" || 
         product.category === selectedCategory ||

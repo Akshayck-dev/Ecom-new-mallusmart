@@ -10,6 +10,15 @@ import Wishlist from './pages/Wishlist';
 import About from './pages/About';
 import FAQ from './pages/FAQ';
 import Contact from './pages/Contact';
+
+// Admin Pages & Layout
+import AdminLayout from './components/admin/AdminLayout';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminCategories from './pages/admin/AdminCategories';
+
 import ScrollToTopButton from './components/ScrollToTopButton';
 import GlobalUI from './components/GlobalUI';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -26,6 +35,9 @@ function ScrollToTop() {
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const isAdmin = location.pathname.startsWith('/admin');
+
+  if (isAdmin) return <>{children}</>;
 
   return (
     <AnimatePresence mode="wait">
@@ -52,23 +64,42 @@ export default function App() {
       <ScrollToTop />
       <GlobalUI />
       <Toaster position="bottom-right" richColors closeButton />
-      {/* Global Artisan Texture Wrapper (noise-bg) */}
-      <div className="min-h-screen flex flex-col relative overflow-x-hidden">
-        <Navbar />
-        <PageWrapper>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
-        </PageWrapper>
-        <Footer />
-        <ScrollToTopButton />
-      </div>
+      
+      <Routes>
+        {/* Admin Login - No Sidebar/Header */}
+        <Route path="/admin" element={<AdminLogin />} />
+
+        {/* Admin Dashboard - Nested with Sidebar/Header */}
+        <Route path="/admin/*" element={<AdminLayout />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="categories" element={<AdminCategories />} />
+        </Route>
+
+        {/* Main Storefront Routes */}
+        <Route
+          path="*"
+          element={
+            <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+              <Navbar />
+              <PageWrapper>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/wishlist" element={<Wishlist />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/contact" element={<Contact />} />
+                </Routes>
+              </PageWrapper>
+              <Footer />
+              <ScrollToTopButton />
+            </div>
+          }
+        />
+      </Routes>
     </Router>
   );
 }

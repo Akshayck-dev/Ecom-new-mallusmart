@@ -19,6 +19,8 @@ export interface Product {
   skinType?: string[];
   concern?: string[];
   technicalSpecs?: string[]; // New field from catalog data
+  status?: 'Active' | 'Low Stock' | 'Out of Stock' | string;
+  stock?: number;
 }
 
 export interface Category {

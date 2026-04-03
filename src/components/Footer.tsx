@@ -138,7 +138,7 @@ export default function Footer() {
           <div className="flex items-center gap-6 sm:gap-8 text-[8px] font-bold uppercase tracking-widest text-on-surface-variant/40">
             <span className="hover:text-secondary transition-colors cursor-pointer">Terms</span>
             <span className="hover:text-secondary transition-colors cursor-pointer">Privacy</span>
-            <span className="hover:text-secondary transition-colors cursor-pointer">Accessibility</span>
+            <Link to="/admin" className="hover:text-secondary transition-colors cursor-pointer">Admin Portal</Link>
           </div>
         </div>
       </div>

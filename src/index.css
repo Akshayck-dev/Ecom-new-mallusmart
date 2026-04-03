@@ -8,6 +8,10 @@
   --font-display: "Anton", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   
+  /* Brand Identity Palette */
+  --color-forest: #0B4619;
+  --color-vibrant-orange: #F97316;
+  
   /* Warm Artisan Heritage Palette */
   --color-primary: #111111;
   --color-secondary: #f97316;

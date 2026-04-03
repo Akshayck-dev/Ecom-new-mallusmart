@@ -13,7 +13,7 @@ import {
   ArrowRight,
   MessageCircle
 } from "lucide-react";
-import { PRODUCTS } from "../constants";
+import { useProductStore } from "../store/productStore";
 import { ProductCard } from "../components/ProductCard";
 import { useHistoryStore } from "../store/historyStore";
 import { useOrderStore } from "../store/orderStore";
@@ -22,7 +22,12 @@ import { ProductDetailSkeleton } from "../components/Skeleton";
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const product = PRODUCTS.find(p => p.id === id) || PRODUCTS[0];
+  const { products } = useProductStore();
+  
+  const product = useMemo(() => {
+    return products.find(p => p.id === id) || products[0];
+  }, [products, id]);
+
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,10 +60,10 @@ export default function ProductDetail() {
   }, [product]);
 
   const relatedProducts = useMemo(() => {
-    return PRODUCTS
-      .filter(p => p.id !== product.id && p.category === product.category)
+    return products
+      .filter(p => p.id !== product.id && (p.category === product.category || p.parentCategory === product.parentCategory))
       .slice(0, 4);
-  }, [product]);
+  }, [products, product]);
 
   useEffect(() => {
     if (product) addViewed(product.id);
