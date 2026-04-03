@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ShieldCheck, ArrowRight, Lock, User } from 'lucide-react';
 import Logo from '../../components/Logo';
+import { purgeSystemData } from '../../utils/systemPurge';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -17,6 +18,16 @@ export default function AdminLogin() {
       }, 800);
     } else {
       toast.error('ACCESS DENIED: Invalid administrative credentials');
+    }
+  };
+
+  const handleSystemReset = () => {
+    if (window.confirm('PROTOCOL: Total System Initialization? This will purge all products, analytics, and session data to restore the factory Mallu\'s Mart state.')) {
+      const toastId = toast.loading('Initializing administrative registries...');
+      setTimeout(() => {
+        purgeSystemData();
+        toast.dismiss(toastId);
+      }, 1000);
     }
   };
 
@@ -98,9 +109,18 @@ export default function AdminLogin() {
         </div>
 
         {/* System Status Indicator */}
-        <div className="mt-8 flex items-center justify-center gap-2">
-          <div className="w-1 h-1 rounded-full bg-vibrant-orange animate-pulse" />
-          <p className="text-[8px] font-bold text-white/20 uppercase tracking-[0.4em]">System Operational Port: 3000</p>
+        <div className="mt-8 flex flex-col items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-1 rounded-full bg-vibrant-orange animate-pulse" />
+            <p className="text-[8px] font-bold text-white/20 uppercase tracking-[0.4em]">System Operational Port: 3000</p>
+          </div>
+          
+          <button 
+            onClick={handleSystemReset}
+            className="text-[9px] font-black uppercase tracking-[0.3em] text-white/10 hover:text-vibrant-orange transition-colors"
+          >
+            Reset System Defaults
+          </button>
         </div>
       </div>
     </div>

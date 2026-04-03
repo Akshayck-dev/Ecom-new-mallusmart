@@ -6,9 +6,11 @@ import {
   ClipboardList, 
   Tags, 
   LogOut,
-  ChevronRight
+  ChevronRight,
+  RefreshCcw
 } from 'lucide-react';
 import Logo from '../Logo';
+import { purgeSystemData } from '../../utils/systemPurge';
 
 const navItems = [
   { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
@@ -62,13 +64,26 @@ export default function AdminSidebar() {
               <p className="text-[10px] text-white/40 uppercase font-bold tracking-tighter">Super Admin</p>
             </div>
           </div>
-          <button 
-            className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2"
-            onClick={() => window.location.href = '/'}
-          >
-            <LogOut size={14} />
-            Exit System
-          </button>
+          <div className="space-y-2">
+            <button 
+              className="w-full py-3 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 border border-white/5"
+              onClick={() => {
+                if (window.confirm('PROTOCOL: Total System Refresh? All products and analytics will be reset to defaults.')) {
+                  purgeSystemData();
+                }
+              }}
+            >
+              <RefreshCcw size={12} />
+              Refresh System
+            </button>
+            <button 
+              className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2"
+              onClick={() => window.location.href = '/'}
+            >
+              <LogOut size={14} />
+              Exit System
+            </button>
+          </div>
         </div>
       </div>
     </aside>
