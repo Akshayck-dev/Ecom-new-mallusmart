@@ -21,7 +21,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-forest relative flex items-center justify-center p-6 sm:p-10 selection:bg-vibrant-orange/10 selection:text-vibrant-orange overflow-hidden">
+    <div className="h-screen fixed inset-0 bg-forest relative flex items-center justify-center p-6 sm:p-10 selection:bg-vibrant-orange/10 selection:text-vibrant-orange overflow-hidden">
       {/* Background Graphic Element */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl aspect-square border border-white/5 rounded-full blur-[100px]" />
       <div className="absolute top-0 right-0 w-1/3 aspect-square bg-vibrant-orange/5 blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2 animate-pulse" />
