@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
+import { Capacitor } from '@capacitor/core';
+import { AnimatePresence, motion } from 'framer-motion';
+
 import Navbar from './components/Navbar';
 import MobileNav from './components/MobileNav';
 import Footer from './components/Footer';
@@ -22,7 +25,8 @@ import AdminCategories from './pages/admin/AdminCategories';
 
 import ScrollToTopButton from './components/ScrollToTopButton';
 import GlobalUI from './components/GlobalUI';
-import { AnimatePresence, motion } from 'framer-motion';
+
+const isNativeApp = Capacitor.isNativePlatform();
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -51,7 +55,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
           duration: 0.6, 
           ease: [0.16, 1, 0.3, 1] 
         }}
-        className={`flex-grow ${!isHome ? 'pt-16 sm:pt-20' : ''} pb-20 md:pb-0`}
+        className={`flex-grow ${!isHome ? 'pt-16 sm:pt-20' : ''} ${isNativeApp ? 'pb-20 md:pb-0' : ''}`}
       >
         {children}
       </motion.div>
@@ -96,7 +100,7 @@ export default function App() {
                 </Routes>
               </PageWrapper>
               <Footer />
-              <MobileNav />
+              {isNativeApp && <MobileNav />}
               <ScrollToTopButton />
             </div>
           }

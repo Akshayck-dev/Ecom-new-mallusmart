@@ -33,6 +33,10 @@ const navLinks = [
 const DISCOVER_LINKS = ['New Arrivals', 'Best Sellers', 'Artisan Stories', 'Heritage Collection'];
 const COMMUNITY_LINKS = ['Our Philosophy', 'Shipping Policy', 'Returns', 'Privacy Protocol'];
 
+import { Capacitor } from '@capacitor/core';
+
+const isNativeApp = Capacitor.isNativePlatform();
+
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -60,7 +64,7 @@ export default function Navbar() {
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-700 ease-in-out hidden md:block ${
+        className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-700 ease-in-out ${isNativeApp ? 'hidden md:block' : 'block'} ${
           showSolidNav 
             ? "bg-white/80 backdrop-blur-xl border-primary/5 py-0 shadow-premium" 
             : "bg-transparent border-transparent py-4"
