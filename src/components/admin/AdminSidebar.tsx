@@ -21,7 +21,7 @@ const navItems = [
 
 export default function AdminSidebar() {
   return (
-    <aside className="w-72 bg-forest text-white h-screen sticky top-0 flex flex-col shadow-2xl z-50">
+    <aside className="w-72 bg-[#111111] text-white h-screen sticky top-0 flex flex-col shadow-2xl z-50">
       {/* Sidebar Header */}
       <div className="p-8 border-b border-white/10">
         <Logo variant="invert" size={60} className="mb-2" />

@@ -5,10 +5,24 @@ import { SearchModal } from './SearchModal';
 import { OrderModal } from './OrderModal';
 import { QuickViewModal } from './QuickViewModal';
 import { useQuickViewStore } from '../store/quickViewStore';
+import SplashScreen from './SplashScreen';
+import AppLoader from './AppLoader';
 
 export default function GlobalUI() {
+  const [showSplash, setShowSplash] = useState(true);
   const { scrollYProgress } = useScroll();
   const { selectedProductId, closeQuickView } = useQuickViewStore();
+  
+  // Persistence Check for Session
+  useEffect(() => {
+    const isFirstVisit = !localStorage.getItem('mallu-mart-session-active');
+    if (!isFirstVisit) {
+      setShowSplash(false);
+    } else {
+      localStorage.setItem('mallu-mart-session-active', 'true');
+    }
+  }, []);
+
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
@@ -17,9 +31,11 @@ export default function GlobalUI() {
 
   return (
     <>
+      <SplashScreen onComplete={() => setShowSplash(false)} duration={2500} />
+      
       {/* Scroll Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-primary z-[100] origin-left"
+        className="fixed top-0 left-0 right-0 h-1 bg-vibrant-orange z-[100] origin-left"
         style={{ scaleX }}
       />
 
