@@ -26,6 +26,8 @@ import AdminCategories from './pages/admin/AdminCategories';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import GlobalUI from './components/GlobalUI';
 import ConnectivityGuard from './components/ConnectivityGuard';
+import AppLoader from './components/AppLoader';
+import { useLoadingStore } from './store/loadingStore';
 
 const isNativeApp = Capacitor.isNativePlatform();
 
@@ -42,6 +44,18 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const isAdmin = location.pathname.startsWith('/admin');
+  const setIsLoading = useLoadingStore((state) => state.setIsLoading);
+
+  // Trigger Native Transition Loader
+  useEffect(() => {
+    if (isNativeApp) {
+      setIsLoading(true, 'Optimizing View...');
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 500); // 500ms transition mask
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, setIsLoading]);
 
   if (isAdmin) return <>{children}</>;
 
@@ -68,6 +82,7 @@ export default function App() {
   return (
     <Router>
       <ConnectivityGuard>
+        <AppLoader />
         <ScrollToTop />
         <GlobalUI />
         <Toaster position="bottom-right" richColors closeButton />
