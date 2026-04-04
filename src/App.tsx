@@ -63,14 +63,14 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
-        animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-        exit={{ opacity: 0, scale: 1.02, filter: 'blur(10px)' }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -5 }}
         transition={{ 
-          duration: 0.6, 
-          ease: [0.16, 1, 0.3, 1] 
+          duration: 0.3, 
+          ease: "easeInOut" 
         }}
-        className={`flex-grow ${!isHome ? 'pt-16 sm:pt-20' : ''} ${isNativeApp ? 'pb-20 md:pb-0' : ''}`}
+        className={`flex-grow ${(!isHome && !isNativeApp) ? 'pt-16 sm:pt-20' : ''} ${isNativeApp ? 'pb-20 md:pb-0' : ''}`}
       >
         {children}
       </motion.div>
@@ -103,8 +103,8 @@ export default function App() {
           <Route
             path="*"
             element={
-              <div className="min-h-screen flex flex-col relative overflow-x-hidden">
-                <Navbar />
+              <div className={`min-h-screen flex flex-col relative overflow-x-hidden ${isNativeApp ? 'native-touch-scroll' : ''}`}>
+                {!isNativeApp && <Navbar />}
                 <PageWrapper>
                   <Routes>
                     <Route path="/" element={<Home />} />
@@ -116,7 +116,7 @@ export default function App() {
                     <Route path="/contact" element={<Contact />} />
                   </Routes>
                 </PageWrapper>
-                <Footer />
+                {!isNativeApp && <Footer />}
                 {isNativeApp && <MobileNav />}
                 <ScrollToTopButton />
               </div>

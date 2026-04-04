@@ -50,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, showCategory 
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -8 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-premium transition-all duration-700 h-full flex flex-col border border-primary/5"
+      className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-premium transition-all duration-700 h-full flex flex-col border border-primary/5 active-scale"
     >
       {/* Product Image & Interaction Layer */}
       <div className="relative aspect-[4/3] overflow-hidden bg-surface rounded-xl mx-2 mt-2 sm:mx-3 sm:mt-3">

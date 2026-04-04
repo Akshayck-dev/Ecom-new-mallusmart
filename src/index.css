@@ -107,3 +107,20 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Native App Optimizations */
+.native-touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+.active-scale {
+  @apply transition-transform duration-200 active:scale-95;
+}
+
+/* Remove hover effects on touch devices to prevent sticky highlights */
+@media (hover: none) {
+  .hover-trigger:hover {
+    transform: none !important;
+  }
+}

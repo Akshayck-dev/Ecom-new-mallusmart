@@ -7,6 +7,10 @@ import { ShopSidebar } from "../components/ShopSidebar";
 import { ChevronDown, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { Capacitor } from "@capacitor/core";
+
+const isNativeApp = Capacitor.isNativePlatform();
+
 export default function Shop() {
   const { products } = useProductStore();
   const [selectedCategory, setSelectedCategory] = useState("All Products");
@@ -53,7 +57,7 @@ export default function Shop() {
   }, [selectedCategory, sortBy]);
 
   return (
-    <div className="flex flex-col lg:flex-row bg-white min-h-screen text-primary">
+    <div className={`flex flex-col lg:flex-row bg-white min-h-screen text-primary ${isNativeApp ? 'native-touch-scroll' : ''}`}>
       {/* Sidebar Navigation */}
       <ShopSidebar 
         selectedCategory={selectedCategory} 
@@ -63,35 +67,37 @@ export default function Shop() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-h-screen lg:pl-64">
+      <main className={`flex-1 flex flex-col min-h-screen ${!isNativeApp ? 'lg:pl-64' : ''}`}>
         
         {/* Page Content */}
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-0 sm:py-2 lg:py-4 w-full space-y-8 sm:space-y-12 lg:space-y-16">
+        <div className={`max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 w-full ${isNativeApp ? 'py-4 space-y-6' : 'py-0 sm:py-2 lg:py-4 space-y-8 sm:space-y-12 lg:space-y-16'}`}>
           
           {/* Dynamic Category Section Title & Sorting - Desktop Only */}
-          <div className="hidden lg:flex items-center justify-between mb-10 mt-10 border-b border-primary/5 pb-6">
-            <h2 className="text-[10px] sm:text-xs text-primary font-bold tracking-[0.4em] uppercase">
-              {selectedCategory === "All Products" ? "All Collections" : selectedCategory}
-            </h2>
+          {!isNativeApp && (
+            <div className="hidden lg:flex items-center justify-between mb-10 mt-10 border-b border-primary/5 pb-6">
+              <h2 className="text-[10px] sm:text-xs text-primary font-bold tracking-[0.4em] uppercase">
+                {selectedCategory === "All Products" ? "All Collections" : selectedCategory}
+              </h2>
 
-            {/* Modern Sorting Interface */}
-            <div className="flex items-center gap-4">
-              <ModernSort 
-                options={[
-                  "Featured", 
-                  "Price: Low to High", 
-                  "Price: High to Low", 
-                  "Newest Arrivals"
-                ]}
-                value={sortBy}
-                onChange={setSortBy}
-                label="Sort By"
-              />
+              {/* Modern Sorting Interface */}
+              <div className="flex items-center gap-4">
+                <ModernSort 
+                  options={[
+                    "Featured", 
+                    "Price: Low to High", 
+                    "Price: High to Low", 
+                    "Newest Arrivals"
+                  ]}
+                  value={sortBy}
+                  onChange={setSortBy}
+                  label="Sort By"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Bento-style Grid (Responsive Columns) */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+          <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 ${isNativeApp ? 'gap-4' : 'gap-4 sm:gap-6 lg:gap-8'}`}>
             <AnimatePresence mode="popLayout">
               {filteredProducts.map((product, i) => (
                 <motion.div
@@ -101,6 +107,7 @@ export default function Shop() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.5, delay: i * 0.02, ease: [0.16, 1, 0.3, 1] }}
+                  className="active-scale"
                 >
                   <AtelierProductCard 
                     product={product} 
@@ -113,7 +120,7 @@ export default function Shop() {
 
           {/* Empty State */}
           {filteredProducts.length === 0 && (
-            <div className="py-20 sm:py-32 text-center space-y-8">
+            <div className={`${isNativeApp ? 'py-10' : 'py-20 sm:py-32'} text-center space-y-8`}>
               <div className="w-20 h-20 bg-surface rounded-2xl border border-primary/5 flex items-center justify-center mx-auto text-primary/10 shadow-premium">
                 <Sparkles size={28} />
               </div>
@@ -123,7 +130,7 @@ export default function Shop() {
               </div>
               <button 
                 onClick={() => setSelectedCategory("All Products")}
-                className="btn-luxury px-10 py-4"
+                className="btn-luxury px-10 py-4 active-scale"
               >
                 Reset All Filters
               </button>
@@ -131,14 +138,16 @@ export default function Shop() {
           )}
         </div>
 
-        {/* Footer Space */}
-        <footer className="mt-auto py-8 px-4 sm:px-8 lg:px-12 border-t border-primary/5 flex flex-col sm:flex-row justify-between items-center gap-6 text-on-surface-variant/40">
-          <span className="text-[9px] uppercase tracking-[0.4em] font-bold">© 2026 Mallu's Mart • Heritage Protocols</span>
-          <div className="flex gap-8 sm:gap-12">
-            <a className="text-[9px] uppercase tracking-[0.4em] font-bold hover:text-primary transition-colors font-medium italic" href="#">Privacy Protocol</a>
-            <a className="text-[9px] uppercase tracking-[0.4em] font-bold hover:text-primary transition-colors font-medium italic" href="#">Service Terms</a>
-          </div>
-        </footer>
+        {/* Footer Space - Only on Web */}
+        {!isNativeApp && (
+          <footer className="mt-auto py-8 px-4 sm:px-8 lg:px-12 border-t border-primary/5 flex flex-col sm:flex-row justify-between items-center gap-6 text-on-surface-variant/40">
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold">© 2026 Mallu's Mart • Heritage Protocols</span>
+            <div className="flex gap-8 sm:gap-12">
+              <a className="text-[9px] uppercase tracking-[0.4em] font-bold hover:text-primary transition-colors font-medium italic" href="#">Privacy Protocol</a>
+              <a className="text-[9px] uppercase tracking-[0.4em] font-bold hover:text-primary transition-colors font-medium italic" href="#">Service Terms</a>
+            </div>
+          </footer>
+        )}
       </main>
     </div>
   );
