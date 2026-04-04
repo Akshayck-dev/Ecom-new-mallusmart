@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import Navbar from './components/Navbar';
+import MobileNav from './components/MobileNav';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -50,7 +51,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
           duration: 0.6, 
           ease: [0.16, 1, 0.3, 1] 
         }}
-        className={`flex-grow ${!isHome ? 'pt-16 sm:pt-20' : ''}`}
+        className={`flex-grow ${!isHome ? 'pt-16 sm:pt-20' : ''} pb-20 md:pb-0`}
       >
         {children}
       </motion.div>
@@ -95,6 +96,7 @@ export default function App() {
                 </Routes>
               </PageWrapper>
               <Footer />
+              <MobileNav />
               <ScrollToTopButton />
             </div>
           }

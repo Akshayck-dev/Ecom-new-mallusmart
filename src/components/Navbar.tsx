@@ -60,7 +60,7 @@ export default function Navbar() {
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-700 ease-in-out ${
+        className={`fixed top-0 left-0 right-0 z-50 w-full border-b transition-all duration-700 ease-in-out hidden md:block ${
           showSolidNav 
             ? "bg-white/80 backdrop-blur-xl border-primary/5 py-0 shadow-premium" 
             : "bg-transparent border-transparent py-4"
