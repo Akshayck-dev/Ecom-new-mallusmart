@@ -6,22 +6,12 @@ import { useHistoryStore } from '../store/historyStore';
 import { PRODUCTS, CATEGORIES } from '../constants';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
+import { resolveMedia, resolveBrandAsset } from '../utils/mediaUtils';
 
 export const SearchModal = () => {
   const { isSearchOpen, closeSearch } = useSearchStore();
   const { viewedIds } = useHistoryStore();
   const [query, setQuery] = useState('');
-
-  // Dynamic Asset Resolver for Vite
-  const getProductImage = (imagePath: string) => {
-    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    if (imagePath.startsWith('http')) return imagePath;
-    try {
-      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
-    } catch {
-      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    }
-  };
 
   const recentProducts = useMemo(() => {
     return viewedIds
@@ -123,7 +113,7 @@ export const SearchModal = () => {
                             className="flex gap-4 sm:gap-6 group p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-surface hover:bg-white transition-all duration-500 border border-transparent hover:border-primary/5 hover:shadow-premium"
                           >
                             <div className="w-16 h-16 sm:w-24 sm:h-24 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-primary/5">
-                              <img src={getProductImage(product.image)} alt={product.name} className="block w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                              <img src={resolveMedia(product.image)} alt={product.name} className="block w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
                             </div>
                             <div className="flex flex-col justify-center space-y-1">
                               <p className="text-[8px] font-bold uppercase tracking-[0.3em] text-secondary">
@@ -165,7 +155,7 @@ export const SearchModal = () => {
                               onClick={closeSearch}
                               className="flex items-center gap-6 p-5 rounded-2xl bg-surface hover:bg-white border border-transparent hover:border-primary/5 transition-all duration-500 group"
                             >
-                              <img src={getProductImage(product?.image || '')} className="block w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover shadow-sm border border-primary/5" />
+                              <img src={resolveMedia(product?.image || '')} className="block w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover shadow-sm border border-primary/5" />
                               <div className="flex-1 space-y-1">
                                 <p className="text-[8px] font-bold text-secondary uppercase tracking-[0.3em]">{product?.category}</p>
                                 <p className="text-base font-bold text-primary uppercase tracking-tight italic">{product?.name}</p>
@@ -193,7 +183,7 @@ export const SearchModal = () => {
                             onClick={closeSearch}
                             className="relative h-40 sm:h-48 rounded-2xl sm:rounded-[3rem] overflow-hidden group border border-primary/5 shadow-sm"
                           >
-                            <img src={cat.image} alt={cat.name} className="block absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2.5s]" />
+                            <img src={resolveBrandAsset(cat.image)} alt={cat.name} className="block absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2.5s]" />
                             <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/60 transition-all duration-700 flex items-end p-6 sm:p-8">
                               <span className="text-white font-bold uppercase tracking-[0.4em] text-[10px] translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700">
                                 {cat.name}

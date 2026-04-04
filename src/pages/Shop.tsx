@@ -70,11 +70,11 @@ export default function Shop() {
       <main className={`flex-1 flex flex-col min-h-screen ${!isNativeApp ? 'lg:pl-64' : ''}`}>
         
         {/* Page Content */}
-        <div className={`max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 w-full ${isNativeApp ? 'py-4 space-y-6' : 'py-0 sm:py-2 lg:py-4 space-y-8 sm:space-y-12 lg:space-y-16'}`}>
+        <div className={`max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 w-full ${isNativeApp ? 'py-4 space-y-6' : 'section-spacing space-y-8 sm:space-y-12 lg:space-y-16'}`}>
           
           {/* Dynamic Category Section Title & Sorting - Desktop Only */}
           {!isNativeApp && (
-            <div className="hidden lg:flex items-center justify-between mb-10 mt-10 border-b border-primary/5 pb-6">
+            <div className="hidden lg:flex items-center justify-between mb-8 pb-6 border-b border-primary/5">
               <h2 className="text-[10px] sm:text-xs text-primary font-bold tracking-[0.4em] uppercase">
                 {selectedCategory === "All Products" ? "All Collections" : selectedCategory}
               </h2>
@@ -97,7 +97,7 @@ export default function Shop() {
           )}
 
           {/* Bento-style Grid (Responsive Columns) */}
-          <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 ${isNativeApp ? 'gap-4' : 'gap-4 sm:gap-6 lg:gap-8'}`}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             <AnimatePresence mode="popLayout">
               {filteredProducts.map((product, i) => (
                 <motion.div
@@ -107,7 +107,7 @@ export default function Shop() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
                   transition={{ duration: 0.5, delay: i * 0.02, ease: [0.16, 1, 0.3, 1] }}
-                  className="active-scale"
+                  className="active-scale h-full"
                 >
                   <AtelierProductCard 
                     product={product} 
@@ -140,9 +140,9 @@ export default function Shop() {
 
         {/* Footer Space - Only on Web */}
         {!isNativeApp && (
-          <footer className="mt-auto py-8 px-4 sm:px-8 lg:px-12 border-t border-primary/5 flex flex-col sm:flex-row justify-between items-center gap-6 text-on-surface-variant/40">
-            <span className="text-[9px] uppercase tracking-[0.4em] font-bold">© 2026 Mallu's Mart • Heritage Protocols</span>
-            <div className="flex gap-8 sm:gap-12">
+          <footer className="mt-auto py-8 sm:py-12 px-4 sm:px-8 lg:px-12 border-t border-primary/5 flex flex-col sm:flex-row justify-between items-center gap-8 text-on-surface-variant/40">
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-center sm:text-left leading-relaxed">© 2026 Mallu's Mart • Heritage Protocols</span>
+            <div className="flex gap-8 sm:gap-12 items-center justify-center">
               <a className="text-[9px] uppercase tracking-[0.4em] font-bold hover:text-primary transition-colors font-medium italic" href="#">Privacy Protocol</a>
               <a className="text-[9px] uppercase tracking-[0.4em] font-bold hover:text-primary transition-colors font-medium italic" href="#">Service Terms</a>
             </div>

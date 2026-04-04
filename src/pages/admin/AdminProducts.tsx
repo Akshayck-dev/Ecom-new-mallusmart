@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useProductStore } from '../../store/productStore';
 import { useAdminStore } from '../../store/adminStore';
+import { resolveMedia } from '../../utils/mediaUtils';
 import { toast } from 'sonner';
 
 const CATEGORIES = [
@@ -53,7 +54,7 @@ export default function AdminProducts() {
       parentCategory: newProduct.category,
       price: Number(newProduct.price),
       description: newProduct.description,
-      image: newProduct.image || newProduct.gallery[0] || 'https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000',
+      image: newProduct.image || newProduct.gallery[0] || 'default_product.png',
       gallery: newProduct.gallery,
       maker: newProduct.maker,
       stock: Number(newProduct.stock) || 0,
@@ -156,8 +157,22 @@ export default function AdminProducts() {
                 <tr key={product.id} className="hover:bg-forest/[0.01] transition-colors group">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-forest/5 flex items-center justify-center text-forest/30 border border-forest/10 overflow-hidden">
-                        <ImageIcon size={20} />
+                      <div className="w-12 h-12 rounded-xl bg-forest/5 flex items-center justify-center text-forest/30 border border-forest/10 overflow-hidden relative">
+                        <img 
+                          src={resolveMedia(product.image)} 
+                          alt="" 
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const parent = e.currentTarget.parentElement;
+                            if (parent) {
+                              const icon = document.createElement('div');
+                              icon.className = 'absolute inset-0 flex items-center justify-center';
+                              icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
+                              parent.appendChild(icon);
+                            }
+                          }}
+                        />
                       </div>
                       <div>
                         <p className="text-xs font-black uppercase tracking-widest text-forest">{product.name}</p>
@@ -344,7 +359,7 @@ export default function AdminProducts() {
                       <div className="grid grid-cols-4 gap-4 pt-2">
                         {newProduct.gallery.map((url, idx) => (
                           <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-forest/10 group">
-                            <img src={url} alt="Gallery" className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = 'https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000')} />
+                            <img src={resolveMedia(url)} alt="Gallery" className="w-full h-full object-cover" />
                             <button 
                               onClick={() => setNewProduct({ ...newProduct, gallery: newProduct.gallery.filter((_, i) => i !== idx) })}
                               className="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity"

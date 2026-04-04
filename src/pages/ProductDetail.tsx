@@ -19,6 +19,7 @@ import { useHistoryStore } from "../store/historyStore";
 import { useOrderStore } from "../store/orderStore";
 import { useCartStore } from "../store/cartStore";
 import { ProductDetailSkeleton } from "../components/Skeleton";
+import { resolveMedia, resolveBrandAsset } from "../utils/mediaUtils";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -36,17 +37,6 @@ export default function ProductDetail() {
   const { addViewed } = useHistoryStore();
   const openOrderModal = useOrderStore((state) => state.openOrderModal);
   const addItem = useCartStore((state) => state.addItem);
-
-  // Dynamic Asset Resolver for Vite
-  const getProductImage = (imagePath: string) => {
-    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    if (imagePath.startsWith('http')) return imagePath;
-    try {
-      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
-    } catch {
-      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    }
-  };
 
   const productImages = useMemo(() => {
     const imgs = [];
@@ -113,7 +103,7 @@ export default function ProductDetail() {
               <img 
                 alt={product.name} 
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
-                src={getProductImage(productImages[activeImageIndex])} 
+                src={resolveMedia(productImages[activeImageIndex])} 
               />
               {product.tag && (
                 <div className="absolute top-6 left-6 px-4 py-2 bg-white/90 backdrop-blur-md text-on-surface rounded-full text-[10px] font-bold uppercase tracking-widest border border-on-surface/5 shadow-sm">
@@ -132,7 +122,7 @@ export default function ProductDetail() {
                     activeImageIndex === i ? 'border-secondary shadow-lg' : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <img alt={`v${i}`} className="w-full h-full object-cover" src={getProductImage(img)} />
+                  <img alt={`v${i}`} className="w-full h-full object-cover" src={resolveMedia(img)} />
                 </button>
               ))}
             </div>
@@ -170,7 +160,7 @@ export default function ProductDetail() {
                 <img 
                   alt="Seller" 
                   className="w-full h-full object-cover" 
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" 
+                  src={resolveBrandAsset("logo.png")} 
                 />
               </div>
               <div className="flex-1">
@@ -275,7 +265,7 @@ export default function ProductDetail() {
                 transition={{ duration: 2 }}
                 alt="Crafting Process" 
                 className="w-full h-full object-cover" 
-                src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=1200" 
+                src={resolveBrandAsset("kerala_artisanal_flatlay.png")} 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>

@@ -69,15 +69,15 @@
 }
 
 .text-display-lg {
-  @apply text-[3.5rem] leading-[1.1] font-extrabold tracking-tight;
+  @apply text-3xl sm:text-5xl lg:text-[3.5rem] leading-[1.1] font-extrabold tracking-tight;
 }
 
 .text-display-md {
-  @apply text-[2.5rem] leading-[1.2] font-bold tracking-tight;
+  @apply text-2xl sm:text-4xl lg:text-[2.5rem] leading-[1.2] font-bold tracking-tight;
 }
 
 .section-spacing {
-  @apply py-6 sm:py-10 lg:py-16;
+  @apply py-6 sm:py-10;
 }
 
 @layer components {

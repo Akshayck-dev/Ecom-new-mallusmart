@@ -258,7 +258,7 @@ export const PRODUCTS: Product[] = [
     category: "Jewellery",
     parentCategory: "Fashion Street",
     maker: "The Atelier",
-    image: "https://images.unsplash.com/photo-1584030373081-f37b7bb4fa8e?auto=format&fit=crop&q=80&w=800",
+    image: "silk_scarf_atelier.png",
     tag: "SILK",
     description: "100% mulberry silk scarf with a hand-rolled hem and abstract print.",
     technicalSpecs: ["100% Mulberry silk", "Hand-rolled hems", "Digital print technology"]
@@ -270,7 +270,7 @@ export const PRODUCTS: Product[] = [
     category: "Cosmetics",
     parentCategory: "Natural Care Zone",
     maker: "Flora Botanica",
-    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=800",
+    image: "lavender_oil_atelier.png",
     tag: "ORGANIC",
     description: "Pure, therapeutic-grade lavender essential oil for relaxation and skin care.",
     technicalSpecs: ["Steam distilled", "Therapeutic grade", "UV-protected glass bottle"]
@@ -330,7 +330,7 @@ export const PRODUCTS: Product[] = [
     category: "Food Products",
     parentCategory: "Healthy Kitchen",
     maker: "Ancient Grains",
-    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=800",
+    image: "quinoa_blend_atelier.png",
     tag: "SUPERFOOD",
     description: "A nutrient-dense blend of red, white, and black quinoa. Sourced from sustainable high-altitude farms.",
     technicalSpecs: ["Triple-washed grains", "Source of 9 amino acids", "Organic certified"]
@@ -342,7 +342,7 @@ export const PRODUCTS: Product[] = [
     category: "Food Products",
     parentCategory: "Healthy Kitchen",
     maker: "Noir Botanica",
-    image: "https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&q=80&w=800",
+    image: "dark_chocolate_atelier.png",
     tag: "BEAN-TO-BAR",
     description: "75% single-origin cacao from Madagascar. Notes of red fruit and toasted nuts.",
     technicalSpecs: ["75% single-origin cacao", "Ethically sourced beans", "Stone-ground texture"]
@@ -354,7 +354,7 @@ export const PRODUCTS: Product[] = [
     category: "Cosmetics",
     parentCategory: "Natural Care Zone",
     maker: "Flora Botanica",
-    image: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&q=80&w=800",
+    image: "rose_mist_atelier.png",
     tag: "PURE",
     description: "Pure steam-distilled Damask rose water. Instantly hydrates and refreshes tired skin.",
     technicalSpecs: ["Damask rose petals", "Non-alcoholic formula", "Mist spray head"]
@@ -378,7 +378,7 @@ export const PRODUCTS: Product[] = [
     category: "Corporate Gifts",
     parentCategory: "Gift Corner",
     maker: "The Scribe",
-    image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&q=80&w=800",
+    image: "leather_notebook_atelier.png",
     tag: "BESPOKE",
     description: "Refillable Italian leather notebook with premium cream paper. An essential for the modern professional.",
     technicalSpecs: ["Full-grain Italian leather", "120gsm archival paper", "Refillable design"]
@@ -390,7 +390,7 @@ export const PRODUCTS: Product[] = [
     category: "Personalized",
     parentCategory: "Gift Corner",
     maker: "Clay & Coil",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=800",
+    image: "ceramic_mug_atelier.png",
     tag: "UNIQUE",
     description: "Hand-thrown ceramic mugs with minimalist gold-leaf initials. Set of two.",
     technicalSpecs: ["Oven & Microwave safe", "Hand-brushed gold initials", "Matte ceramic finish"]
@@ -402,7 +402,7 @@ export const PRODUCTS: Product[] = [
     category: "Toys",
     parentCategory: "Kids Zone",
     maker: "Arul Woodworks",
-    image: "https://images.unsplash.com/photo-1535572290543-960a8046f5af?auto=format&fit=crop&q=80&w=800",
+    image: "wooden_blocks_atelier.png",
     tag: "HEIRLOOM",
     description: "Hand-carved maple wood blocks finished with non-toxic beeswax. A timeless educational tool.",
     technicalSpecs: ["Solid Maple wood", "Food-grade beeswax finish", "Engraved letters"]
@@ -414,7 +414,7 @@ export const PRODUCTS: Product[] = [
     category: "Apparel",
     parentCategory: "Kids Zone",
     maker: "Tiny Threads",
-    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=800",
+    image: "cotton_hoodie_atelier.png",
     tag: "COZY",
     description: "Extra-thick organic cotton fleece hoodie. Designed for comfort and durability.",
     technicalSpecs: ["Organic french terry", "Heavyweight 400gsm", "Plant-based dyes"]
@@ -426,7 +426,7 @@ export const PRODUCTS: Product[] = [
     category: "Counselling",
     parentCategory: "Service Zone",
     maker: "Prana Flow",
-    image: "https://images.unsplash.com/photo-1528319725582-ddc096101511?auto=format&fit=crop&q=80&w=800",
+    image: "mindfulness_session_atelier.png",
     tag: "INSTITUTIONAL",
     description: "One-hour private session with a certified mindfulness practitioner. Focused on stress reduction and focus.",
     technicalSpecs: ["Certified practitioner", "Individual focus plan", "Post-session toolkit"]
@@ -462,7 +462,7 @@ export const PRODUCTS: Product[] = [
     category: "Covers",
     parentCategory: "Pack Corner",
     maker: "Green Pack",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800",
+    image: "cotton_tote_atelier.png",
     tag: "REUSABLE",
     description: "Heavy-duty canvas tote with reinforced handles. A premium alternative to plastic.",
     technicalSpecs: ["12oz Heavy canvas", "Cross-stitched handles", "Internal pocket"]
@@ -472,37 +472,37 @@ export const PRODUCTS: Product[] = [
 export const CATEGORIES = [
   { 
     name: "Fashion Street", 
-    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1000",
+    image: "fashion_mural_atelier.png",
     subcategories: ["Dress", "Jewellery"]
   },
   { 
     name: "Healthy Kitchen", 
-    image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=1000",
+    image: "kitchen_mural_atelier.png",
     subcategories: ["Food Products"]
   },
   { 
     name: "Natural Care Zone", 
-    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=1000",
+    image: "kerala_skincare_lifestyle.png",
     subcategories: ["Cosmetics", "Cleaning items"]
   },
   { 
     name: "Gift Corner", 
-    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=1000",
+    image: "gift_mural_atelier.png",
     subcategories: ["Corporate Gifts", "Personalized"]
   },
   { 
     name: "Kids Zone", 
-    image: "https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&q=80&w=1000",
+    image: "kids_mural_atelier.png",
     subcategories: ["Toys", "Apparel"]
   },
   { 
     name: "Service Zone", 
-    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000",
+    image: "kerala_artisanal_flatlay.png",
     subcategories: ["Yoga", "teaching", "Counselling"]
   },
   { 
     name: "Pack Corner", 
-    image: "https://images.unsplash.com/photo-1620987278429-ca1cf2f51df2?auto=format&fit=crop&q=80&w=1000",
+    image: "hero_products.png",
     subcategories: ["Bottles", "Covers", "Paper Bags"]
   }
 ];

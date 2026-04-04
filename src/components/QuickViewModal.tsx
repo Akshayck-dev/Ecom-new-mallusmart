@@ -6,6 +6,7 @@ import { Product } from '../types';
 import { PRODUCTS } from '../constants';
 import { useCartStore } from '../store/cartStore';
 import { useWishlistStore } from '../store/wishlistStore';
+import { resolveMedia } from '../utils/mediaUtils';
 import { toast } from 'sonner';
 
 interface QuickViewModalProps {
@@ -19,16 +20,6 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
   const addItem = useCartStore((state) => state.addItem);
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore();
 
-  // Dynamic Asset Resolver for Vite
-  const getProductImage = (imagePath: string) => {
-    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    if (imagePath.startsWith('http')) return imagePath;
-    try {
-      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
-    } catch {
-      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    }
-  };
 
   if (!product && productId) return null;
 
@@ -88,7 +79,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ productId, onClo
             
             <div className="aspect-square md:aspect-auto bg-surface-container-lowest overflow-hidden border-b md:border-b-0 md:border-r border-primary/5">
               <img 
-                src={getProductImage(product.image)} 
+                src={resolveMedia(product.image)} 
                 alt={product.name} 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"

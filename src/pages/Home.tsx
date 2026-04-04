@@ -4,17 +4,18 @@ import { ArrowRight, Star, Leaf, MessageCircle, Sparkles, ShieldCheck, Utensils,
 import { motion, AnimatePresence } from 'framer-motion';
 import { Capacitor } from '@capacitor/core';
 
-import { PRODUCTS } from '../constants';
+import { PRODUCTS, CATEGORIES } from '../constants';
 import { ProductCard } from '../components/ProductCard';
+import { resolveMedia, resolveBrandAsset } from '../utils/mediaUtils';
 import artisanHero from '../assets/kerala_artisanal_flatlay.png';
 import wellnessHero from '../assets/kerala_skincare_lifestyle.png';
 
 const CATEGORIES_DATA = [
-  { id: 'Food', name: 'Traditional Food', icon: Utensils, image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=600', count: '12+ Items' },
-  { id: 'Handmade', name: 'Handmade Art', icon: Palette, image: 'https://images.unsplash.com/photo-1601821765780-754fa98637c1?auto=format&fit=crop&q=80&w=600', count: '8+ Items' },
-  { id: 'Beauty', name: 'Natural Care', icon: Sparkles, image: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=600', count: '15+ Items' },
-  { id: 'Gifts', name: 'Curated Gifts', icon: Gift, image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80&w=600', count: '10+ Items' },
-  { id: 'Kids', name: 'Kids Zone', icon: Baby, image: 'https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&q=80&w=600', count: '6+ Items' },
+  { id: 'Food', name: 'Traditional Food', icon: Utensils, image: 'kitchen_mural_atelier.png', count: '12+ Items' },
+  { id: 'Handmade', name: 'Handmade Art', icon: Palette, image: 'kerala_artisanal_flatlay.png', count: '8+ Items' },
+  { id: 'Beauty', name: 'Natural Care', icon: Sparkles, image: 'kerala_skincare_lifestyle.png', count: '15+ Items' },
+  { id: 'Gifts', name: 'Curated Gifts', icon: Gift, image: 'gift_mural_atelier.png', count: '10+ Items' },
+  { id: 'Kids', name: 'Kids Zone', icon: Baby, image: 'kids_mural_atelier.png', count: '6+ Items' },
 ];
 
 const TRUST_DATA = [
@@ -62,7 +63,7 @@ function NativeHome({ featuredProducts }: { featuredProducts: any[] }) {
               className="flex-shrink-0 flex flex-col items-center gap-3 snap-start active-scale"
             >
               <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md">
-                <img src={cat.image} className="w-full h-full object-cover" alt="" />
+                <img src={resolveBrandAsset(cat.image)} className="w-full h-full object-cover" alt="" />
               </div>
               <span className="text-[9px] font-black uppercase tracking-widest text-primary/60">{cat.id}</span>
             </Link>
@@ -115,7 +116,7 @@ export default function Home() {
     },
     {
       id: 2,
-      src: "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=2600",
+      src: resolveBrandAsset('hero_artisan.png'),
       title: 'Pure Origins',
       subtitle: 'Handmade with Absolute Trust'
     }
@@ -215,11 +216,11 @@ export default function Home() {
       </section>
 
       {/* Symmetrical Grid Categories */}
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto border-t border-primary/5">
-        <div className="flex flex-col md:flex-row items-end justify-between mb-10 sm:mb-16 gap-6 sm:gap-8 text-center md:text-left">
+      <section className="section-spacing px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto border-t border-primary/5">
+        <div className="flex flex-col md:flex-row items-end justify-between mb-8 sm:mb-16 gap-6 sm:gap-8 text-center md:text-left">
           <div className="space-y-3 sm:space-y-4 w-full md:w-auto">
             <h2 className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary">Archive Discovery</h2>
-            <h3 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-primary tracking-tighter leading-none uppercase">
+            <h3 className="text-display-md uppercase">
               The Heritage <br className="sm:hidden" /> <span className="text-secondary italic font-serif lowercase">Zones.</span>
             </h3>
           </div>
@@ -240,7 +241,7 @@ export default function Home() {
             >
               <Link to={`/shop`} className="block w-full h-full">
                 <img 
-                  src={cat.image} 
+                  src={resolveBrandAsset(cat.image)} 
                   alt={cat.name} 
                   className="block w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110" 
                 />
@@ -258,14 +259,14 @@ export default function Home() {
       </section>
 
       {/* Discover Section */}
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto border-t border-primary/5">
-        <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-10 sm:mb-16 gap-6 text-center md:text-left">
+      <section className="section-spacing px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto border-t border-primary/5">
+        <div className="flex flex-col md:flex-row items-center md:items-end justify-between mb-8 sm:mb-16 gap-6 text-center md:text-left">
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-center md:justify-start gap-3">
               <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-primary">Curated Masterpieces</span>
               <div className="hidden sm:block w-12 h-px bg-primary/10" />
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-primary tracking-tighter leading-none uppercase">
+            <h2 className="text-display-md uppercase">
               Discover <br className="sm:hidden" /> <span className="text-secondary italic font-serif lowercase">Authenticity.</span>
             </h2>
           </div>
@@ -284,11 +285,11 @@ export default function Home() {
       </section>
 
       {/* Trust Banner */}
-      <section className="py-10 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 border-t border-primary/5 bg-surface">
+      <section className="section-spacing px-4 sm:px-6 lg:px-8 border-t border-primary/5 bg-surface">
         <div className="max-w-screen-xl mx-auto">
           <div className="text-center mb-10 sm:mb-16 space-y-3 sm:space-y-4">
             <h2 className="text-[10px] font-bold uppercase tracking-[0.6em] text-primary">Institutional Standard</h2>
-            <h3 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-primary tracking-tighter uppercase leading-tight">Why Trust Us?</h3>
+            <h3 className="text-display-md uppercase leading-tight">Why Trust Us?</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -316,9 +317,9 @@ export default function Home() {
       <section className="relative w-full min-h-[60vh] flex items-center justify-center overflow-hidden bg-primary">
         <div className="absolute inset-0 opacity-15">
           <img
-            src="https://images.unsplash.com/photo-1540932239986-30128078f3c5?auto=format&fit=crop&q=80&w=2000"
+            src={resolveBrandAsset('hero_delivery.png')}
             alt=""
-            className="block w-full h-full object-cover grayscale"
+            className="block w-full h-full object-cover grayscale brightness-50"
           />
         </div>
 

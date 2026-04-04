@@ -20,12 +20,12 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-surface-container pt-12 sm:pt-16 pb-6 overflow-hidden font-sans border-t border-surface-container-high">
+    <footer className="relative bg-surface-container pt-12 sm:pt-16 pb-12 sm:pb-6 overflow-hidden font-sans border-t border-surface-container-high">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 lg:gap-10 mb-12 sm:mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 lg:gap-10 mb-12 sm:mb-16">
           
           {/* Brand Identity */}
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-6 flex flex-col items-center md:items-start text-center md:text-left">
             <Link to="/" className="inline-block group transition-transform duration-500 hover:scale-105">
               <Logo size={40} className="opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
@@ -45,7 +45,7 @@ export default function Footer() {
                   key={i}
                   href={social.href}
                   aria-label={social.label}
-                  className="w-10 h-10 rounded-full bg-surface border border-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 shadow-sm hover:shadow-lg"
+                  className="w-10 h-10 rounded-full bg-surface border border-surface-container-high flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 shadow-sm hover:shadow-lg active-scale"
                 >
                   <social.icon size={16} />
                 </a>
@@ -53,17 +53,17 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Navigation Links Grid - Rearranged for Mobile */}
-          <div className="grid grid-cols-2 lg:contents gap-10 sm:gap-12 lg:gap-10">
+          {/* Navigation Links Grid - Optimized for Mobile Stacking */}
+          <div className="grid grid-cols-2 lg:contents gap-8 sm:gap-12 lg:gap-10">
             {/* Quick Links */}
-            <div className="sm:pt-1">
-              <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-4 sm:mb-6 text-primary">Discover</h4>
-              <ul className="grid grid-cols-1 gap-3">
+            <div className="space-y-5">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Discover</h4>
+              <ul className="space-y-3">
                 {['New Arrivals', 'Best Sellers', 'Artisan Stories', 'Heritage Collection'].map((item) => (
                   <li key={item}>
                     <Link 
                       to="/shop" 
-                      className="text-[11px] font-bold text-on-surface-variant hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest text-left"
+                      className="text-[11px] font-bold text-on-surface-variant hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-secondary scale-0 group-hover:scale-100 transition-transform flex-shrink-0" />
                       {item}
@@ -74,14 +74,14 @@ export default function Footer() {
             </div>
 
             {/* Institutional */}
-            <div className="sm:pt-1">
-              <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-4 sm:mb-6 text-primary">Community</h4>
-              <ul className="grid grid-cols-1 gap-3">
+            <div className="space-y-5">
+              <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Community</h4>
+              <ul className="space-y-3">
                 {['Our Philosophy', 'Shipping Policy', 'Returns', 'Privacy Protocol'].map((item) => (
                   <li key={item}>
                     <Link 
                       to="/shop" 
-                      className="text-[11px] font-bold text-on-surface-variant hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest text-left"
+                      className="text-[11px] font-bold text-on-surface-variant hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-secondary scale-0 group-hover:scale-100 transition-transform flex-shrink-0" />
                       {item}
@@ -94,7 +94,7 @@ export default function Footer() {
 
           {/* Artisan Support Card */}
           <div className="lg:col-span-1">
-            <div className="bg-surface rounded-2xl p-6 border border-surface-container-high space-y-5 sm:space-y-6 relative overflow-hidden group shadow-sm hover:shadow-lg transition-shadow">
+            <div className="bg-surface rounded-2xl p-6 sm:p-8 border border-surface-container-high space-y-6 relative overflow-hidden group shadow-sm hover:shadow-lg transition-all">
               <div className="relative z-10 space-y-1.5">
                 <h3 className="text-base font-bold text-primary uppercase tracking-tight">Direct Support</h3>
                 <p className="text-[10px] font-medium text-on-surface-variant uppercase tracking-widest leading-loose">
@@ -106,14 +106,14 @@ export default function Footer() {
                 href={WA_HELP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 w-full bg-primary py-4 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] text-white hover:opacity-90 active:scale-95 transition-all shadow-sm"
+                className="flex items-center justify-center gap-3 w-full bg-primary py-4 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] text-white hover:opacity-90 active-scale transition-all shadow-sm"
               >
                 <MessageCircle size={16} />
                 Artisan Hotline
                 <ArrowRight size={12} />
               </a>
 
-              <div className="flex items-center justify-between pt-4 border-t border-surface-container-high">
+              <div className="flex items-center justify-between pt-5 border-t border-surface-container-high">
                 {[
                   { icon: Globe, label: 'Global' },
                   { icon: MapPin, label: 'Local' },
@@ -131,7 +131,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 border-t border-surface-container-high flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="pt-8 border-t border-surface-container-high flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-4">
           <p className="text-[9px] font-bold text-on-surface-variant/50 uppercase tracking-[0.4em] text-center sm:text-left">
             © {currentYear} Mallu's Mart • Authentic Heritage Retail
           </p>

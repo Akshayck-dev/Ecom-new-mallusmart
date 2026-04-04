@@ -99,16 +99,16 @@ export default function Navbar() {
           </nav>
 
           {/* Action Icons */}
-          <div className={`flex items-center gap-1 sm:gap-2 relative z-10 transition-colors duration-500 ${!showSolidNav ? 'text-white' : 'text-on-surface'}`}>
-            {/* Search */}
+          <div className={`flex items-center gap-1 sm:gap-4 relative z-10 transition-colors duration-500 ${!showSolidNav ? 'text-white' : 'text-on-surface'}`}>
+            {/* Search - Hidden on small mobile */}
             <button
               onClick={openSearch}
-              className="p-2 text-on-surface hover:opacity-70 transition-all hover:scale-110 active:scale-90"
+              className="hidden sm:flex p-2 text-on-surface hover:opacity-70 transition-all hover:scale-110 active:scale-90"
             >
               <Search size={20} strokeWidth={2} />
             </button>
 
-            {/* Wishlist Icon */}
+            {/* Wishlist Icon - Hidden on small mobile */}
             <Link
               to="/wishlist"
               className="hidden sm:flex relative p-2 text-on-surface hover:opacity-70 transition-all hover:scale-110 active:scale-90"
@@ -135,10 +135,11 @@ export default function Navbar() {
             </button>
 
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle (Hamburger) */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="md:hidden p-2 text-on-surface hover:opacity-70 transition-all active:scale-90"
+              className="md:hidden p-2 text-on-surface hover:opacity-70 transition-all active:scale-90 flex items-center justify-center"
+              aria-label="Toggle Menu"
             >
               <Menu size={24} strokeWidth={2} />
             </button>

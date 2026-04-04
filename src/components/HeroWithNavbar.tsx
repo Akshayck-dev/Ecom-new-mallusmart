@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingBag, Menu, X, ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
+import { resolveMedia } from "../utils/mediaUtils";
 
 /**
  * HeroWithNavbar - A premium, high-density Hero section with a coordinated transparent Navbar.
@@ -124,7 +125,7 @@ export default function HeroWithNavbar() {
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
             transition={{ duration: 10, ease: "easeOut" }}
-            src="https://images.unsplash.com/photo-1604908176997-4317c57c7f98?auto=format&fit=crop&q=80&w=2600"
+            src={resolveMedia('kerala_artisanal_flatlay.png')}
             className="w-full h-full object-cover bg-center grayscale-[10%] brightness-[0.85]"
             alt="Mallu's Mart Heritage Artisan"
             referrerPolicy="no-referrer"

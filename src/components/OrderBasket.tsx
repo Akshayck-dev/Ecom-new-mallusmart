@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useOrderStore } from '../store/orderStore';
 import { useCartStore } from '../store/cartStore';
+import { resolveMedia } from '../utils/mediaUtils';
 
 export const OrderBasket = () => {
   const { 
@@ -23,16 +24,6 @@ export const OrderBasket = () => {
     setCartIconRef,
   } = useCartStore();
 
-  // Dynamic Asset Resolver for Vite
-  const getProductImage = (imagePath: string) => {
-    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    if (imagePath.startsWith('http')) return imagePath;
-    try {
-      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
-    } catch {
-      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    }
-  };
   
   const basketRef = useRef<HTMLButtonElement>(null);
   
@@ -129,7 +120,7 @@ export const OrderBasket = () => {
                       className="group flex gap-4 bg-white border border-primary/5 p-4 rounded-[2rem] hover:shadow-premium transition-all duration-500"
                     >
                       <div className="w-24 h-24 rounded-2xl overflow-hidden bg-surface flex-shrink-0 shadow-sm">
-                        <img src={getProductImage(item.image)} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <img src={resolveMedia(item.image)} alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
                         <div className="space-y-1">

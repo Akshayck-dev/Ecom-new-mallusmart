@@ -4,23 +4,13 @@ import { X, MessageCircle, User, Phone, MapPin, Package, AlertCircle, ShoppingBa
 import { useOrderStore } from '../store/orderStore';
 import { useCartStore } from '../store/cartStore';
 import { toast } from 'sonner';
+import { resolveMedia } from '../utils/mediaUtils';
 
 const WHATSAPP_NUMBER = '919562854999';
 
 export const OrderModal = () => {
   const { isOpen, closeOrderModal, orderType, product, initialQuantity } = useOrderStore();
   const { items, totalPrice, clearCart } = useCartStore();
-
-  // Dynamic Asset Resolver for Vite
-  const getProductImage = (imagePath: string) => {
-    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    if (imagePath.startsWith('http')) return imagePath;
-    try {
-      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
-    } catch {
-      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    }
-  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -187,7 +177,7 @@ export const OrderModal = () => {
                           <div className="pt-6 space-y-4 max-h-[300px] overflow-y-auto no-scrollbar">
                             {orderType === 'single' && product ? (
                               <div className="flex items-center gap-4">
-                                <img src={getProductImage(product.image)} className="w-14 h-14 rounded-2xl object-cover shadow-premium" />
+                                <img src={resolveMedia(product.image)} className="w-14 h-14 rounded-2xl object-cover shadow-premium" />
                                 <div className="flex-1 min-w-0">
                                   <p className="text-xs font-bold text-primary uppercase truncate">{product.name}</p>
                                   <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">₹{product.price.toLocaleString()} x {formData.quantity}</p>
@@ -196,7 +186,7 @@ export const OrderModal = () => {
                             ) : (
                               items.map((item) => (
                                 <div key={item.id} className="flex items-center gap-4">
-                                  <img src={getProductImage(item.image)} className="w-14 h-14 rounded-2xl object-cover shadow-premium" />
+                                  <img src={resolveMedia(item.image)} className="w-14 h-14 rounded-2xl object-cover shadow-premium" />
                                   <div className="flex-1 min-w-0">
                                     <p className="text-xs font-bold text-primary uppercase truncate">{item.name}</p>
                                     <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">₹{item.price.toLocaleString()} x {item.quantity}</p>

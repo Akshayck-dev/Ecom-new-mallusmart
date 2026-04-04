@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import logo from '../assets/logo.png';
 import Logo from '../components/Logo';
+import { resolveMedia } from '../utils/mediaUtils';
 
 export default function Contact() {
   return (
@@ -114,7 +115,7 @@ export default function Contact() {
           >
             <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-premium border border-primary/5">
               <img 
-                src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=1200" 
+                src={resolveMedia('kerala_skincare_lifestyle.png')} 
                 alt="Beauty products" 
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
                 referrerPolicy="no-referrer"

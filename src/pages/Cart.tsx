@@ -5,6 +5,7 @@ import { PRODUCTS } from '../constants';
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../store/cartStore';
 import Logo from '../components/Logo';
+import { resolveMedia } from '../utils/mediaUtils';
 
 export default function Cart() {
   const { items, savedItems, updateQuantity, removeItem, saveForLater, moveToCart, removeSavedItem } = useCartStore();
@@ -62,17 +63,6 @@ export default function Cart() {
   const p2Y = useTransform(ySpring, [-0.5, 0.5], [15, -15]);
   const p3X = useTransform(xSpring, [-0.5, 0.5], [-10, 10]);
   const p3Y = useTransform(ySpring, [-0.5, 0.5], [10, -10]);
-
-  // Dynamic Asset Resolver for Vite
-  const getProductImage = (imagePath: string) => {
-    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    if (imagePath.startsWith('http')) return imagePath;
-    try {
-      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
-    } catch {
-      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000"; // Fallback
-    }
-  };
 
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shipping = 0;
@@ -209,7 +199,7 @@ export default function Cart() {
                   </AnimatePresence>
 
                   <div className="w-full sm:w-40 h-40 sm:h-40 rounded-2xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
-                    <img src={getProductImage(item.image)} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={resolveMedia(item.image)} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   </div>
                   <div className="flex-grow w-full space-y-4 sm:space-y-6">
                     <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -441,7 +431,7 @@ export default function Cart() {
                       </AnimatePresence>
 
                       <div className="w-24 h-24 rounded-2xl overflow-hidden bg-surface-container-low flex-shrink-0 shadow-inner">
-                        <img src={getProductImage(item.image)} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
+                        <img src={resolveMedia(item.image)} alt={item.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
                       </div>
                       <div className="flex-grow min-w-0">
                         <h4 className="font-headline font-medium text-lg truncate mb-1">{item.name}</h4>
@@ -545,7 +535,7 @@ export default function Cart() {
                   {items.map(item => (
                     <div key={item.id} className="flex gap-6 items-center">
                       <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white flex-shrink-0 shadow-sm">
-                        <img src={getProductImage(item.image)} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        <img src={resolveMedia(item.image)} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                       <div className="flex-grow">
                         <p className="font-headline font-medium text-base leading-tight mb-1">{item.name}</p>

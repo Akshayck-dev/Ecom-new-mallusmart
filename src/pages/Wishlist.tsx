@@ -6,22 +6,12 @@ import { useWishlistStore } from '../store/wishlistStore';
 import { useCartStore } from '../store/cartStore';
 import { toast } from 'sonner';
 import Logo from '../components/Logo';
+import { resolveMedia } from '../utils/mediaUtils';
 
 export default function Wishlist() {
   const { items, removeItem } = useWishlistStore();
   const addItemToCart = useCartStore((state) => state.addItem);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Dynamic Asset Resolver for Vite
-  const getProductImage = (imagePath: string) => {
-    if (!imagePath) return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    if (imagePath.startsWith('http')) return imagePath;
-    try {
-      return new URL(`../assets/products/${imagePath}`, import.meta.url).href;
-    } catch {
-      return "https://images.unsplash.com/photo-1560393464-513689404285?auto=format&fit=crop&q=80&w=1000";
-    }
-  };
 
   // Mouse tracking for parallax
   const mouseX = useMotionValue(0);
@@ -105,7 +95,7 @@ export default function Wishlist() {
               className="group flex flex-col h-full bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-primary/5 shadow-premium hover:shadow-premium-hover transition-all duration-500"
             >
               <div className="aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-6 bg-surface relative shrink-0 shadow-sm">
-                <img src={getProductImage(product.image)} alt={product.name} className="block w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" referrerPolicy="no-referrer" />
+                <img src={resolveMedia(product.image)} alt={product.name} className="block w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" referrerPolicy="no-referrer" />
                 <button 
                   onClick={() => removeItem(product.id)}
                   className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2.5 sm:p-3 rounded-xl bg-white/90 backdrop-blur-md text-primary/40 hover:text-red-500 transition-all shadow-premium border border-primary/5"
