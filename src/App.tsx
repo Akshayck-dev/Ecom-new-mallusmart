@@ -25,6 +25,7 @@ import AdminCategories from './pages/admin/AdminCategories';
 
 import ScrollToTopButton from './components/ScrollToTopButton';
 import GlobalUI from './components/GlobalUI';
+import ConnectivityGuard from './components/ConnectivityGuard';
 
 const isNativeApp = Capacitor.isNativePlatform();
 
@@ -66,46 +67,48 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
 export default function App() {
   return (
     <Router>
-      <ScrollToTop />
-      <GlobalUI />
-      <Toaster position="bottom-right" richColors closeButton />
-      
-      <Routes>
-        {/* Admin Login - No Sidebar/Header */}
-        <Route path="/admin" element={<AdminLogin />} />
+      <ConnectivityGuard>
+        <ScrollToTop />
+        <GlobalUI />
+        <Toaster position="bottom-right" richColors closeButton />
+        
+        <Routes>
+          {/* Admin Login - No Sidebar/Header */}
+          <Route path="/admin" element={<AdminLogin />} />
 
-        {/* Admin Dashboard - Nested with Sidebar/Header */}
-        <Route path="/admin/*" element={<AdminLayout />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="categories" element={<AdminCategories />} />
-        </Route>
+          {/* Admin Dashboard - Nested with Sidebar/Header */}
+          <Route path="/admin/*" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="categories" element={<AdminCategories />} />
+          </Route>
 
-        {/* Main Storefront Routes */}
-        <Route
-          path="*"
-          element={
-            <div className="min-h-screen flex flex-col relative overflow-x-hidden">
-              <Navbar />
-              <PageWrapper>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/shop" element={<Shop />} />
-                  <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/wishlist" element={<Wishlist />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/faq" element={<FAQ />} />
-                  <Route path="/contact" element={<Contact />} />
-                </Routes>
-              </PageWrapper>
-              <Footer />
-              {isNativeApp && <MobileNav />}
-              <ScrollToTopButton />
-            </div>
-          }
-        />
-      </Routes>
+          {/* Main Storefront Routes */}
+          <Route
+            path="*"
+            element={
+              <div className="min-h-screen flex flex-col relative overflow-x-hidden">
+                <Navbar />
+                <PageWrapper>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/shop" element={<Shop />} />
+                    <Route path="/product/:id" element={<ProductDetail />} />
+                    <Route path="/wishlist" element={<Wishlist />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/contact" element={<Contact />} />
+                  </Routes>
+                </PageWrapper>
+                <Footer />
+                {isNativeApp && <MobileNav />}
+                <ScrollToTopButton />
+              </div>
+            }
+          />
+        </Routes>
+      </ConnectivityGuard>
     </Router>
   );
 }
